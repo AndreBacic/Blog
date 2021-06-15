@@ -30,34 +30,8 @@ namespace BlogAPI.Controllers
 
             foreach (var a in dbArticles)
             {
-                List<CommentViewModel> commentViews = new List<CommentViewModel>();
-                foreach (var c in a.Comments)
-                {
-                    UserViewModel author = new UserViewModel
-                    {
-                        FirstName = c.Author.FirstName,
-                        LastName = c.Author.LastName,
-                        EmailAddress = c.Author.EmailAddress
-                    };
-                    CommentViewModel commentView = new CommentViewModel
-                    {
-                        Author = author,
-                        DatePosted = c.DatePosted,
-                        LastEdited = c.LastEdited,
-                        Content = c.Content
-                    };
-                }
-
-                ArticleViewModel articleView = new ArticleViewModel
-                {
-                    AuthorName = a.AuthorName,
-                    Title = a.Title,
-                    Content = a.Content,
-                    DatePosted = a.DatePosted,
-                    LastEdited = a.LastEdited,
-                    Comments = commentViews,
-                    Tags = a.Tags
-                };
+                ArticleViewModel articleView = new ArticleViewModel();
+                articleView.SetThisToDbArticleModel(a);
                 output.Add(articleView);
             }
             return output;
@@ -65,15 +39,20 @@ namespace BlogAPI.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ArticleViewModel Get(int id)
         {
-            return "value";
+            ArticleViewModel articleView = new ArticleViewModel();
+            articleView.SetThisToDbArticleModel(_db.GetArticle(id));
+
+            return articleView;
         }
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]ArticleViewModel article)
         {
+            // TODO: Validate user input before saving to the db.
+            _db.CreateArticle(article.GetAsDbArticleModel());
         }
 
         // PUT api/<controller>/5

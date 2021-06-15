@@ -6,9 +6,30 @@ namespace BlogDataLibrary.Models
 {
     public class CommentViewModel
     {
+        public int Id { get; set; }
         public DateTime DatePosted { get; set; }
         public DateTime LastEdited { get; set; }
         public UserViewModel Author { get; set; }
         public string Content { get; set; }
+        public void SetThisToDbCommentModel(CommentModel comment)
+        {
+            this.Id = comment.Id;
+            this.Author.SetThisToDbUserModel(comment.Author);
+            this.DatePosted = comment.DatePosted;
+            this.LastEdited = comment.LastEdited;
+            this.Content = comment.Content;
+        }
+        public CommentModel GetAsDbCommentModel()
+        {
+            CommentModel output = new CommentModel
+            {
+                Id = this.Id,
+                Author = this.Author.GetAsDbUserModel(),
+                DatePosted = this.DatePosted,
+                LastEdited = this.LastEdited,
+                Content = this.Content
+            };
+            return output;
+        }
     }
 }
