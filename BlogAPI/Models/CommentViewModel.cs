@@ -11,13 +11,18 @@ namespace BlogDataLibrary.Models
         public DateTime LastEdited { get; set; }
         public UserViewModel Author { get; set; }
         public string Content { get; set; }
-        public void SetThisToDbCommentModel(CommentModel comment)
+        /// <summary>
+        /// Id of the article this belongs to
+        /// </summary>
+        public int ArticleId { get; set; }
+        public void SetThisToDbCommentModel(CommentModel comment, int articleId = -1)
         {
             this.Id = comment.Id;
             this.Author.SetThisToDbUserModel(comment.Author);
             this.DatePosted = comment.DatePosted;
             this.LastEdited = comment.LastEdited;
             this.Content = comment.Content;
+            this.ArticleId = articleId;
         }
         public CommentModel GetAsDbCommentModel()
         {

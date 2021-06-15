@@ -21,7 +21,7 @@ namespace BlogDataLibrary.Models
             foreach (var c in article.Comments)
             {
                 CommentViewModel commentView = new CommentViewModel();
-                commentView.SetThisToDbCommentModel(c);
+                commentView.SetThisToDbCommentModel(c, this.Id);
                 commentViews.Add(commentView);                
             }
 

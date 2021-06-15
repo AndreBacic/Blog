@@ -19,7 +19,7 @@ namespace BlogDataLibrary.DataAccess
             throw new NotImplementedException();
         }
 
-        public void CreateComment(CommentModel comment)
+        public void CreateComment(CommentModel comment, int articleId)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +44,7 @@ namespace BlogDataLibrary.DataAccess
             throw new NotImplementedException();
         }
 
-        public List<CommentModel> GetAllComments()
+        public List<CommentModel> GetAllCommentsInArticle(int articleId)
         {
             throw new NotImplementedException();
         }

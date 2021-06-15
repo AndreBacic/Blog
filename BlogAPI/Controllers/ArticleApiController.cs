@@ -57,14 +57,19 @@ namespace BlogAPI.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]ArticleViewModel article)
         {
+            // TODO: Validate user input before saving to the db.
+            ArticleModel dbArticle = article.GetAsDbArticleModel();
+            dbArticle.Id = id;
+            _db.UpdateArticle(dbArticle);
         }
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            _db.DeleteArticle(id);
         }
     }
 }

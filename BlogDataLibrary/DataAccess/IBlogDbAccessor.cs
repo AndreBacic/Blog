@@ -19,8 +19,8 @@ namespace BlogDataLibrary.DataAccess
         public void DeleteArticle(int id);
 
         public CommentModel GetComment(int id);
-        public List<CommentModel> GetAllComments();
-        public void CreateComment(CommentModel comment);
+        public List<CommentModel> GetAllCommentsInArticle(int articleId);
+        public void CreateComment(CommentModel comment, int articleId);
         public void UpdateComment(CommentModel comment);
         public void DeleteComment(int id);
     }
