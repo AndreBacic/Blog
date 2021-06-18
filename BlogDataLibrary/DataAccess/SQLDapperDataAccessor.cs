@@ -31,6 +31,8 @@ namespace BlogDataLibrary.DataAccess
 
         public void DeleteArticle(int id)
         {
+            // delete all comments attached to the article
+            // delete the article
             throw new NotImplementedException();
         }
 
@@ -41,11 +43,15 @@ namespace BlogDataLibrary.DataAccess
 
         public List<ArticleModel> GetAllArticles()
         {
+            // get all articles
+            // foreach article, get all comments
             throw new NotImplementedException();
         }
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId)
         {
+            // Get comments by article
+            // foreach comment, get author by id
             throw new NotImplementedException();
         }
 
@@ -56,11 +62,8 @@ namespace BlogDataLibrary.DataAccess
 
         public ArticleModel GetArticle(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public CommentModel GetComment(int id)
-        {
+            // get article
+            // get all of the article's comments
             throw new NotImplementedException();
         }
 
@@ -80,6 +83,11 @@ namespace BlogDataLibrary.DataAccess
         }
 
         public void UpdateUser(UserModel user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateUserPassword(UserModel user, string newPassword)
         {
             throw new NotImplementedException();
         }

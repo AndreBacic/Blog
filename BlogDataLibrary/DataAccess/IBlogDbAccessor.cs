@@ -10,7 +10,17 @@ namespace BlogDataLibrary.DataAccess
         public UserModel GetUser(int id);
         public List<UserModel> GetAllUsers();
         public void CreateUser(UserModel user);
+        /// <summary>
+        /// Updates all user data BUT the password
+        /// </summary>
+        /// <param name="user"></param>
         public void UpdateUser(UserModel user);
+        /// <summary>
+        /// Updates user's password to be newPassword. newPassword is plaintext, and is hashed by this method
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="newPassword"></param>
+        public void UpdateUserPassword(UserModel user, string newPassword);
 
         public ArticleModel GetArticle(int id);
         public List<ArticleModel> GetAllArticles();
@@ -18,7 +28,6 @@ namespace BlogDataLibrary.DataAccess
         public void UpdateArticle(ArticleModel article);
         public void DeleteArticle(int id);
 
-        public CommentModel GetComment(int id);
         public List<CommentModel> GetAllCommentsInArticle(int articleId);
         public void CreateComment(CommentModel comment, int articleId);
         public void UpdateComment(CommentModel comment);
