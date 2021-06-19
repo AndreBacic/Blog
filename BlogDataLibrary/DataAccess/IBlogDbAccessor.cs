@@ -9,7 +9,13 @@ namespace BlogDataLibrary.DataAccess
     {
         public UserModel GetUser(int id);
         public List<UserModel> GetAllUsers();
-        public void CreateUser(UserModel user);
+        /// <summary>
+        /// Inserts user into the database.
+        /// Note: assumes user password is plaintext, and will salt and hash it before inserting.
+        /// If password is specified as NOT being plaintext, ensure that it is in the form "iterations.salt.passwordHash"
+        /// </summary>
+        /// <param name="user"></param>
+        public void CreateUser(UserModel user, bool isUserPasswordPlaintext = true);
         /// <summary>
         /// Updates all user data BUT the password
         /// </summary>
@@ -30,6 +36,10 @@ namespace BlogDataLibrary.DataAccess
         /// </summary>
         /// <param name="article"></param>
         public void CreateArticle(ArticleModel article);
+        /// <summary>
+        /// Updates the article, but NOT any comments added to it.
+        /// </summary>
+        /// <param name="article"></param>
         public void UpdateArticle(ArticleModel article);
         public void DeleteArticle(ArticleModel article);
 
