@@ -2,7 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using Dapper;
 using System.Text;
+using System.Linq;
 
 namespace BlogDataLibrary.DataAccess
 {
@@ -16,29 +19,116 @@ namespace BlogDataLibrary.DataAccess
         }
         public void CreateArticle(ArticleModel article)
         {
-            throw new NotImplementedException();
+            if (article.Title == null ||
+                article.DatePosted == null ||
+                article.AuthorName == null ||
+                article.Content == null)
+            {
+                throw new FormatException("Invalid format for parameter 'article' for method 'CreateArticle': article fields Title, DatePosted, AuthorName, and Content cannot be null");
+            }
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Title", article.Title);
+                parameters.Add("@DatePosted", article.DatePosted);
+                parameters.Add("@AuthorName", article.AuthorName);
+                parameters.Add("@Tags", article.Tags);
+                parameters.Add("@ContentText", article.Content);
+                parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
+
+                connection.Execute("dbo.spArticles_Insert", parameters, commandType: CommandType.StoredProcedure);
+
+                article.Id = parameters.Get<int>("@id");
+            }
+
+            if (article.Comments.Any())
+            {
+                foreach (var comment in article.Comments)
+                {
+                    CreateComment(comment, article.Id);
+                }
+            }
         }
 
         public void CreateComment(CommentModel comment, int articleId)
         {
-            throw new NotImplementedException();
+            if (comment.DatePosted == null ||
+                comment.Content == null ||
+                comment.Author == null)
+            {
+                throw new FormatException("Invalid format for parameter 'comment' for method 'CreateComment': comment fields DatePosted, Author, and Content cannot be null");
+            }
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@ArticleId", articleId);
+                parameters.Add("@DatePosted", comment.DatePosted);
+                parameters.Add("@ContentText", comment.Content);
+                parameters.Add("@AuthorId", comment.Author.Id);
+                parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
+
+                connection.Execute("dbo.spComments_Insert", parameters, commandType: CommandType.StoredProcedure);
+
+                comment.Id = parameters.Get<int>("@id");
+            }
         }
 
         public void CreateUser(UserModel user)
         {
-            throw new NotImplementedException();
+            if (user.FirstName == null ||
+                user.LastName == null ||
+                user.EmailAddress == null ||
+                user.Role == null ||
+                user.PasswordHash == null)
+            {
+                throw new FormatException("Invalid format for parameter 'user' for method 'CreateUser': no user fields except user.Id may be null");
+            }
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@FirstName", user.FirstName);
+                parameters.Add("@LastName", user.LastName);
+                parameters.Add("@EmailAddress", user.EmailAddress);
+                parameters.Add("@Role", user.Role);
+                parameters.Add("@PasswordHash", user.PasswordHash);
+                parameters.Add("@DoesReceiveNotifications", user.DoesReceiveNotifications);
+                parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
+
+                connection.Execute("dbo.spUsers_Insert", parameters, commandType: CommandType.StoredProcedure);
+
+                user.Id = parameters.Get<int>("@id");
+            }
         }
 
-        public void DeleteArticle(int id)
+        public void DeleteArticle(ArticleModel article)
         {
             // delete all comments attached to the article
+            foreach (var comment in article.Comments)
+            {
+                DeleteComment(comment.Id);
+            }
+
             // delete the article
-            throw new NotImplementedException();
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", article.Id);
+
+                connection.Execute("dbo.spArticles_Delete", parameters, commandType: CommandType.StoredProcedure);
+            }
         }
 
         public void DeleteComment(int id)
         {
-            throw new NotImplementedException();
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                connection.Execute("dbo.spComments_Delete", parameters, commandType: CommandType.StoredProcedure);
+            }
         }
 
         public List<ArticleModel> GetAllArticles()

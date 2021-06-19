@@ -24,9 +24,14 @@ namespace BlogDataLibrary.DataAccess
 
         public ArticleModel GetArticle(int id);
         public List<ArticleModel> GetAllArticles();
+
+        /// <summary>
+        /// Inserts the article into the database, along with any comments already added to it.
+        /// </summary>
+        /// <param name="article"></param>
         public void CreateArticle(ArticleModel article);
         public void UpdateArticle(ArticleModel article);
-        public void DeleteArticle(int id);
+        public void DeleteArticle(ArticleModel article);
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId);
         public void CreateComment(CommentModel comment, int articleId);
