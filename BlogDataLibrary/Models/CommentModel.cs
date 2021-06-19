@@ -9,6 +9,7 @@ namespace BlogDataLibrary.Models
         public int Id { get; set; }
         public DateTime DatePosted { get; set; }
         public DateTime LastEdited { get; set; }
+        public int AuthorId { get; set; }
         public UserModel Author { get; set; }
         public string Content { get; set; }
     }

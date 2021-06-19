@@ -133,33 +133,87 @@ namespace BlogDataLibrary.DataAccess
 
         public List<ArticleModel> GetAllArticles()
         {
-            // get all articles
-            // foreach article, get all comments
-            throw new NotImplementedException();
+            List<ArticleModel> output = new List<ArticleModel>();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                output = connection.Query<ArticleModel>("dbo.spArticles_GetAll", commandType: CommandType.StoredProcedure)
+                                    .ToList();
+            }
+
+            foreach (var article in output)
+            {
+                article.Comments = GetAllCommentsInArticle(article.Id);
+            }
+
+            return output;            
         }
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId)
         {
+            List<CommentModel> output = new List<CommentModel>();
+
             // Get comments by article
-            // foreach comment, get author by id
-            throw new NotImplementedException();
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@ArticleId", articleId);
+
+                output = connection.Query<CommentModel>("dbo.spComments_GetByArticle", parameters, commandType: CommandType.StoredProcedure)
+                                    .ToList();
+            }
+            
+            foreach (var comment in output)
+            {
+                comment.Author = GetUser(comment.AuthorId);
+            }
+
+            return output;
         }
 
         public List<UserModel> GetAllUsers()
         {
-            throw new NotImplementedException();
+            List<UserModel> output = new List<UserModel>();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                output = connection.Query<UserModel>("dbo.spUsers_GetAll", commandType: CommandType.StoredProcedure)
+                                    .ToList();
+            }
+            return output;
         }
 
         public ArticleModel GetArticle(int id)
         {
-            // get article
-            // get all of the article's comments
-            throw new NotImplementedException();
+            ArticleModel output = new ArticleModel();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                output = connection.Query<ArticleModel>("dbo.spArticles_GetById", parameters, commandType: CommandType.StoredProcedure)
+                                    .First();
+            }
+
+            output.Comments = GetAllCommentsInArticle(output.Id);
+
+            return output;
         }
 
         public UserModel GetUser(int id)
         {
-            throw new NotImplementedException();
+            UserModel output = new UserModel();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", id);
+
+                output = connection.Query<UserModel>("dbo.spUsers_GetById", parameters, commandType: CommandType.StoredProcedure)
+                                    .First();
+            }
+            return output;
         }
 
         public void UpdateArticle(ArticleModel article)
