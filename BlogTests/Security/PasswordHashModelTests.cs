@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace BlogDataLibrary.Tests
+namespace BlogDataLibrary.Tests.Security
 {
     public class PasswordHashModelTests
     {

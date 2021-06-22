@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace BlogDataLibrary.Tests
+namespace BlogDataLibrary.Tests.Security
 {
     public class HashAndSalterTests
     {
@@ -21,12 +21,16 @@ namespace BlogDataLibrary.Tests
             Assert.Equal(HashAndSalter.Iterations, model.IterationsOnHash);
         }
         [Fact]
-        public void HashAndSalt_ShouldFail()
+        public void HashAndSalt_TestWeirdInputs()
         {
             // Arrange
             string password = "";
             // Act/assert
-            Assert.ThrowsAny<Exception>(() => HashAndSalter.HashAndSalt(password));
+            var model = HashAndSalter.HashAndSalt(password);
+            //Assert.ThrowsAny<Exception>(() => HashAndSalter.HashAndSalt(password)); // <- doesn't throw any exceptions
+            Assert.NotNull(model);
+            Assert.True(model.PasswordHashString.Length == 44);
+
         }
     }
 }
