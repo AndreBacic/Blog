@@ -13,7 +13,7 @@ namespace BlogDataLibrary.Models
         public List<CommentViewModel> Comments { get; set; }
         public List<string> Tags { get; set; }
         public string AuthorName { get; set; }
-        public string Content { get; set; }
+        public string ContentText { get; set; }
 
         public void SetThisToDbArticleModel(ArticleModel article)
         {
@@ -28,7 +28,7 @@ namespace BlogDataLibrary.Models
             this.Id = article.Id; // TODO: encrypt ViewModel ids before sending them to the front end
             this.AuthorName = article.AuthorName;
             this.Title = article.Title;
-            this.Content = article.Content;
+            this.ContentText = article.ContentText;
             this.DatePosted = article.DatePosted;
             this.LastEdited = article.LastEdited;
             this.Comments = commentViews;
@@ -52,7 +52,7 @@ namespace BlogDataLibrary.Models
                 Title = this.Title,
                 DatePosted = this.DatePosted,
                 LastEdited = this.LastEdited,
-                Content = this.Content,
+                ContentText = this.ContentText,
                 Tags = this.Tags,
                 Comments = comments
             };

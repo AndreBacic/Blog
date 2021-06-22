@@ -10,7 +10,7 @@ namespace BlogDataLibrary.Models
         public DateTime DatePosted { get; set; }
         public DateTime LastEdited { get; set; }
         public UserViewModel Author { get; set; } = new UserViewModel();
-        public string Content { get; set; }
+        public string ContentText { get; set; }
         /// <summary>
         /// Id of the article this belongs to
         /// </summary>
@@ -21,7 +21,7 @@ namespace BlogDataLibrary.Models
             this.Author.SetThisToDbUserModel(comment.Author);
             this.DatePosted = comment.DatePosted;
             this.LastEdited = comment.LastEdited;
-            this.Content = comment.Content;
+            this.ContentText = comment.ContentText;
             this.ArticleId = articleId;
         }
         public CommentModel GetAsDbCommentModel()
@@ -32,7 +32,7 @@ namespace BlogDataLibrary.Models
                 Author = this.Author.GetAsDbUserModel(),
                 DatePosted = this.DatePosted,
                 LastEdited = this.LastEdited,
-                Content = this.Content
+                ContentText = this.ContentText
             };
             return output;
         }

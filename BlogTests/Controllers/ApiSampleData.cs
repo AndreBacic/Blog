@@ -14,7 +14,7 @@ namespace BlogDataLibrary.Tests.Controllers
             {
                 AuthorName = "Joe",
                 Comments = comments,
-                Content = "This is sample content",
+                ContentText = "This is sample content",
                 DatePosted = DateTime.Now,
                 Id = 2,
                 Tags = null,
@@ -26,7 +26,7 @@ namespace BlogDataLibrary.Tests.Controllers
             {
                 AuthorName = "Joe",
                 Comments = comments,
-                Content = "content 2B content",
+                ContentText = "ContentText 2B content",
                 DatePosted = DateTime.Now,
                 Id = 1,
                 Tags = tags,
@@ -43,7 +43,7 @@ namespace BlogDataLibrary.Tests.Controllers
                 Id = 1,
                 Author = GetSampleUser(),
                 AuthorId = 1,
-                Content = "Nice post",
+                ContentText = "Nice post",
                 DatePosted = DateTime.Now
             });
             output.Add(new CommentModel
@@ -51,7 +51,7 @@ namespace BlogDataLibrary.Tests.Controllers
                 Id = 2,
                 Author = GetSampleUser(),
                 AuthorId = 2,
-                Content = "Cool post",
+                ContentText = "Cool post",
                 DatePosted = DateTime.Now
             });
             return output;

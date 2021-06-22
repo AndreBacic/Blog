@@ -18,14 +18,18 @@ namespace BlogDataLibrary.DataAccess
         {
             _connectionString = configuration.GetConnectionString("SQLBlogDb");
         }
+        public SQLDapperDataAccessor(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
         public void CreateArticle(ArticleModel article)
         {
             if (article.Title == null ||
                 article.DatePosted == null ||
                 article.AuthorName == null ||
-                article.Content == null)
+                article.ContentText == null)
             {
-                throw new FormatException("Invalid format for parameter 'article' for method 'CreateArticle': article fields Title, DatePosted, AuthorName, and Content cannot be null");
+                throw new FormatException("Invalid format for parameter 'article' for method 'CreateArticle': article fields Title, DatePosted, AuthorName, and ContentText cannot be null");
             }
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
@@ -33,8 +37,8 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@Title", article.Title);
                 parameters.Add("@DatePosted", article.DatePosted);
                 parameters.Add("@AuthorName", article.AuthorName);
-                parameters.Add("@Tags", article.Tags);
-                parameters.Add("@ContentText", article.Content);
+                parameters.Add("@dbTags", article.dbTags);
+                parameters.Add("@ContentText", article.ContentText);
                 parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
 
                 connection.Execute("dbo.spArticles_Insert", parameters, commandType: CommandType.StoredProcedure);
@@ -54,10 +58,10 @@ namespace BlogDataLibrary.DataAccess
         public void CreateComment(CommentModel comment, int articleId)
         {
             if (comment.DatePosted == null ||
-                comment.Content == null ||
+                comment.ContentText == null ||
                 comment.Author == null)
             {
-                throw new FormatException("Invalid format for parameter 'comment' for method 'CreateComment': comment fields DatePosted, Author, and Content cannot be null");
+                throw new FormatException("Invalid format for parameter 'comment' for method 'CreateComment': comment fields DatePosted, Author, and ContentText cannot be null");
             }
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
@@ -65,7 +69,7 @@ namespace BlogDataLibrary.DataAccess
                 var parameters = new DynamicParameters();
                 parameters.Add("@ArticleId", articleId);
                 parameters.Add("@DatePosted", comment.DatePosted);
-                parameters.Add("@ContentText", comment.Content);
+                parameters.Add("@ContentText", comment.ContentText);
                 parameters.Add("@AuthorId", comment.Author.Id);
                 parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
 
@@ -230,9 +234,9 @@ namespace BlogDataLibrary.DataAccess
             if (article.Title == null ||
                 article.LastEdited == null ||
                 article.AuthorName == null ||
-                article.Content == null)
+                article.ContentText == null)
             {
-                throw new FormatException("Invalid format for parameter 'article' for method 'UpdateArticle': article fields Title, LastEdited, AuthorName, and Content cannot be null");
+                throw new FormatException("Invalid format for parameter 'article' for method 'UpdateArticle': article fields Title, LastEdited, AuthorName, and ContentText cannot be null");
             }
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
@@ -241,8 +245,8 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@Title", article.Title);
                 parameters.Add("@LastEdited", article.LastEdited);
                 parameters.Add("@AuthorName", article.AuthorName);
-                parameters.Add("@Tags", article.Tags);
-                parameters.Add("@ContentText", article.Content);                
+                parameters.Add("@dbTags", article.dbTags);
+                parameters.Add("@ContentText", article.ContentText);                
 
                 connection.Execute("dbo.spArticles_Update", parameters, commandType: CommandType.StoredProcedure);
             }
@@ -251,9 +255,9 @@ namespace BlogDataLibrary.DataAccess
         public void UpdateComment(CommentModel comment)
         {
             if (comment.LastEdited == null ||
-                comment.Content == null)
+                comment.ContentText == null)
             {
-                throw new FormatException("Invalid format for parameter 'comment' for method 'UpdateComment': comment fields LastEdited and Content cannot be null");
+                throw new FormatException("Invalid format for parameter 'comment' for method 'UpdateComment': comment fields LastEdited and ContentText cannot be null");
             }
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
@@ -261,7 +265,7 @@ namespace BlogDataLibrary.DataAccess
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", comment.Id, DbType.Int32);
                 parameters.Add("@LastEdited", comment.LastEdited);
-                parameters.Add("@ContentText", comment.Content);
+                parameters.Add("@ContentText", comment.ContentText);
 
                 connection.Execute("dbo.spComments_Update", parameters, commandType: CommandType.StoredProcedure);
             }
