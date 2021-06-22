@@ -307,7 +307,7 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@id", user.Id, DbType.Int32);
                 parameters.Add("@PasswordHash", passwordHashModel.ToDbString());
 
-                connection.Execute("dbo.spUsers_Update", parameters, commandType: CommandType.StoredProcedure);
+                connection.Execute("dbo.spUsers_UpdatePassword", parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }

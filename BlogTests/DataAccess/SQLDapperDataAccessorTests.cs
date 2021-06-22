@@ -13,6 +13,14 @@ namespace BlogDataLibrary.Tests.DataAccess
     public class SQLDapperDataAccessorTests
     {
         [Fact]
+        public void UpdateUserPassword_ShouldWork()
+        {
+            var db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            var user = db.GetUser(1);
+            db.UpdateUserPassword(user, "Password123"); 
+        }
+
+        [Fact]
         public void CreateArticle_ShouldWork()
         {
             var db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
