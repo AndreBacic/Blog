@@ -39,7 +39,8 @@ namespace BlogAPI.Controllers
         public CommentViewModel Get(int articleId, int id)
         {
             // note: id is the id of the comment we're getting
-            CommentModel comment = _db.GetComment(id);
+            CommentModel comment = _db.GetAllCommentsInArticle(articleId)
+                                    .Where(c => c.Id == id).First();
             CommentViewModel commentView = new CommentViewModel();
             commentView.SetThisToDbCommentModel(comment);
             return commentView;

@@ -69,7 +69,8 @@ namespace BlogAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _db.DeleteArticle(id);
+            var article = _db.GetArticle(id);
+            _db.DeleteArticle(article);
         }
     }
 }
