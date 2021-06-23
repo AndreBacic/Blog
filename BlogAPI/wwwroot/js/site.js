@@ -1,26 +1,29 @@
 ﻿const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
-let articles = {}
+let articles = []
 
 function GetAllArticles() {
     fetch(articleURI, {
         method: 'GET'
     })
         .then(response => response.json())
-        .then(json => DisplayArticles(json))    
+        .then(function (json) {
+            articles = json
+            DisplayArticles(json)
+        })    
             .catch(error => console.error('Unable to get articles.', error));
-    articles = json
 }
 
 async function GetAllArticlesAsync() {
-    articles = await fetch(articleURI, { method: 'GET' })
+    let infoPromise = await fetch(articleURI, { method: 'GET' })
+    articles = await infoPromise.json()
     DisplayArticles(articles)
     document.body.append("<h3>Footer?</h3>")
 }
 
 function DisplayArticles(json) {
-    articles = JSON.parse(json)
+    //articles = JSON.parse(json)
     let html = "<h2>My Articles:</h2>"
     articles.forEach(article => {
         html += "<p>" + article.Title + "," + article.AuthorName + " | "  + article + "</p>"
