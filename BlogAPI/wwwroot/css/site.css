@@ -1,2 +1,37 @@
-﻿body {
+﻿/* Has padding and borders included in width and height of all elements */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color : white;
+}
+
+.flex-container-column {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+.flex-item {
+    border: 3px groove #0bebfa;
+    border-radius: 12px 30px 30px 30px;
+    padding: 0px 10px 5px 20px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 2px;
+}
+@media screen and (min-width: 700px){
+    .flex-container-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+article.flex-item {
+    background-color: #e5f7fc;
+    height: 300px;
+    width: 500px;
+    font-stretch:expanded;
+    color: #0b20c3;
 }
