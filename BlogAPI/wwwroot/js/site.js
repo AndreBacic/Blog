@@ -1,7 +1,6 @@
 ﻿const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
-let articles = []
 
 async function GetAllArticlesAsync() {
     let infoPromise = await fetch(articleURI, { method: 'GET' })
