@@ -7,8 +7,13 @@
     <script async src="js/site.js"></script>
 </head>
 <body>
+    <script>
+        window.onload = function () {
+            RenderArticles().then()
+        }
+    </script>
     <h1>My Blog</h1>
-    <div id="articleList" class="flex-container-column" onload="">
+    <div id="articleList" class="flex-container-column">
         <article class="flex-item">
             <h4>An Article!</h4>
             <p>Article text.</p>

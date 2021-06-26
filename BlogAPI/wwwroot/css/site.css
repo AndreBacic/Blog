@@ -27,6 +27,10 @@ body {
         flex-direction: row;
         flex-wrap: wrap;
     }
+    p, h3, h4, h5 {
+        font-size: 1.8em;
+        color: darkred;
+    }
 }
 article.flex-item {
     background-color: #e5f7fc;
