@@ -15,7 +15,7 @@ namespace BlogDataLibrary.Models
         public string AuthorName { get; set; }
         public string ContentText { get; set; }
 
-        public void SetThisToDbArticleModel(ArticleModel article)
+        public void SetThisToDbArticleModel(ArticleModel article) // TODO: Move all data model <-> view model processor methods to their own class.
         {
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
             foreach (var c in article.Comments)

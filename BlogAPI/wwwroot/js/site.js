@@ -1,7 +1,7 @@
 ﻿const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
-
+// ArticleApi methods
 async function GetAllArticlesAsync() {
     let infoPromise = await fetch(articleURI, { method: 'GET' })
     let articles = await infoPromise.json()
@@ -14,36 +14,82 @@ async function GetArticleByIdAsync(id) {
     return article;
 }
 
-async function RenderArticles() {
-    articles = await GetAllArticlesAsync()
-    let articleList = document.getElementById("articleList")
-    while (articleList.firstChild) {
-        articleList.removeChild(articleList.firstChild)
-    }
-
-    for (let a of articles) {
-        const newArticle = RenderPreviewOfArticle(a)
-        articleList.appendChild(newArticle)
-    }    
+async function CreateArticleAsync(article) {
+    let createPromise = await fetch(articleURI,
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(article)
+        })
+    let success = await createPromise.json()
 }
 
-function RenderPreviewOfArticle(articleJSON) {
-    const article = document.createElement("article")
-    article.className = "flex-item"
+async function UpdateArticleAsync(id, article) {
+    let updatePromise = await fetch(`${articleURI}/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(article)
+        })
+    let success = await updatePromise.json()
+}
 
-    const header = document.createElement("h4")
-    header.textContent = articleJSON.title
-    article.appendChild(header)
+async function DeleteArticleAsync(id) {
+    let deletePromise = await fetch(`${articleURI}/${id}`,
+        {
+            method: 'DELETE'
+        })
+    let success = await deletePromise.json()
+}
 
-    const content = document.createElement("p")
-    content.textContent = articleJSON.contentText
-    article.appendChild(content)
+// CommentApi methods
+async function GetAllCommentsInArticle(articleId) {
+    let infoPromise = await fetch(`${commentURI}/${articleId}`, { method: 'GET' })
+    let comments = await infoPromise.json()
+    return comments;
+}
 
-    const authorNameLabel = document.createElement("p")
-    const citedAuthorName = document.createElement("cite")
-    citedAuthorName.textContent = articleJSON.contentText
-    authorNameLabel.appendChild(citedAuthorName)
-    article.appendChild(authorNameLabel)
+async function GetCommentByArticleAndId(articleId, commentId) {
+    let infoPromise = await fetch(`${commentURI}/${articleId}?id=${commentId}`, { method: 'GET' })
+    let comment = await infoPromise.json()
+    return comment;
+}
+async function CreateCommentAsync(comment) {
+    let createPromise = await fetch(commentURI,
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(comment)
+        })
+    let success = await createPromise.json()
+}
 
-    return article
+async function UpdateCommentAsync(id, comment) {
+    let updatePromise = await fetch(`${commentURI}/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(comment)
+        })
+    let success = await updatePromise.json()
+}
+
+async function DeleteCommentAsync(id) {
+    let deletePromise = await fetch(`${commentURI}/${id}`,
+        {
+            method: 'DELETE'
+        })
+    let success = await deletePromise.json()
 }
