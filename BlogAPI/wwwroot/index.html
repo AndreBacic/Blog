@@ -5,12 +5,11 @@
     <title>Blog</title>
     <link rel="stylesheet" href="css/site.css" />
     <script async src="js/site.js"></script>
-    <script async src="js/DOMRendering.js"></script>
-    <script async src="js/Classes.js"></script>
 </head>
 <body>
     <script>
         window.onload = function () {
+            RenderHeaderAsync().then()
             RenderArticles().then()
         }
     </script>
@@ -32,5 +31,6 @@
             <p><cite>Author's Name</cite></p>
         </article>-->
     </div>
+    <a href="about.html">About page</a>
 </body>
 </html>

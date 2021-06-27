@@ -1,7 +1,8 @@
-﻿const articleURI = "api/ArticleApi"
+﻿
+const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
-// ArticleApi methods
+// ArticleApi methods   ////////////////////////////////////////////////////////////
 async function GetAllArticlesAsync() {
     let infoPromise = await fetch(articleURI, { method: 'GET' })
     let articles = await infoPromise.json()
@@ -48,7 +49,7 @@ async function DeleteArticleAsync(id) {
     let success = await deletePromise.json()
 }
 
-// CommentApi methods
+// CommentApi methods   ////////////////////////////////////////////////////////////////
 async function GetAllCommentsInArticle(articleId) {
     let infoPromise = await fetch(`${commentURI}/${articleId}`, { method: 'GET' })
     let comments = await infoPromise.json()
@@ -92,4 +93,97 @@ async function DeleteCommentAsync(id) {
             method: 'DELETE'
         })
     let success = await deletePromise.json()
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Data Model Classes  //////////////////////////////////////////////////////////////////////////////
+
+class UserModel {
+    constructor(firstName, lastName, emailAddress, id = null) {
+        this.firstName = firstName
+        this.lastName = lastName
+        this.emailAddress = emailAddress
+        this.id = id
+    }
+
+    get Name() {
+        return `${this.firstName} ${this.lastName}`
+    }
+}
+
+class CommentModel {
+    constructor(datePosted, author, contentText, articleId, lastEdited = null, id = null) {
+        this.datePosted = datePosted
+        this.lastEdited = lastEdited
+        this.author = author // should be UserModel
+        this.contentText = contentText
+        this.articleId = articleId
+        this.id = id
+    }
+}
+
+class ArticleModel {
+    constructor(authorName, title, contentText, datePosted, lastEdited = null, comments = [], tags = [], id = null) {
+        this.authorName = authorName
+        this.title = title
+        this.contentText = contentText
+        this.datePosted = datePosted
+        this.lastEdited = lastEdited
+        this.comments = comments
+        this.tags = tags
+        this.id = id
+    }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/// DOM Rendering Methods  ///////////////////////////////////////////////////////////////////////////
+
+async function RenderArticles() {
+    articles = await GetAllArticlesAsync()
+    let articleList = document.getElementById("articleList")
+    while (articleList.firstChild) {
+        articleList.removeChild(articleList.firstChild)
+    }
+
+    for (let a of articles) {
+        const newArticle = RenderPreviewOfArticle(a)
+        articleList.appendChild(newArticle)
+    }
+}
+
+function RenderPreviewOfArticle(articleJSON) {
+    const article = document.createElement("article")
+    article.className = "flex-item"
+
+    const header = document.createElement("h4")
+    header.textContent = articleJSON.title
+    article.appendChild(header)
+
+    const content = document.createElement("p")
+    content.textContent = articleJSON.contentText
+    article.appendChild(content)
+
+    const authorNameLabel = document.createElement("p")
+    const citedAuthorName = document.createElement("cite")
+    citedAuthorName.textContent = articleJSON.contentText
+    authorNameLabel.appendChild(citedAuthorName)
+    article.appendChild(authorNameLabel)
+
+    return article
+}
+
+async function RenderHeaderAsync() {
+    let promisething = await fetch("templates.html")
+    let data = await promisething.text()
+    parser = new DOMParser()
+    let templates = parser.parseFromString(data, 'text/html')
+    let header = templates.querySelector('#header')
+    let clone = header.content.cloneNode(true)
+    document.body.prepend(clone)
 }
