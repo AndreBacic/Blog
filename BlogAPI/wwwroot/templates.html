@@ -1,26 +1,45 @@
 ﻿<!DOCTYPE html>
 <template id="header">
-    <header>
+    <header class="header">
         <h1>TEST HEADER</h1>
     </header>
 </template>
 
 <template id="navbar-with-search">
-    <nav>
-        <h2>Test NAV</h2>
+    <nav class="navbar">
+        <ul>
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <a href="about.html">About</a>
+            </li>
+            <li>
+                <input type="text" class="navbar-input"/>
+            </li>
+        </ul>
     </nav>
 </template>
 <template id="navbar-no-search">
-    <nav>
+    <nav class="navbar">
+        <ul>
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <a href="about.html">About</a>
+            </li>
+        </ul>
     </nav>
 </template>
 
 <template id="footer-not-logged-in">
-    <footer>
+    <footer class="footer">
         <h2>Test FOOTER</h2>
     </footer>
 </template>
 <template id="footer-user-logged-in">
-    <footer>
+    <footer class="footer">
+        <h2>Test FOOTER logged in</h2>
     </footer>
 </template>

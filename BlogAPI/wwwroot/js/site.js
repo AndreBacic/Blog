@@ -171,19 +171,38 @@ function RenderPreviewOfArticle(articleJSON) {
 
     const authorNameLabel = document.createElement("p")
     const citedAuthorName = document.createElement("cite")
-    citedAuthorName.textContent = articleJSON.contentText
+    citedAuthorName.textContent = articleJSON.authorName
     authorNameLabel.appendChild(citedAuthorName)
     article.appendChild(authorNameLabel)
 
     return article
 }
 
-async function RenderHeaderAsync() {
+async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true) {
     let promisething = await fetch("templates.html")
     let data = await promisething.text()
     parser = new DOMParser()
     let templates = parser.parseFromString(data, 'text/html')
+
+    let navbar = null;
+    if (haveSearch) {
+        navbar = templates.querySelector('#navbar-with-search')
+    } else {
+        navbar = templates.querySelector('#navbar-no-search')
+    }
+    let navClone = navbar.content.cloneNode(true)
+    document.body.prepend(navClone)
+
     let header = templates.querySelector('#header')
-    let clone = header.content.cloneNode(true)
-    document.body.prepend(clone)
+    let headerClone = header.content.cloneNode(true)
+    document.body.prepend(headerClone)
+
+    let footer = null;
+    if (isLoggedIn) {
+        footer = templates.querySelector('#footer-user-logged-in')
+    } else {
+        footer = templates.querySelector('#footer-not-logged-in')
+    }
+    let footerClone = footer.content.cloneNode(true)
+    document.body.append(footerClone)
 }

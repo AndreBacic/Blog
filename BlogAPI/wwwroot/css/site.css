@@ -5,6 +5,7 @@
 
 body {
     background-color : white;
+    margin:0;
 }
 
 .flex-container-column {
@@ -22,6 +23,50 @@ body {
     flex-shrink: 1;
     margin: 2px;
 }
+
+.header {
+    position: relative;
+    top: 0;
+    background-color: aqua;
+    text-align: center;
+    width: 100%;
+    padding: 40px;
+}
+
+.navbar {
+    width:100%;
+    background-color:black;
+    padding:0px 30px;
+}
+.navbar ul {
+    padding:0px;
+    margin:0px;
+}
+.navbar li {
+    color: white;
+    display: inline;
+    padding: 5px 3px;
+}
+.navbar li:hover {
+    color:black;
+    background-color:#28cec3;
+}
+.navbar a {
+    color: white;
+    text-align: center;
+    text-decoration: none;    
+}
+.navbar a:hover {
+    color: black;
+}
+
+.footer {
+    width: 100%;
+    background-color: black;
+    color: aquamarine;
+    padding: 30px;
+}
+
 @media screen and (min-width: 700px){
     .flex-container-column {
         flex-direction: row;
