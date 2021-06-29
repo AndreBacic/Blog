@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,22 @@ namespace BlogAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("BlogAuth").AddCookie("BlogAuth", cookieConfig =>
+            {
+                cookieConfig.LoginPath = "/Home/Index";
+                cookieConfig.Cookie.Name = "Blog.Cookie1";
+                cookieConfig.AccessDeniedPath = "/Home/AccessDenied";
+                cookieConfig.Cookie.SameSite = SameSiteMode.None;
+                cookieConfig.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin = redirectContext =>
+                    {
+                        redirectContext.HttpContext.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+            services.AddCors();
             services.AddControllers();
             services.AddSingleton<IBlogDbAccessor, SQLDapperDataAccessor>();
         }
@@ -45,6 +63,15 @@ namespace BlogAPI
 
             app.UseRouting();
 
+            app.UseCors(policy =>
+            {
+                //policy.AllowAnyHeader();
+                //policy.AllowAnyMethod();
+                //policy.AllowAnyOrigin();
+                policy.AllowCredentials();
+            });
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -4,13 +4,21 @@ const commentURI = "api/CommentApi"
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
 async function GetAllArticlesAsync() {
-    let infoPromise = await fetch(articleURI, { method: 'GET' })
+    let infoPromise = await fetch(articleURI,
+        {
+            method: 'GET', 
+            credentials: 'include'
+        })
     let articles = await infoPromise.json()
     return articles;
 }
 
 async function GetArticleByIdAsync(id) {
-    let infoPromise = await fetch(`${articleURI}/${id}`, { method: 'GET' })
+    let infoPromise = await fetch(`${articleURI}/${id}`,
+        {
+            method: 'GET',
+            credentials: 'include'
+        })
     let article = await infoPromise.json()
     return article;
 }
@@ -19,6 +27,7 @@ async function CreateArticleAsync(article) {
     let createPromise = await fetch(articleURI,
         {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -32,6 +41,7 @@ async function UpdateArticleAsync(id, article) {
     let updatePromise = await fetch(`${articleURI}/${id}`,
         {
             method: 'PUT',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -44,20 +54,29 @@ async function UpdateArticleAsync(id, article) {
 async function DeleteArticleAsync(id) {
     let deletePromise = await fetch(`${articleURI}/${id}`,
         {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         })
     let success = await deletePromise.json()
 }
 
 // CommentApi methods   ////////////////////////////////////////////////////////////////
 async function GetAllCommentsInArticle(articleId) {
-    let infoPromise = await fetch(`${commentURI}/${articleId}`, { method: 'GET' })
+    let infoPromise = await fetch(`${commentURI}/${articleId}`,
+        {
+            method: 'GET',
+            credentials: 'include'
+        })
     let comments = await infoPromise.json()
     return comments;
 }
 
 async function GetCommentByArticleAndId(articleId, commentId) {
-    let infoPromise = await fetch(`${commentURI}/${articleId}?id=${commentId}`, { method: 'GET' })
+    let infoPromise = await fetch(`${commentURI}/${articleId}?id=${commentId}`,
+        {
+            method: 'GET',
+            credentials: 'include'
+        })
     let comment = await infoPromise.json()
     return comment;
 }
@@ -65,6 +84,7 @@ async function CreateCommentAsync(comment) {
     let createPromise = await fetch(commentURI,
         {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -78,6 +98,7 @@ async function UpdateCommentAsync(id, comment) {
     let updatePromise = await fetch(`${commentURI}/${id}`,
         {
             method: 'PUT',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -90,7 +111,8 @@ async function UpdateCommentAsync(id, comment) {
 async function DeleteCommentAsync(id) {
     let deletePromise = await fetch(`${commentURI}/${id}`,
         {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         })
     let success = await deletePromise.json()
 }
