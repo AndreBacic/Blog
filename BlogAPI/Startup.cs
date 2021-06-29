@@ -30,9 +30,7 @@ namespace BlogAPI
         {
             services.AddAuthentication("BlogAuth").AddCookie("BlogAuth", cookieConfig =>
             {
-                cookieConfig.LoginPath = "/Home/Index";
                 cookieConfig.Cookie.Name = "Blog.Cookie1";
-                cookieConfig.AccessDeniedPath = "/Home/AccessDenied";
                 cookieConfig.Cookie.SameSite = SameSiteMode.None;
                 cookieConfig.Events = new CookieAuthenticationEvents
                 {
