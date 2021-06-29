@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -41,6 +42,15 @@ namespace BlogAPI
                     }
                 };
             });
+
+            services.AddAuthorization(authConfig =>
+            {
+                authConfig.AddPolicy("Ensure Commenter Policy", policyBuilder =>
+                {
+                    policyBuilder.RequireClaim(ClaimTypes.Name);
+                });
+            });
+
             services.AddCors();
             services.AddControllers();
             services.AddSingleton<IBlogDbAccessor, SQLDapperDataAccessor>();

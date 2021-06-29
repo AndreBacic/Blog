@@ -45,12 +45,14 @@ namespace BlogAPI.Controllers
 
                     List<ClaimsIdentity> claimsIdentities = new List<ClaimsIdentity>()
                     {
-                        new ClaimsIdentity(userClaims)
+                        new ClaimsIdentity(userClaims, "Yes.no")
                     };
 
                     ClaimsPrincipal multiClaimIdentityContainer = new ClaimsPrincipal(claimsIdentities);
 
-                    await Request.HttpContext.SignInAsync("BlogAuth", multiClaimIdentityContainer);
+                    Request.HttpContext.SignInAsync("BlogAuth", multiClaimIdentityContainer);
+
+                    var somethinElse = HttpContext.Request.Cookies["BlogAuth"];
                 }
                 else
                 {
@@ -61,6 +63,7 @@ namespace BlogAPI.Controllers
             {
                 return BadRequest(new UnauthorizedObjectResult("Invalid email address"));
             }
+            var somethin = HttpContext.Request.Cookies["BlogAuth"];
 
             return NoContent();
         }
