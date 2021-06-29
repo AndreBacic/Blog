@@ -23,7 +23,7 @@ namespace BlogAPI.Controllers
             _db = db;
         }
 
-        [HttpPost]
+        [HttpPost("{emailAddress}/{password}")]
         public async Task<IActionResult> Login(string emailAddress, string password)
         {
             var user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
@@ -50,7 +50,7 @@ namespace BlogAPI.Controllers
 
                     ClaimsPrincipal multiClaimIdentityContainer = new ClaimsPrincipal(claimsIdentities);
 
-                    await HttpContext.SignInAsync(multiClaimIdentityContainer);
+                    await Request.HttpContext.SignInAsync("BlogAuth", multiClaimIdentityContainer);
                 }
                 else
                 {

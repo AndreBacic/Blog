@@ -3,12 +3,24 @@
 <head>
     <meta charset="utf-8" />
     <title>Login</title>
+    <link rel="stylesheet" href="../css/site.css" />
+    <script src="../js/site.js"></script>
 </head>
 <body>
     <script>
         window.onload = function () {
-            this.RenderTempletesAsync(true).then()
+            this.RenderTempletesAsync(false, true, true).then()
         }
     </script>
+    <main>
+        <h1>Log in</h1>
+        <form onsubmit="LoginAsync(this).then()">
+            <label for="emailInput">Email: </label>
+            <input id="emailInput" type="email" /><br />
+            <label for="passwordInput">Password: </label>
+            <input id="passwordInput" type="password" />
+            <button type="submit" >Log in</button>
+        </form>
+    </main>
 </body>
 </html>

@@ -65,8 +65,8 @@ namespace BlogAPI
 
             app.UseCors(policy =>
             {
-                //policy.AllowAnyHeader();
-                //policy.AllowAnyMethod();
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
                 //policy.AllowAnyOrigin();
                 policy.AllowCredentials();
             });

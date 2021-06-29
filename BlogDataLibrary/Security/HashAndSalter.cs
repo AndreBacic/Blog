@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -69,7 +70,7 @@ namespace BlogDataLibrary.Security
                 iterationCount: iterations,
                 numBytesRequested: 32);
 
-            bool passwordEqualsHash = (hashedPassword == hash);
+            bool passwordEqualsHash = (hashedPassword.SequenceEqual(hash));
             bool needsUpgrade = (iterations != Iterations);
             return (passwordEqualsHash, iterationsNeedsUpgrade: needsUpgrade);
         }

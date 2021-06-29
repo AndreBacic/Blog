@@ -1,6 +1,28 @@
-﻿
+﻿const accountURI = "api/AccountApi"
 const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
+
+
+// AccountApi methods   ////////////////////////////////////////////////////////////
+async function LoginAsync(form) {
+    let email = form[0].value
+    let password = form[1].value
+    let uri = `../${accountURI}/${email}/${password}`
+    let somePromise = await fetch(uri,
+        {
+            method: 'POST',
+            credentials: 'include'
+        })
+    let success = await somePromise.text()
+}
+async function LogoutAsync() {
+    let somePromise = await fetch(`../${accountURI}`,
+        {
+            method: 'POST',
+            credentials: 'include'
+        })
+    let success = await somePromise.text()
+}
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
 async function GetAllArticlesAsync() {
@@ -210,8 +232,13 @@ function RenderPreviewOfArticle(articleJSON) {
     return article
 }
 
-async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true) {
-    let promisething = await fetch("templates.html")
+async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true, areTemplatesInDifferentFolder = false) {
+    let promisething = null;
+    if (areTemplatesInDifferentFolder) {
+        promisething = await fetch("../templates.html")
+    } else {
+        promisething = await fetch("templates.html")
+    }
     let data = await promisething.text()
     parser = new DOMParser()
     let templates = parser.parseFromString(data, 'text/html')
