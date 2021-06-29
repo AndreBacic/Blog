@@ -95,6 +95,11 @@ async function DeleteCommentAsync(id) {
     let success = await deletePromise.json()
 }
 
+function GetUrlSearch() {
+    let url = window.location.search
+    return url.slice(1)
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,19 +166,24 @@ function RenderPreviewOfArticle(articleJSON) {
     const article = document.createElement("article")
     article.className = "flex-item"
 
+    const link = document.createElement("a")
+    link.href = `article.html?${articleJSON.id}`
+
     const header = document.createElement("h4")
     header.textContent = articleJSON.title
-    article.appendChild(header)
+    link.appendChild(header)
 
     const content = document.createElement("p")
     content.textContent = articleJSON.contentText
-    article.appendChild(content)
+    link.appendChild(content)
 
     const authorNameLabel = document.createElement("p")
     const citedAuthorName = document.createElement("cite")
     citedAuthorName.textContent = articleJSON.authorName
     authorNameLabel.appendChild(citedAuthorName)
-    article.appendChild(authorNameLabel)
+    link.appendChild(authorNameLabel)
+
+    article.appendChild(link)
 
     return article
 }
@@ -205,4 +215,12 @@ async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true) {
     }
     let footerClone = footer.content.cloneNode(true)
     document.body.append(footerClone)
+}
+
+async function RenderArticlePageMainAsync() {
+    let id = parseInt(GetUrlSearch())
+    let json = await GetArticleByIdAsync(id)
+    let article = RenderPreviewOfArticle(json)
+    document.getElementById("main").appendChild(article)
+    document.title = json.title
 }
