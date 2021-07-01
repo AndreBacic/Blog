@@ -14,6 +14,8 @@ async function LoginAsync(form) {
             credentials: 'include'
         })
     let success = await somePromise.text()
+
+    await LogoutAsync()
 }
 async function LogoutAsync() {
     let somePromise = await fetch(`../${accountURI}`,

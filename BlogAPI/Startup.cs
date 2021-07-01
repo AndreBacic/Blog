@@ -31,7 +31,8 @@ namespace BlogAPI
         {
             services.AddAuthentication("BlogAuth").AddCookie("BlogAuth", cookieConfig =>
             {
-                cookieConfig.Cookie.Name = "Blog.Cookie1";
+                cookieConfig.Cookie.Name = "Blog.Cookie";
+                cookieConfig.Cookie.HttpOnly = true;
                 cookieConfig.Cookie.SameSite = SameSiteMode.None;
                 cookieConfig.Events = new CookieAuthenticationEvents
                 {
