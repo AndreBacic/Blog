@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlogAPI
 {
@@ -29,18 +30,20 @@ namespace BlogAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication("BlogAuth").AddCookie("BlogAuth", cookieConfig =>
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = "BlogAuth";
+                options.DefaultChallengeScheme = "BlogAuth";
+            }
+            ).AddJwtBearer("BlogAuth", JwtBearerOptions =>
             {
-                cookieConfig.Cookie.Name = "Blog.Cookie";
-                cookieConfig.Cookie.HttpOnly = true;
-                cookieConfig.Cookie.SameSite = SameSiteMode.None;
-                cookieConfig.Events = new CookieAuthenticationEvents
+                JwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
-                    OnRedirectToLogin = redirectContext =>
-                    {
-                        redirectContext.HttpContext.Response.StatusCode = 401;
-                        return Task.CompletedTask;
-                    }
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = somehowgetthatsecretkeyfromthesecureplace,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(3)
                 };
             });
 

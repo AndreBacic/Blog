@@ -7,15 +7,21 @@ const commentURI = "api/CommentApi"
 async function LoginAsync(form) {
     let email = form[0].value
     let password = form[1].value
-    let uri = `../${accountURI}/${email}/${password}`
+    let uri = `../${accountURI}/login`
     let somePromise = await fetch(uri,
         {
             method: 'POST',
-            credentials: 'include'
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "emailAddress": email,
+                "password": password
+            })
         })
-    let success = await somePromise.text()
-
-    await LogoutAsync()
+    let jwt = await somePromise.json()
+    localStorage.setItem('user', JSON.stringify(jwt))
 }
 async function LogoutAsync() {
     let somePromise = await fetch(`../${accountURI}`,
