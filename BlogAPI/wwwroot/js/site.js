@@ -4,10 +4,20 @@ const commentURI = "api/CommentApi"
 
 
 // AccountApi methods   ////////////////////////////////////////////////////////////
+function getAuthToken() {
+    let authToken = null;
+    try {
+        authToken = JSON.parse(localStorage.getItem('user')).token
+    } catch {
+        return null
+    }
+    return authToken
+}
+
 async function LoginAsync(form) {
     let email = form[0].value
     let password = form[1].value
-    let uri = `../${accountURI}/login`
+    let uri = `${accountURI}/login`
     let somePromise = await fetch(uri,
         {
             method: 'POST',
@@ -24,10 +34,12 @@ async function LoginAsync(form) {
     localStorage.setItem('user', JSON.stringify(jwt))
 }
 async function LogoutAsync() {
-    let somePromise = await fetch(`../${accountURI}`,
+    let somePromise = await fetch(`${accountURI}`,
         {
             method: 'POST',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer '+getAuthToken()
+            }
         })
     let success = await somePromise.text()
 }
@@ -36,8 +48,10 @@ async function LogoutAsync() {
 async function GetAllArticlesAsync() {
     let infoPromise = await fetch(articleURI,
         {
-            method: 'GET', 
-            credentials: 'include'
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let articles = await infoPromise.json()
     return articles;
@@ -47,7 +61,9 @@ async function GetArticleByIdAsync(id) {
     let infoPromise = await fetch(`${articleURI}/${id}`,
         {
             method: 'GET',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let article = await infoPromise.json()
     return article;
@@ -57,10 +73,10 @@ async function CreateArticleAsync(article) {
     let createPromise = await fetch(articleURI,
         {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
             },
             body: JSON.stringify(article)
         })
@@ -71,10 +87,10 @@ async function UpdateArticleAsync(id, article) {
     let updatePromise = await fetch(`${articleURI}/${id}`,
         {
             method: 'PUT',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
             },
             body: JSON.stringify(article)
         })
@@ -85,7 +101,9 @@ async function DeleteArticleAsync(id) {
     let deletePromise = await fetch(`${articleURI}/${id}`,
         {
             method: 'DELETE',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let success = await deletePromise.json()
 }
@@ -95,7 +113,9 @@ async function GetAllCommentsInArticle(articleId) {
     let infoPromise = await fetch(`${commentURI}/${articleId}`,
         {
             method: 'GET',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let comments = await infoPromise.json()
     return comments;
@@ -105,7 +125,9 @@ async function GetCommentByArticleAndId(articleId, commentId) {
     let infoPromise = await fetch(`${commentURI}/${articleId}?id=${commentId}`,
         {
             method: 'GET',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let comment = await infoPromise.json()
     return comment;
@@ -114,10 +136,10 @@ async function CreateCommentAsync(comment) {
     let createPromise = await fetch(commentURI,
         {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
             },
             body: JSON.stringify(comment)
         })
@@ -128,10 +150,10 @@ async function UpdateCommentAsync(id, comment) {
     let updatePromise = await fetch(`${commentURI}/${id}`,
         {
             method: 'PUT',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
             },
             body: JSON.stringify(comment)
         })
@@ -142,7 +164,9 @@ async function DeleteCommentAsync(id) {
     let deletePromise = await fetch(`${commentURI}/${id}`,
         {
             method: 'DELETE',
-            credentials: 'include'
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
         })
     let success = await deletePromise.json()
 }
@@ -240,13 +264,8 @@ function RenderPreviewOfArticle(articleJSON) {
     return article
 }
 
-async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true, areTemplatesInDifferentFolder = false) {
-    let promisething = null;
-    if (areTemplatesInDifferentFolder) {
-        promisething = await fetch("../templates.html")
-    } else {
-        promisething = await fetch("templates.html")
-    }
+async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true) {
+    let promisething = await fetch("templates.html")
     let data = await promisething.text()
     parser = new DOMParser()
     let templates = parser.parseFromString(data, 'text/html')

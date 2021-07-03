@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,16 +21,20 @@ namespace BlogAPI.Controllers
     public class AccountApiController : Controller
     {
         private readonly IBlogDbAccessor _db;
+        private readonly IConfiguration _config;
 
-        public AccountApiController(IBlogDbAccessor db)
+        public AccountApiController(IBlogDbAccessor db, IConfiguration configuration)
         {
             _db = db;
+            _config = configuration;
         }
 
         [Route("login")]
         [HttpPost]
-        public IActionResult Login(string emailAddress, string password)
+        public IActionResult Login([FromBody]LoginModel loginModel)
         {
+            string emailAddress = loginModel.emailAddress;
+            string password = loginModel.password;
             var user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
             if (user != null)
             {
@@ -51,7 +57,8 @@ namespace BlogAPI.Controllers
 
                     var token = new JwtSecurityToken(
                         new JwtHeader(
-                            new SigningCredentials(thekey, SecurityAlgorithms.HmacSha256)),
+                            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetValue<string>("JWTPrivateKey"))),
+                                                    SecurityAlgorithms.HmacSha256)),
                         new JwtPayload(userClaims));
                     var handler = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -81,5 +88,10 @@ namespace BlogAPI.Controllers
             await HttpContext.SignOutAsync();
             return NoContent();
         }
+    }
+    public class LoginModel
+    {
+        public string emailAddress { get; set; }
+        public string password { get; set; }
     }
 }
