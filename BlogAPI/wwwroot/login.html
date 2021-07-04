@@ -14,12 +14,22 @@
     </script>
     <main>
         <h1>Log in</h1>
-        <form onsubmit="LoginAsync(this).then()">
+        <form>
             <label for="emailInput">Email: </label>
             <input id="emailInput" type="email" /><br />
             <label for="passwordInput">Password: </label>
             <input id="passwordInput" type="password" />
-            <button type="submit" >Log in</button>
+            <button type="button" onclick="GetLoginDataAndLogin()">Log in</button>
+            <script>
+                function GetLoginDataAndLogin() {
+                    let emailInput = document.getElementById('emailInput')
+                    let passwordInput = document.getElementById('passwordInput')
+                    LoginAsync(emailInput.value, passwordInput.value).then()
+                    emailInput.value = ""
+                    passwordInput.value = ""
+                    window.location = "index.html"
+                }
+            </script>
         </form>
     </main>
 </body>

@@ -7,16 +7,14 @@ const commentURI = "api/CommentApi"
 function getAuthToken() {
     let authToken = null;
     try {
-        authToken = JSON.parse(localStorage.getItem('user')).token
+        authToken = JSON.parse(localStorage.getItem('user'))
     } catch {
         return null
     }
     return authToken
 }
 
-async function LoginAsync(form) {
-    let email = form[0].value
-    let password = form[1].value
+async function LoginAsync(email, password) {
     let uri = `${accountURI}/login`
     let somePromise = await fetch(uri,
         {
@@ -299,4 +297,9 @@ async function RenderArticlePageMainAsync() {
     let article = RenderPreviewOfArticle(json)
     document.getElementById("main").appendChild(article)
     document.title = json.title
+}
+
+function LoginUsingFormData(form) {
+    //LoginAsync(form[0].value, form[1].value).then()
+    LoginAsync('joe@smith.net', 'Password123').then()
 }
