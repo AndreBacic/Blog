@@ -14,6 +14,10 @@ body {
     flex-direction: column;
     font-family:sans-serif;
 }
+p, h3, h4, h5, h6 {
+    font-size: 1.3em;
+    color: darkred;
+}
 
 main {
     flex-grow:1;
@@ -21,8 +25,8 @@ main {
 
 .flex-container-column {
     display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
@@ -46,34 +50,27 @@ main {
 
 .navbar {
     width:100%;
+    height:2.22em;
     background-color:black;
     padding: 0px 30px;
     margin: 0px;
 }
-.navbar ul {
-    padding: 0px;
-    margin:0px;
-    display: flex;
-    align-items: center;
-}
-.navbar li {
+.navbar a, .navbar div {
     color: white;
-    display: inline;
-    padding: 0.9vh 0 0.9vh;
-    margin:0px;
-}
-.navbar li:hover {
-    color:black;
-}
-.navbar a {
-    color: white;
+    height:100%;
+    display:inline-block;
     text-align: center;
     text-decoration: none;    
-    padding: 1.1vh 1vw 1.2vh;
+    padding: 1.1vh 1vw 1.1vh;
+    margin: 0px;
+    float: left;
 }
 .navbar a:hover {
     color: black;
     background-color:#28cec3;
+}
+.navbar a.right {
+    float:right;
 }
 
 .footer {
@@ -83,20 +80,57 @@ main {
     padding: 30px;
 }
 
-@media screen and (min-width: 700px){
-    .flex-container-column {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    p, h3, h4, h5, h6 {
-        font-size: 1.8em;
-        color: darkred;
-    }
-}
 article.flex-item {
     background-color: #e5f7fc;
     height: 300px;
     width: 500px;
     font-stretch:expanded;
     color: #0b20c3;
+}
+
+
+@media screen and (max-width: 700px) {
+    body {
+        font-size: 1.5em;
+    }
+    .flex-container-column {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+    .navbar a {
+        width: 50%;
+    }
+    .navbar div {
+        width: 100%;
+    }
+}
+@media screen and (max-device-width: 700px) {
+    body {
+        font-size: 1.5em;
+    }
+    p, h3, h4, h5, h6 {
+        color: blue;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+    body {
+        font-size: 2.5em;
+    }
+    .navbar a, .navbar div {
+        width: 100%;
+    }
+}
+@media screen and (max-device-width: 400px) {
+    body {
+        font-size: 2.5em;
+    }
+    p, h3, h4, h5, h6 {
+        color: green;
+    }
+    .flex-container-column {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
 }

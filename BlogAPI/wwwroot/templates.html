@@ -7,41 +7,22 @@
 
 <template id="navbar-with-search">
     <nav class="navbar">
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li>
-                <a href="about.html">About</a>
-            </li>
-            <li>
-                <input type="text" class="navbar-input" />
-            </li>
-            <li style="float:right;">
-                <a href="register.html">Sign Up</a>
-            </li>
-            <li style="float:right;">
-                <a href="login.html">Login</a>
-            </li>
-        </ul>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a class="right" href="register.html">Sign Up</a>
+        <a class="right" href="login.html">Login</a>
+        <div style="float:right;">
+            <label for="search bar">Search:</label>
+            <input id="search bar" type="text" class="navbar-input" />
+        </div>     
     </nav>
 </template>
 <template id="navbar-no-search">
     <nav class="navbar">
-        <ul>
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li>
-                <a href="about.html">About</a>
-            </li>
-            <li style="float:right;">
-                <a href="register.html">Sign Up</a>
-            </li>
-            <li style="float:right;">
-                <a href="login.html">Login</a>
-            </li>
-        </ul>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a class="right" href="register.html">Sign Up</a>
+        <a class="right" href="login.html">Login</a>
     </nav>
 </template>
 
