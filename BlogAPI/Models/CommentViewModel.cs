@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlogDataLibrary.Models
+namespace BlogAPI.Models
 {
     public class CommentViewModel
     {

@@ -6,11 +6,14 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
+using BlogAPI.Models;
 using BlogDataLibrary.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using BlogDataLibrary.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -79,19 +82,57 @@ namespace BlogAPI.Controllers
 
         [Route("logout")]
         [HttpPost]
-        public async Task<IActionResult> Logout()
+        public void Logout()
         {
-            var s = HttpContext.User.Identity.IsAuthenticated;
-            var somethinElse = HttpContext.Response.Cookies;
-            var somethingElse = HttpContext.Request.Cookies;
-            
-            await HttpContext.SignOutAsync();
-            return NoContent();
+            throw new NotImplementedException("Log out from JWT token?");
         }
-    }
-    public class LoginModel
-    {
-        public string emailAddress { get; set; }
-        public string password { get; set; }
+
+        [Route("createAccount")]
+        [HttpPost]
+        public void CreateAccount([FromBody]UserViewModel userViewModel)
+        {
+            // 1 Ensure that there are no users with the new email
+            var users = _db.GetAllUsers();
+            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress))
+            {
+                return;
+            }
+            // 2 ok that email isn't used so this account can be created
+            _db.CreateUser(userViewModel.GetAsDbUserModel());
+        }
+
+        [Authorize(Policy = "IsCommenter")]
+        [Route("editAccount")]
+        [HttpPost]
+        public void EditAccount([FromBody]UserViewModel userViewModel)
+        {
+            // 1 Ensure that there are no users with the new email
+            var users = _db.GetAllUsers();
+            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress))
+            {
+                return;
+            }
+            // 2 Get original email from token
+            Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
+            // 3 update user data in column with the original email
+            UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail.Value).First();
+            userViewModel.Id = oldDbUser.Id;
+            _db.UpdateUser(userViewModel.GetAsDbUserModel());
+        }
+
+        [Authorize(Policy = "IsCommenter")]
+        [Route("deleteAccount")]
+        [HttpDelete]
+        public void DeleteAccount()
+        {
+            //// 1 Get email from token
+            //Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
+            //// 2 Get id of logged in user 
+            //var users = _db.GetAllUsers();
+            //int userId = users.Where(x => x.EmailAddress == originalEmail.Value).First().Id;
+            //// 3 delete user by id
+            //_db.DeleteUser(userId);
+            throw new NotImplementedException("We don't actually allow our users to delete their accounts as of now.");
+        }
     }
 }
