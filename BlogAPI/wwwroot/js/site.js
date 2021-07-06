@@ -24,22 +24,68 @@ async function LoginAsync(email, password) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "emailAddress": email,
-                "password": password
+                "EmailAddress": email,
+                "Password": password
             })
         })
     let jwt = await somePromise.json()
     localStorage.setItem('user', JSON.stringify(jwt))
 }
 async function LogoutAsync() {
-    let somePromise = await fetch(`${accountURI}`,
+    //let somePromise = await fetch(`${accountURI}/logout`,
+    //    {
+    //        method: 'POST',
+    //        headers: {
+    //            'Authorization': 'Bearer '+getAuthToken()
+    //        }
+    //    })
+    //let success = await somePromise.text()
+    localStorage.removeItem('user')
+}
+
+async function CreateAccountAsync(user) {
+    let createPromise = await fetch(accountURI,
         {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer '+getAuthToken()
-            }
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
+            },
+            body: JSON.stringify(user)
         })
-    let success = await somePromise.text()
+    let success = await createPromise.json()
+}
+
+async function EditAccountAsync(user) {
+    let createPromise = await fetch(articleURI,
+        {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
+            },
+            body: JSON.stringify(user)
+        })
+    let success = await createPromise.json()
+}
+
+async function EditPasswordAsync(oldPassword, newPassword) {
+    let createPromise = await fetch(articleURI,
+        {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
+            },
+            body: JSON.stringify({
+                "OldPassword": oldPassword,
+                "NewPassword": newPassword
+            })
+        })
+    let success = await createPromise.json()
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
@@ -297,9 +343,4 @@ async function RenderArticlePageMainAsync() {
     let article = RenderPreviewOfArticle(json)
     document.getElementById("main").appendChild(article)
     document.title = json.title
-}
-
-function LoginUsingFormData(form) {
-    //LoginAsync(form[0].value, form[1].value).then()
-    LoginAsync('joe@smith.net', 'Password123').then()
 }

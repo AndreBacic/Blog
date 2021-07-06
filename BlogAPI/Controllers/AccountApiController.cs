@@ -36,8 +36,8 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Login([FromBody]LoginModel loginModel)
         {
-            string emailAddress = loginModel.emailAddress;
-            string password = loginModel.password;
+            string emailAddress = loginModel.EmailAddress;
+            string password = loginModel.Password;
             var user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
             if (user != null)
             {
@@ -103,7 +103,7 @@ namespace BlogAPI.Controllers
 
         [Authorize(Policy = "IsCommenter")]
         [Route("editAccount")]
-        [HttpPost]
+        [HttpPut]
         public void EditAccount([FromBody]UserViewModel userViewModel)
         {
             // 1 Ensure that there are no users with the new email
@@ -118,6 +118,29 @@ namespace BlogAPI.Controllers
             UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail.Value).First();
             userViewModel.Id = oldDbUser.Id;
             _db.UpdateUser(userViewModel.GetAsDbUserModel());
+        }
+
+        [Authorize(Policy = "IsCommenter")]
+        [Route("editPassword")]
+        [HttpPut]
+        public void EditPassword([FromBody]EditPasswordModel editPasswordModel)
+        {
+            // 1 Get logged in user by email
+            string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+            UserModel user = _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+
+            // 2 Make sure that old password really is the old password
+            PasswordHashModel dbPassword = new PasswordHashModel();
+            dbPassword.FromDbString(user.PasswordHash);
+
+            (bool isSamePassword, bool needsUpgrade) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
+            if (isSamePassword == false)
+            {
+                return;
+            }
+
+            // 3 if the old password is correct, replace it with the new one
+            _db.UpdateUserPassword(user, editPasswordModel.NewPassword);
         }
 
         [Authorize(Policy = "IsCommenter")]
