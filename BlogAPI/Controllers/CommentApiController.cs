@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -46,6 +47,7 @@ namespace BlogAPI.Controllers
             return commentView;
         }
 
+        [Authorize(Policy = ("IsCommenter"))]
         // POST api/<controller>
         [HttpPost]
         public void Post([FromBody]CommentViewModel comment)
@@ -61,6 +63,7 @@ namespace BlogAPI.Controllers
             }
         }
 
+        [Authorize(Policy = ("IsCommenter"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]CommentViewModel comment)
@@ -71,6 +74,7 @@ namespace BlogAPI.Controllers
             _db.UpdateComment(dbComment);
         }
 
+        [Authorize(Policy = ("IsCommenter"))]
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public void Delete(int id)

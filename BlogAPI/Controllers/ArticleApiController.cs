@@ -38,7 +38,6 @@ namespace BlogAPI.Controllers
             return output;
         }
 
-        [Authorize(Policy = "Ensure Commenter Policy")]
         // GET api/<controller>/5
         [HttpGet("{id}")]
         public ArticleViewModel Get(int id)
@@ -49,6 +48,7 @@ namespace BlogAPI.Controllers
             return articleView;
         }
 
+        [Authorize(Policy=("IsAdmin"))]
         // POST api/<controller>
         [HttpPost]
         public void Post([FromBody]ArticleViewModel article)
@@ -57,6 +57,7 @@ namespace BlogAPI.Controllers
             _db.CreateArticle(article.GetAsDbArticleModel());
         }
 
+        [Authorize(Policy = ("IsAdmin"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]ArticleViewModel article)
@@ -67,6 +68,7 @@ namespace BlogAPI.Controllers
             _db.UpdateArticle(dbArticle);
         }
 
+        [Authorize(Policy = ("IsAdmin"))]
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public void Delete(int id)

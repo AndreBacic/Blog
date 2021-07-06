@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,9 +51,19 @@ namespace BlogAPI
 
             services.AddAuthorization(authConfig =>
             {
-                authConfig.AddPolicy("Ensure Commenter Policy", policyBuilder =>
+                authConfig.AddPolicy("IsCommenter", policyBuilder =>
                 {
                     policyBuilder.RequireClaim(ClaimTypes.Name);
+                    policyBuilder.RequireClaim(ClaimTypes.Email);
+                    string[] acceptedRoles = { UserModel.ADMIN_ROLE, UserModel.COMMENTER_ROLE };
+                    policyBuilder.RequireRole(acceptedRoles);
+                });
+                authConfig.AddPolicy("IsAdmin", policyBuilder =>
+                {
+                    policyBuilder.RequireClaim(ClaimTypes.Name);
+                    policyBuilder.RequireClaim(ClaimTypes.Email);
+                    string[] acceptedRoles = {UserModel.ADMIN_ROLE}; 
+                    policyBuilder.RequireRole(acceptedRoles);
                 });
             });
 

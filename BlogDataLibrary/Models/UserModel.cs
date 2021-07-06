@@ -21,5 +21,8 @@ namespace BlogDataLibrary.Models
                 return this.FirstName + " " + this.LastName;
             }
         }
+
+        public static readonly string ADMIN_ROLE = "Admin";
+        public static readonly string COMMENTER_ROLE = "Commenter";
     }
 }
