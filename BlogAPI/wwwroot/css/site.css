@@ -20,7 +20,7 @@ p, h3, h4, h5, h6 {
 }
 
 main {
-    flex-grow:1;
+    flex-grow: 1;
 }
 
 .flex-container-column {
@@ -49,16 +49,16 @@ main {
 }
 
 .navbar {
-    width:100%;
-    height:2.22em;
-    background-color:black;
+    width: 100%;
+    height: 2.22em;
+    background-color: black;
     padding: 0px 30px;
     margin: 0px;
 }
 .navbar a, .navbar div {
     color: white;
-    height:100%;
-    display:inline-block;
+    height: 100%;
+    display: inline-block;
     text-align: center;
     text-decoration: none;    
     padding: 1.1vh 1vw 1.1vh;
@@ -67,10 +67,10 @@ main {
 }
 .navbar a:hover {
     color: black;
-    background-color:#28cec3;
+    background-color: #28cec3;
 }
 .navbar a.right {
-    float:right;
+    float: right;
 }
 
 .footer {
@@ -84,29 +84,38 @@ article.flex-item {
     background-color: #e5f7fc;
     height: 300px;
     width: 500px;
-    font-stretch:expanded;
+    font-stretch: expanded;
     color: #0b20c3;
+    overflow: hidden;
 }
 
 
 @media screen and (max-width: 700px) {
-    body {
-        font-size: 1.5em;
-    }
     .flex-container-column {
         flex-direction: column;
         flex-wrap: nowrap;
     }
+    #nav-no-search {
+        min-height: 4.44em;
+    }
+    #nav-no-search a {
+        height: 50%;
+    }
+    .navbar {
+        min-height: 6.66em;
+    }
     .navbar a {
         width: 50%;
+        height: 33.3%;
     }
     .navbar div {
         width: 100%;
+        height: 33.3%;
     }
 }
 @media screen and (max-device-width: 700px) {
     body {
-        font-size: 1.5em;
+        font-size: 1.6em;
     }
     p, h3, h4, h5, h6 {
         color: blue;
@@ -115,16 +124,23 @@ article.flex-item {
 
 
 @media screen and (max-width: 400px) {
-    body {
-        font-size: 2.5em;
+    #nav-no-search {
+        min-height: 8.88em;
+    }
+    #nav-no-search a {
+        height: 25%;
+    }
+    .navbar {
+        min-height: 11.1em;
     }
     .navbar a, .navbar div {
         width: 100%;
+        height: 20%;
     }
 }
 @media screen and (max-device-width: 400px) {
     body {
-        font-size: 2.5em;
+        font-size: 2.4em;
     }
     p, h3, h4, h5, h6 {
         color: green;

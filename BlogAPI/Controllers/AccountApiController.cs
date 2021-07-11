@@ -38,7 +38,13 @@ namespace BlogAPI.Controllers
         {
             string emailAddress = loginModel.EmailAddress;
             string password = loginModel.Password;
-            var user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
+            UserModel user = null;
+            try
+            {
+                user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
+            } catch (InvalidOperationException error) {
+                // todo: maybe do something with the error message.
+            }
             if (user != null)
             {
                 PasswordHashModel passwordHash = new PasswordHashModel();
