@@ -14,6 +14,10 @@ function getAuthToken() {
     return authToken
 }
 
+function isUserLoggedIn() {
+    return getAuthToken() !== null
+}
+
 async function LoginAsync(email, password) {
     let uri = `${accountURI}/login`
     let somePromise = await fetch(uri,
@@ -308,7 +312,9 @@ function RenderPreviewOfArticle(articleJSON) {
     return article
 }
 
-async function RenderTempletesAsync(isLoggedIn = false, haveSearch = true) {
+async function RenderTempletesAsync(haveSearch = true) {
+    let isLoggedIn = isUserLoggedIn()
+
     let promisething = await fetch("templates.html")
     let data = await promisething.text()
     parser = new DOMParser()
