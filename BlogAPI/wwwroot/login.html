@@ -14,23 +14,28 @@
     </script>
     <main>
         <h1>Log in</h1>
-        <form>
-            <label for="emailInput">Email: </label>
-            <input id="emailInput" type="email" /><br />
-            <label for="passwordInput">Password: </label>
-            <input id="passwordInput" type="password" />
-            <button type="button" onclick="GetLoginDataAndLogin()">Log in</button>
-            <script>
-                function GetLoginDataAndLogin() {
-                    let emailInput = document.getElementById('emailInput')
-                    let passwordInput = document.getElementById('passwordInput')
-                    LoginAsync(emailInput.value, passwordInput.value).then()
-                    emailInput.value = ""
-                    passwordInput.value = ""
-                    window.location = "index.html"
-                }
-            </script>
+        <form action="javascript:void(0)" onsubmit="GetLoginDataAndLogin()" class="login-form">
+            <div>
+                <label for="emailInput">Email: </label>
+                <input id="emailInput" type="email" class="login-text-input" contenteditable="true" />
+            </div>
+            <div>
+                <label for="passwordInput">Password: </label>
+                <input id="passwordInput" type="password" class="login-text-input" contenteditable="true" />
+            </div>
+            <input type="submit" class="blog-button" value="Log in" />
         </form>
+        <script>
+            function GetLoginDataAndLogin() {
+                let emailInput = document.getElementById('emailInput')
+                let passwordInput = document.getElementById('passwordInput')
+                LoginAsync(emailInput.value, passwordInput.value).then(() => {
+                    emailInput.value = "";
+                    passwordInput.value = "";
+                    window.location = "index.html";
+                })
+            }
+        </script>
     </main>
 </body>
 </html>

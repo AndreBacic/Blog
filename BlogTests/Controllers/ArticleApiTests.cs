@@ -5,6 +5,7 @@ using Autofac.Extras.Moq;
 using BlogDataLibrary.DataAccess;
 using BlogAPI.Controllers;
 using BlogDataLibrary.Models;
+using BlogAPI.Models;
 
 namespace BlogDataLibrary.Tests.Controllers
 {
