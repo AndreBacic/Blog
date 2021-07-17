@@ -5,6 +5,8 @@
     <title>Login</title>
     <link rel="stylesheet" href="css/site.css" />
     <script src="js/site.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <script>
@@ -12,16 +14,16 @@
             this.RenderTempletesAsync(false).then()
         }
     </script>
-    <main>
-        <h1>Log in</h1>
-        <form action="javascript:void(0)" onsubmit="GetLoginDataAndLogin()" class="login-form">
+    <main>        
+        <form action="javascript:void(0)" onsubmit="GetLoginDataAndLogin()" class=" account-form login-form">
+            <h1>Log in</h1>
             <div>
-                <label for="emailInput">Email: </label>
-                <input id="emailInput" type="email" class="login-text-input" contenteditable="true" />
+                <label for="emailInput">Email: </label><br />
+                <input id="emailInput" type="email" class="account-text-input" contenteditable="true" />
             </div>
             <div>
-                <label for="passwordInput">Password: </label>
-                <input id="passwordInput" type="password" class="login-text-input" contenteditable="true" />
+                <label for="passwordInput">Password: </label><br />
+                <input id="passwordInput" type="password" class="account-text-input" contenteditable="true" />
             </div>
             <input type="submit" class="blog-button" value="Log in" />
         </form>

@@ -1,4 +1,10 @@
 ﻿/* Has padding and borders included in width and height of all elements */
+:root {
+    --blog-forward-color: black;
+    --blog-back-color: white;
+    --blog-theme-color: hsl(180, 100%, 50%);
+    --blog-theme-color-dark: hsl(180, 100%, 38%);
+}
 * {
     box-sizing: border-box;
 }
@@ -10,12 +16,12 @@ html {
 }
 body {
     height: 100%;
-    background-color: white;
+    background-color: var(--blog-back-color);
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    font-family:sans-serif;
+    font-family: sans-serif;
 }
 p, h3, h4, h5, h6 {
     font-size: 1.3em;
@@ -53,7 +59,7 @@ article.flex-item {
 .header {
     position: relative;
     top: 0;
-    background-color: aqua;
+    background-color: var(--blog-theme-color);
     text-align: center;
     width: 100%;
     padding: 40px;
@@ -62,12 +68,12 @@ article.flex-item {
 .navbar {
     width: 100%;
     height: 2.22em;
-    background-color: black;
+    background-color: var(--blog-forward-color);
     padding: 0px 30px;
     margin: 0px;
 }
 .navbar a, .navbar div {
-    color: white;
+    color: var(--blog-back-color);
     height: 100%;
     display: inline-block;
     text-align: center;
@@ -77,8 +83,8 @@ article.flex-item {
     float: left;
 }
 .navbar a:hover {
-    color: black;
-    background-color: #28cec3;
+    color: var(--blog-forward-color);
+    background-color: var(--blog-theme-color-dark);
 }
 .navbar a.right {
     float: right;
@@ -87,7 +93,7 @@ article.flex-item {
 
 .footer {
     width: 100%;
-    background-color: black;
+    background-color: var(--blog-forward-color);
     padding: 23px;
     display: inline-grid;
     grid-template-columns: 40% 60%;
@@ -97,7 +103,7 @@ article.flex-item {
     font-size: 2em;
     font-family: sans-serif;
     font-weight: 300;
-    color: aqua;
+    color: var(--blog-theme-color);
     padding: 20px 10px;
 }
 .footer-signup-form {
@@ -107,8 +113,8 @@ article.flex-item {
     grid-row-gap: 12px;
 }
 .footer-signup-input {
-    background-color: white;
-    border: 2px solid aqua;
+    background-color: var(--blog-back-color);
+    border: 2px solid var(--blog-theme-color);
     border-radius: 0;
     height: 35px;
 }
@@ -116,35 +122,43 @@ article.flex-item {
     border-width: 4px;
 }
 
-.login-form {
-    margin: 20px 50px;
+.account-form {
+    padding: 20px 60px;
     width: 100%;
     display: inline-grid;
     grid-template-columns: auto;
-    grid-template-rows: auto auto auto;
+    grid-row-gap: 1.5vh;
 }
-.login-text-input {
-    background-color: white;
-    border: 2px solid aqua;
+.login-form {
+    grid-template-rows: auto auto auto auto;
+}
+.register-form {
+    grid-template-rows: auto auto auto auto auto auto auto auto;
+}
+
+.account-text-input {
+    background-color: var(--blog-back-color);
+    border: 2px solid var(--blog-theme-color);
     border-radius: 0;
     height: 25px;
+    width: 50vw;
 }
-.login-text-input:focus {
+.account-text-input:focus {
     border-width: 4px;
 }
 
 .blog-button {
     text-align: center;
-    color:  hsl(0, 0%, 0%);
-    background-color: aqua;
+    color: var(--blog-forward-color);
+    background-color: var(--blog-theme-color);
     width: 120px;
     height: 40px;
     padding: 10px;
-    border: 1px solid aqua;
+    border: 1px solid var(--blog-theme-color);
     border-radius: 7px;
 }
 .blog-button:hover {
-    background-color: hsl(180, 100%, 30%);
+    background-color: var(--blog-theme-color-dark);
 }
 
 /* query for resized browser windows */

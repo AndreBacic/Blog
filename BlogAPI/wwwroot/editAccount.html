@@ -5,11 +5,48 @@
     <title></title>
     <link rel="stylesheet" href="css/site.css" />
     <script src="js/site.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <script>
         window.onload = function () {
             this.RenderTempletesAsync(false).then()
+        }
+    </script>
+    <form action="javascript:void(0)" onsubmit="GetEditDataAndSubmit()" class="account-form register-form">
+        <h1>Edit Account</h1>
+        <div>
+            <label for="firstNameInput">First Name: </label><br />
+            <input id="firstNameInput" type="email" class="account-text-input" contenteditable="true" />
+        </div>
+        <div>
+            <label for="lastNameInput">Last Name: </label><br />
+            <input id="lastNameInput" type="email" class="account-text-input" contenteditable="true" />
+        </div>
+        <div>
+            <label for="emailInput">Email: </label><br />
+            <input id="emailInput" type="email" class="account-text-input" contenteditable="true" />
+        </div>
+        <div>
+            <input id="doesReceiveNotificationsBox" type="checkbox" class="" value="doesRecieve" checked="checked" contenteditable="false" />
+            <label for="doesReceiveNotificationsBox">Receive Notifications About New Content</label>
+        </div><br />
+        <div>
+            <label for="passwordInput">New Password: </label><br />
+            <input id="passwordInput" type="password" class="account-text-input" contenteditable="true" />
+        </div>
+        <div>
+            <label for="confirmPasswordInput">Confirm New Password: </label><br />
+            <input id="confirmPasswordInput" type="password" class="account-text-input" contenteditable="true" />
+        </div>
+        <div>
+            <input type="submit" class="blog-button" value="Save Changes" />
+            <input type="button" class="blog-button" value="Cancel" onclick="window.location='index.html'" />
+        </div>
+    </form>
+    <script>
+        function GetEditDataAndSubmit() {
+            
         }
     </script>
 </body>

@@ -322,9 +322,17 @@ async function RenderTempletesAsync(haveSearch = true) {
 
     let navbar = null;
     if (haveSearch) {
-        navbar = templates.querySelector('#navbar-with-search')
+        if (isLoggedIn) {
+            navbar = templates.querySelector('#navbar-logged-in-with-search')
+        } else {
+            navbar = templates.querySelector('#navbar-with-search')
+        }
     } else {
-        navbar = templates.querySelector('#navbar-no-search')
+        if (isLoggedIn) {
+            navbar = templates.querySelector('#navbar-logged-in-no-search')
+        } else {
+            navbar = templates.querySelector('#navbar-no-search')
+        }
     }
     let navClone = navbar.content.cloneNode(true)
     document.body.prepend(navClone)
