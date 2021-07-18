@@ -13,7 +13,7 @@
         <a class="right" href="login.html">Login</a>
         <div style="float:right;">
             <label for="search bar">Search:</label>
-            <input id="search bar" type="text" class="navbar-input" />
+            <input id="search bar" type="text" class="navbar-input" contenteditable="true" />
         </div>
     </nav>
 </template>
@@ -33,7 +33,7 @@
         <a class="right" href="javascript:void(LogoutAsync().then(window.location = 'index.html'))">Logout</a>
         <div style="float:right;">
             <label for="search bar">Search:</label>
-            <input id="search bar" type="text" class="navbar-input" />
+            <input id="search bar" type="text" class="navbar-input" contenteditable="true" />
         </div>
     </nav>
 </template>
@@ -49,16 +49,22 @@
 <template id="footer-not-logged-in">
     <footer class="footer">
         <aside class="footer-signup-prompt">Please subscribe:</aside>
-        <form class="footer-signup-form">
-            <input type="text" class="footer-signup-input" placeholder="First Name" contenteditable="true" />
-            <input type="text" class="footer-signup-input" placeholder="Last Name" contenteditable="true" />
-            <input type="email" class="footer-signup-input" placeholder="Email address" contenteditable="true" />
-            <input type="password" class="footer-signup-input" placeholder="A New Password" contenteditable="true" />
+        <form class="footer-signup-form" action="javascript:void(0)" onsubmit="GetRegisterDataAndLogin()">
+            <input type="text" class="footer-signup-input" id="First Name" placeholder="First Name" contenteditable="true" />
+            <input type="text" class="footer-signup-input" id="Last Name" placeholder="Last Name" contenteditable="true" />
+            <input type="email" class="footer-signup-input" id="Email address" placeholder="Email address" contenteditable="true" />
+            <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" />
+            <input type="submit" class="blog-button" value="Sign Up" />
         </form>
+        <script>
+            function GetRegisterDataAndLogin() {
+                
+            }
+        </script>
     </footer>
 </template>
 <template id="footer-user-logged-in">
     <footer class="footer">
-        <h2>Test FOOTER logged in</h2>
+        <h1 style="text-align: center;">(You Are Logged In)</h1>
     </footer>
 </template>
