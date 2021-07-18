@@ -48,7 +48,7 @@ async function LogoutAsync() {
 }
 
 async function CreateAccountAsync(user) {
-    let createPromise = await fetch(accountURI,
+    let createPromise = await fetch(`${accountURI}/createAccount`,
         {
             method: 'POST',
             headers: {
@@ -58,11 +58,11 @@ async function CreateAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    let success = await createPromise.json()
+    //let success = await createPromise.json()
 }
 
 async function EditAccountAsync(user) {
-    let createPromise = await fetch(articleURI,
+    let createPromise = await fetch(`${accountURI}/editAccount`,
         {
             method: 'PUT',
             headers: {
@@ -72,11 +72,11 @@ async function EditAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    let success = await createPromise.json()
+    //let success = await createPromise.json()
 }
 
 async function EditPasswordAsync(oldPassword, newPassword) {
-    let createPromise = await fetch(articleURI,
+    let createPromise = await fetch(`${accountURI}/editPassword`,
         {
             method: 'PUT',
             headers: {
@@ -89,7 +89,7 @@ async function EditPasswordAsync(oldPassword, newPassword) {
                 "NewPassword": newPassword
             })
         })
-    let success = await createPromise.json()
+    //let success = await createPromise.json()
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ async function CreateArticleAsync(article) {
             },
             body: JSON.stringify(article)
         })
-    let success = await createPromise.json()
+    //let success = await createPromise.json()
 }
 
 async function UpdateArticleAsync(id, article) {
@@ -142,7 +142,7 @@ async function UpdateArticleAsync(id, article) {
             },
             body: JSON.stringify(article)
         })
-    let success = await updatePromise.json()
+    //let success = await updatePromise.json()
 }
 
 async function DeleteArticleAsync(id) {
@@ -153,7 +153,7 @@ async function DeleteArticleAsync(id) {
                 'Authorization': 'Bearer ' + getAuthToken()
             }
         })
-    let success = await deletePromise.json()
+    //let success = await deletePromise.json()
 }
 
 // CommentApi methods   ////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ async function CreateCommentAsync(comment) {
             },
             body: JSON.stringify(comment)
         })
-    let success = await createPromise.json()
+    //let success = await createPromise.json()
 }
 
 async function UpdateCommentAsync(id, comment) {
@@ -205,7 +205,7 @@ async function UpdateCommentAsync(id, comment) {
             },
             body: JSON.stringify(comment)
         })
-    let success = await updatePromise.json()
+    //let success = await updatePromise.json()
 }
 
 async function DeleteCommentAsync(id) {
@@ -216,7 +216,7 @@ async function DeleteCommentAsync(id) {
                 'Authorization': 'Bearer ' + getAuthToken()
             }
         })
-    let success = await deletePromise.json()
+    //let success = await deletePromise.json()
 }
 
 function GetUrlSearch() {

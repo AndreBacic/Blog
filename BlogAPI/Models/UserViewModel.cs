@@ -27,6 +27,7 @@ namespace BlogAPI.Models
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.EmailAddress = user.EmailAddress;
+            this.DoesReceiveNotifications = user.DoesReceiveNotifications;
         }
         public UserModel GetAsDbUserModel()
         {
@@ -34,7 +35,8 @@ namespace BlogAPI.Models
                 Id = this.Id,
                 FirstName = this.FirstName,
                 LastName = this.LastName,
-                EmailAddress = this.EmailAddress
+                EmailAddress = this.EmailAddress,
+                DoesReceiveNotifications = this.DoesReceiveNotifications
             };
             return output;
         }

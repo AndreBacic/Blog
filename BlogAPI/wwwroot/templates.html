@@ -9,7 +9,7 @@
     <nav class="navbar">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a class="right" href="register.html">Sign Up</a>
+        <a class="right" href="#footer">Sign Up</a>
         <a class="right" href="login.html">Login</a>
         <div style="float:right;">
             <label for="search bar">Search:</label>
@@ -21,7 +21,7 @@
     <nav id="nav-no-search" class="navbar">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a class="right" href="register.html">Sign Up</a>
+        <a class="right" href="#footer">Sign Up</a>
         <a class="right" href="login.html">Login</a>
     </nav>
 </template>
@@ -47,24 +47,43 @@
 </template>
 
 <template id="footer-not-logged-in">
-    <footer class="footer">
+    <footer id="footer" class="footer">
         <aside class="footer-signup-prompt">Please subscribe:</aside>
-        <form class="footer-signup-form" action="javascript:void(0)" onsubmit="GetRegisterDataAndLogin()">
-            <input type="text" class="footer-signup-input" id="First Name" placeholder="First Name" contenteditable="true" />
-            <input type="text" class="footer-signup-input" id="Last Name" placeholder="Last Name" contenteditable="true" />
-            <input type="email" class="footer-signup-input" id="Email address" placeholder="Email address" contenteditable="true" />
+        <form class="footer-signup-form" id="register-form" action="javascript:void(0)" onsubmit="//GetRegisterDataAndLogin()">
+            <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" />
+            <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" />
+            <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" />
             <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" />
-            <input type="submit" class="blog-button" value="Sign Up" />
+            <div style="display: inline-block;">
+                <button type="button" class="blog-button" onclick="GetRegisterDataAndLogin()" style="float:right;">Sign Up</button>
+            </div>
         </form>
         <script>
             function GetRegisterDataAndLogin() {
-                
+                let first_name_input = document.getElementById("First_Name")
+                let last_name_input = document.getElementById("Last_Name")
+                let email_address_input = document.getElementById("Email_address")
+                let password_input = document.getElementById("Password")
+                let user = {
+                    FirstName: first_name_input.value,
+                    LastName: last_name_input.value,
+                    EmailAddress: email_address_input.value,
+                    Password: password_input.value,
+                    DoesReceiveNotifications: true
+                }
+                CreateAccountAsync(user).then(() => {
+                    first_name_input.value = "";
+                    last_name_input.value = "";
+                    email_address_input.value = "";
+                    password_input.value = "";
+                    window.alert("You have been signed up!")
+                })
             }
         </script>
     </footer>
 </template>
 <template id="footer-user-logged-in">
-    <footer class="footer">
+    <footer id="footer" class="footer">
         <h1 style="text-align: center;">(You Are Logged In)</h1>
     </footer>
 </template>

@@ -90,21 +90,21 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public void Logout()
         {
-            throw new NotImplementedException("Log out from JWT token?");
+            throw new NotImplementedException("Log out from JWT token?"); // TODO: Either complete or remove this method
         }
 
         [Route("createAccount")]
         [HttpPost]
-        public void CreateAccount([FromBody]UserViewModel userViewModel)
+        public void CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Ensure that there are no users with the new email
             var users = _db.GetAllUsers();
-            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress))
+            if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
             {
                 return;
             }
             // 2 ok that email isn't used so this account can be created
-            _db.CreateUser(userViewModel.GetAsDbUserModel());
+            _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
         }
 
         [Authorize(Policy = "IsCommenter")]
