@@ -11,36 +11,44 @@
     <script>
         window.onload = function () {
             this.RenderTempletesAsync(false).then()
+            this.FillOutKnownUserDataAsync().then()
         }
     </script>
     <form action="javascript:void(0)" onsubmit="GetEditDataAndSubmit()" class="account-form edit-account-form">
         <h1>Edit Account</h1>
         <div>
-            <label for="firstNameInput">First Name: </label><br />
+            <label for="firstNameInput">First Name: </label>
+            <br />
             <input id="firstNameInput" type="email" class="account-text-input" contenteditable="true" />
         </div>
         <div>
-            <label for="lastNameInput">Last Name: </label><br />
+            <label for="lastNameInput">Last Name: </label>
+            <br />
             <input id="lastNameInput" type="email" class="account-text-input" contenteditable="true" />
         </div>
         <div>
-            <label for="emailInput">Email: </label><br />
+            <label for="emailInput">Email: </label>
+            <br />
             <input id="emailInput" type="email" class="account-text-input" contenteditable="true" />
         </div>
         <div>
             <input id="doesReceiveNotificationsBox" type="checkbox" class="" value="doesRecieve" checked="checked" contenteditable="false" />
             <label for="doesReceiveNotificationsBox">Receive Notifications About New Content</label>
-        </div><br />
+        </div>
+        <br />
         <div>
-            <label for="passwordInput">Old Password: </label><br />
+            <label for="oldPasswordInput">Old Password: </label>
+            <br />
             <input id="oldPasswordInput" type="password" class="account-text-input" contenteditable="true" />
         </div>
         <div>
-            <label for="passwordInput">New Password: </label><br />
+            <label for="newPasswordInput">New Password: </label>
+            <br />
             <input id="newPasswordInput" type="password" class="account-text-input" contenteditable="true" />
         </div>
         <div>
-            <label for="confirmPasswordInput">Confirm New Password: </label><br />
+            <label for="confirmPasswordInput">Confirm New Password: </label>
+            <br />
             <input id="confirmPasswordInput" type="password" class="account-text-input" contenteditable="true" />
         </div>
         <div>
@@ -49,8 +57,46 @@
         </div>
     </form>
     <script>
-        function GetEditDataAndSubmit() {
-            
+        async function FillOutKnownUserDataAsync() {
+            let user = await GetLoggedInUserAsync()
+            document.getElementById("firstNameInput").textContent = user.FirstName
+            document.getElementById("lastNameInput").textContent = user.LastName
+            document.getElementById("emailInput").textContent = user.EmailAddress
+            document.getElementById("doesReceiveNotificationsBox").checked = user.DoesReceiveNotifications
+        }
+        async function GetEditDataAndSubmitAsync() {
+            let first_name_input = document.getElementById("firstNameInput")
+            let last_name_input = document.getElementById("lastNameInput")
+            let email_address_input = document.getElementById("emailInput")
+            let doesReceiveNotificationsBox = document.getElementById("doesReceiveNotificationsBox")
+
+            // TODO: Implement full validation
+            if (first_name_input.value &&
+                last_name_input.value &&
+                email_address_input.value.match(/[@]/g))
+            {
+                let user = {
+                    FirstName: first_name_input.value,
+                    LastName: last_name_input.value,
+                    EmailAddress: email_address_input.value,
+                    DoesReceiveNotifications: doesReceiveNotificationsBox.checked
+                }
+
+                let success = await EditAccountAsync(user)
+            }
+
+            let oldPasswordInput = document.getElementById("oldPasswordInput")
+            let newPasswordInput = document.getElementById("newPasswordInput")
+            let confirmPasswordInput = document.getElementById("confirmPasswordInput")
+
+            // TODO: Implement full validation
+            if (oldPasswordInput.value &&
+                newPasswordInput.value &&
+                confirmPasswordInput.value &&
+                newPasswordInput.value === confirmPasswordInput.value)
+            {
+                let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
+            }
         }
     </script>
 </body>

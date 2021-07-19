@@ -93,6 +93,21 @@ namespace BlogAPI.Controllers
             throw new NotImplementedException("Log out from JWT token?"); // TODO: Either complete or remove this method
         }
 
+        [Authorize(Policy = "IsCommenter")]
+        [Route("getLoggedInUser")]
+        [HttpGet]
+        public UserViewModel GetLoggedInUser()
+        {
+            // Get logged in user by email
+            string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+            UserModel user = _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+
+            UserViewModel userViewModel = new UserViewModel();
+            userViewModel.SetThisToDbUserModel(user);
+
+            return userViewModel;
+        }
+
         /// <summary>
         /// Returns whether or not the account was successfully created.
         /// </summary>

@@ -47,6 +47,20 @@ async function LogoutAsync() {
     localStorage.removeItem('user')
 }
 
+async function GetLoggedInUserAsync() {
+    let createPromise = await fetch(`${accountURI}/getLoggedInUser`,
+        {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
+        })
+    let user = await createPromise.json()
+    return user
+}
+
 async function CreateAccountAsync(user) {
     let createPromise = await fetch(`${accountURI}/createAccount`,
         {
