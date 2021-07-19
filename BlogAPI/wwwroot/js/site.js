@@ -58,7 +58,8 @@ async function CreateAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    //let success = await createPromise.json()
+    let success = await createPromise.json()
+    return success
 }
 
 async function EditAccountAsync(user) {
@@ -72,7 +73,8 @@ async function EditAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    //let success = await createPromise.json()
+    let success = await createPromise.json()
+    return success
 }
 
 async function EditPasswordAsync(oldPassword, newPassword) {
@@ -89,7 +91,8 @@ async function EditPasswordAsync(oldPassword, newPassword) {
                 "NewPassword": newPassword
             })
         })
-    //let success = await createPromise.json()
+    let success = await createPromise.json()
+    return success
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////

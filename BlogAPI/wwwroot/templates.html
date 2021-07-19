@@ -49,17 +49,17 @@
 <template id="footer-not-logged-in">
     <footer id="footer" class="footer">
         <aside class="footer-signup-prompt">Please subscribe:</aside>
-        <form class="footer-signup-form" id="register-form" action="javascript:void(0)" onsubmit="//GetRegisterDataAndLogin()">
+        <form class="footer-signup-form" id="register-form" action="javascript:void(0)">
             <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" />
             <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" />
             <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" />
             <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" />
             <div style="display: inline-block;">
-                <button type="button" class="blog-button" onclick="GetRegisterDataAndLogin()" style="float:right;">Sign Up</button>
+                <button type="button" class="blog-button" onclick="GetRegisterDataAndLoginAsync().then()" style="float:right;">Sign Up</button>
             </div>
         </form>
         <script>
-            function GetRegisterDataAndLogin() {
+            async function GetRegisterDataAndLoginAsync() {
                 let first_name_input = document.getElementById("First_Name")
                 let last_name_input = document.getElementById("Last_Name")
                 let email_address_input = document.getElementById("Email_address")
@@ -71,13 +71,17 @@
                     Password: password_input.value,
                     DoesReceiveNotifications: true
                 }
-                CreateAccountAsync(user).then(() => {
-                    first_name_input.value = "";
-                    last_name_input.value = "";
-                    email_address_input.value = "";
-                    password_input.value = "";
-                    window.alert("You have been signed up!")
-                })
+                let success = await CreateAccountAsync(user)
+                first_name_input.value = "";
+                last_name_input.value = "";
+                email_address_input.value = "";
+                password_input.value = "";
+
+                if (success === true) {
+                    window.alert("Successfully signed up!")
+                } else {
+                    window.alert("There was a problem registering you.")
+                }
             }
         </script>
     </footer>

@@ -93,30 +93,41 @@ namespace BlogAPI.Controllers
             throw new NotImplementedException("Log out from JWT token?"); // TODO: Either complete or remove this method
         }
 
+        /// <summary>
+        /// Returns whether or not the account was successfully created.
+        /// </summary>
+        /// <param name="createAccountViewModel"></param>
+        /// <returns></returns>
         [Route("createAccount")]
         [HttpPost]
-        public void CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
+        public bool CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Ensure that there are no users with the new email
             var users = _db.GetAllUsers();
             if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
             {
-                return;
+                return false;
             }
             // 2 ok that email isn't used so this account can be created
             _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
+            return true;
         }
 
+        /// <summary>
+        /// Returns whether or not the account was successfully edited.
+        /// </summary>
+        /// <param name="userViewModel"></param>
+        /// <returns></returns>
         [Authorize(Policy = "IsCommenter")]
         [Route("editAccount")]
         [HttpPut]
-        public void EditAccount([FromBody]UserViewModel userViewModel)
+        public bool EditAccount([FromBody]UserViewModel userViewModel)
         {
             // 1 Ensure that there are no users with the new email
             var users = _db.GetAllUsers();
             if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress))
             {
-                return;
+                return false;
             }
             // 2 Get original email from token
             Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
@@ -124,12 +135,18 @@ namespace BlogAPI.Controllers
             UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail.Value).First();
             userViewModel.Id = oldDbUser.Id;
             _db.UpdateUser(userViewModel.GetAsDbUserModel());
+            return true;
         }
 
+        /// <summary>
+        /// Returns whether or not the password was successfully changed to the new value.
+        /// </summary>
+        /// <param name="editPasswordModel"></param>
+        /// <returns></returns>
         [Authorize(Policy = "IsCommenter")]
         [Route("editPassword")]
         [HttpPut]
-        public void EditPassword([FromBody]EditPasswordModel editPasswordModel)
+        public bool EditPassword([FromBody]EditPasswordModel editPasswordModel)
         {
             // 1 Get logged in user by email
             string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
@@ -142,17 +159,18 @@ namespace BlogAPI.Controllers
             (bool isSamePassword, bool needsUpgrade) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
             if (isSamePassword == false)
             {
-                return;
+                return false;
             }
 
             // 3 if the old password is correct, replace it with the new one
             _db.UpdateUserPassword(user, editPasswordModel.NewPassword);
+            return true;
         }
 
         [Authorize(Policy = "IsCommenter")]
         [Route("deleteAccount")]
         [HttpDelete]
-        public void DeleteAccount()
+        public bool DeleteAccount()
         {
             //// 1 Get email from token
             //Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
