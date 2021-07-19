@@ -140,16 +140,20 @@ namespace BlogAPI.Controllers
         {
             // 1 Ensure that there are no users with the new email
             var users = _db.GetAllUsers();
-            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress))
+
+            string originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+
+            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress && x.EmailAddress != originalEmail))
             {
                 return false;
             }
-            // 2 Get original email from token
-            Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
-            // 3 update user data in column with the original email
-            UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail.Value).First();
+
+            // 2 update user data in column with the original email
+            UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail).First();
             userViewModel.Id = oldDbUser.Id;
-            _db.UpdateUser(userViewModel.GetAsDbUserModel());
+            UserModel newDbUser = userViewModel.GetAsDbUserModel();
+            newDbUser.Role = oldDbUser.Role;
+            _db.UpdateUser(newDbUser);
             return true;
         }
 
