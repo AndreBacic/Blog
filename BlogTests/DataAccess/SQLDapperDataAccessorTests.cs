@@ -1,11 +1,8 @@
 ﻿using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using BlogDataLibrary.Tests.Controllers;
-using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace BlogDataLibrary.Tests.DataAccess
@@ -15,24 +12,24 @@ namespace BlogDataLibrary.Tests.DataAccess
         [Fact]
         public void UpdateUserPassword_ShouldWork()
         {
-            var db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
-            var user = db.GetUser(1);
-            db.UpdateUserPassword(user, "Password123"); 
+            SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            UserModel user = db.GetUser(1);
+            db.UpdateUserPassword(user, "Password123");
         }
 
         [Fact]
         public void CreateArticle_ShouldWork()
         {
-            var db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
-            var model = ApiSampleData.GetSampleArticles().First();
+            SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            ArticleModel model = ApiSampleData.GetSampleArticles().First();
             //Assert.Throws<Exception>(() => db.CreateArticle(model)); // <- throws no error because it works
         }
         [Fact]
         public void GetAllArticles_ShouldWork()
         {
-            var db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
-            var model = ApiSampleData.GetSampleArticles().First();
-            var models = db.GetAllArticles();
+            SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            ArticleModel model = ApiSampleData.GetSampleArticles().First();
+            List<ArticleModel> models = db.GetAllArticles();
             Assert.NotNull(models);
             Assert.NotNull(models[0].Tags);
             Assert.NotNull(models[0].Comments);
@@ -42,18 +39,18 @@ namespace BlogDataLibrary.Tests.DataAccess
         [Fact]
         public void ArticleModel_dbTagsShouldWork()
         {
-            var model = new ArticleModel();
+            ArticleModel model = new ArticleModel();
             model.Tags = new List<string>
             {
                 "ee",
                 "00"
             };
             Assert.NotNull(model.Tags);
-            var e = model.dbTags;
+            string e = model.dbTags;
             Assert.Equal("ee,00", model.dbTags);
 
-            var model2 = new ArticleModel { dbTags = "99,east,Lola" };
-            var expected = new List<string>
+            ArticleModel model2 = new ArticleModel { dbTags = "99,east,Lola" };
+            List<string> expected = new List<string>
             {
                 "99",
                 "east",

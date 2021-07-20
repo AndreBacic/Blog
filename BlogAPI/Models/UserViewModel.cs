@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BlogDataLibrary.Models;
+﻿using BlogDataLibrary.Models;
 
 namespace BlogAPI.Models
 {
@@ -31,7 +28,8 @@ namespace BlogAPI.Models
         }
         public UserModel GetAsDbUserModel()
         {
-            UserModel output = new UserModel {
+            UserModel output = new UserModel
+            {
                 Id = this.Id,
                 FirstName = this.FirstName,
                 LastName = this.LastName,

@@ -1,22 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Security.Claims;
+using System.Text;
 
 namespace BlogAPI
 {
@@ -32,7 +24,8 @@ namespace BlogAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(options => {
+            services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = "BlogAuth";
                 options.DefaultChallengeScheme = "BlogAuth";
             }
@@ -62,7 +55,7 @@ namespace BlogAPI
                 {
                     policyBuilder.RequireClaim(ClaimTypes.Name);
                     policyBuilder.RequireClaim(ClaimTypes.Email);
-                    string[] acceptedRoles = {UserModel.ADMIN_ROLE}; 
+                    string[] acceptedRoles = { UserModel.ADMIN_ROLE };
                     policyBuilder.RequireRole(acceptedRoles);
                 });
             });

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BlogDataLibrary.Models;
+using System;
 using System.Collections.Generic;
-using BlogDataLibrary.Models;
 
 namespace BlogDataLibrary.Tests.Controllers
 {
@@ -9,7 +9,7 @@ namespace BlogDataLibrary.Tests.Controllers
         public static List<ArticleModel> GetSampleArticles()
         {
             List<ArticleModel> output = new List<ArticleModel>();
-            var comments = GetSampleComments();
+            List<CommentModel> comments = GetSampleComments();
             output.Add(new ArticleModel
             {
                 AuthorName = "Joe",
@@ -20,7 +20,7 @@ namespace BlogDataLibrary.Tests.Controllers
                 Tags = null,
                 Title = "Sample Article"
             });
-            var tags = new List<string>();
+            List<string> tags = new List<string>();
             tags.Add("peaceful");
             output.Add(new ArticleModel
             {

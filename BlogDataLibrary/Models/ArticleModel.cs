@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BlogDataLibrary.Models
 {
@@ -31,7 +30,7 @@ namespace BlogDataLibrary.Models
                     if (output.Length > 0)
                     {
                         output = output.Remove(output.Length - 1);
-                    } 
+                    }
                 }
                 return output;
             }

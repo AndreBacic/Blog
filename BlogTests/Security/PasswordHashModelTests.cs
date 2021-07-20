@@ -1,7 +1,4 @@
 ﻿using BlogDataLibrary.Security;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace BlogDataLibrary.Tests.Security
@@ -15,7 +12,7 @@ namespace BlogDataLibrary.Tests.Security
             string expected = "5000.aaaabbbbcYccdddd.ddddccccaaaabbbb";
 
             //Act
-            var model = new PasswordHashModel
+            PasswordHashModel model = new PasswordHashModel
             {
                 IterationsOnHash = 5000,
                 SaltString = "aaaabbbbcYccdddd",
@@ -28,10 +25,10 @@ namespace BlogDataLibrary.Tests.Security
         }
         [Theory]
         [InlineData("3000.ASDasdUIOpqtYYYY.ddddccccaaaabbbb", 3000, "ASDasdUIOpqtYYYY", "ddddccccaaaabbbb")]
-        public void FromDbString_RunsProperly(string dbString, 
+        public void FromDbString_RunsProperly(string dbString,
             int iterationsExpected, string saltExpected, string hashExpected)
         {
-            var model = new PasswordHashModel();
+            PasswordHashModel model = new PasswordHashModel();
             model.FromDbString(dbString);
 
             Assert.Equal(iterationsExpected, model.IterationsOnHash);

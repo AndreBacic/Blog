@@ -1,7 +1,6 @@
-﻿using System;
+﻿using BlogDataLibrary.Models;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using BlogDataLibrary.Models;
 
 namespace BlogAPI.Models
 {
@@ -19,11 +18,11 @@ namespace BlogAPI.Models
         public void SetThisToDbArticleModel(ArticleModel article) // TODO: Move all data model <-> view model processor methods to their own class.
         {
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
-            foreach (var c in article.Comments)
+            foreach (CommentModel c in article.Comments)
             {
                 CommentViewModel commentView = new CommentViewModel();
                 commentView.SetThisToDbCommentModel(c, this.Id);
-                commentViews.Add(commentView);                
+                commentViews.Add(commentView);
             }
 
             this.Id = article.Id; // TODO: encrypt ViewModel ids before sending them to the front end
@@ -39,7 +38,7 @@ namespace BlogAPI.Models
         public ArticleModel GetAsDbArticleModel()
         {
             List<CommentModel> comments = new List<CommentModel>();
-            foreach (var c in this.Comments)
+            foreach (CommentViewModel c in this.Comments)
             {
                 CommentModel comment = new CommentModel();
                 comment = c.GetAsDbCommentModel();

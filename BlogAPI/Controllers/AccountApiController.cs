@@ -1,19 +1,17 @@
-﻿using System;
+﻿using BlogAPI.Models;
+using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Models;
+using BlogDataLibrary.Security;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using BlogDataLibrary.DataAccess;
-using BlogAPI.Models;
-using BlogDataLibrary.Security;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using BlogDataLibrary.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,7 +40,9 @@ namespace BlogAPI.Controllers
             try
             {
                 user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
-            } catch (InvalidOperationException error) {
+            }
+            catch (InvalidOperationException error)
+            {
                 // todo: maybe do something with the error message.
             }
             if (user != null)
@@ -64,12 +64,12 @@ namespace BlogAPI.Controllers
                     }; // TODO: Learn how to refresh a token like every 5 minutes
 
 
-                    var token = new JwtSecurityToken(
+                    JwtSecurityToken token = new JwtSecurityToken(
                         new JwtHeader(
                             new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetValue<string>("JWTPrivateKey"))),
                                                     SecurityAlgorithms.HmacSha256)),
                         new JwtPayload(userClaims));
-                    var handler = new JwtSecurityTokenHandler().WriteToken(token);
+                    string handler = new JwtSecurityTokenHandler().WriteToken(token);
 
                     return new ObjectResult(handler);
                 }
@@ -118,7 +118,7 @@ namespace BlogAPI.Controllers
         public bool CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Ensure that there are no users with the new email
-            var users = _db.GetAllUsers();
+            List<UserModel> users = _db.GetAllUsers();
             if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
             {
                 return false;
@@ -139,7 +139,7 @@ namespace BlogAPI.Controllers
         public bool EditAccount([FromBody]UserViewModel userViewModel)
         {
             // 1 Ensure that there are no users with the new email
-            var users = _db.GetAllUsers();
+            List<UserModel> users = _db.GetAllUsers();
 
             string originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
 

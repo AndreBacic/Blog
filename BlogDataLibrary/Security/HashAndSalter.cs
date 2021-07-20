@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace BlogDataLibrary.Security
 {
@@ -22,7 +20,7 @@ namespace BlogDataLibrary.Security
         {
             // generate a 128-bit salt using a secure PRNG
             byte[] salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
             }

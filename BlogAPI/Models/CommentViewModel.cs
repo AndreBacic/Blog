@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BlogDataLibrary.Models;
+﻿using BlogDataLibrary.Models;
+using System;
 
 namespace BlogAPI.Models
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
-using BlogAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +27,7 @@ namespace BlogAPI.Controllers
             List<ArticleModel> dbArticles = _db.GetAllArticles();
             List<ArticleViewModel> output = new List<ArticleViewModel>();
 
-            foreach (var a in dbArticles)
+            foreach (ArticleModel a in dbArticles)
             {
                 ArticleViewModel articleView = new ArticleViewModel();
                 articleView.SetThisToDbArticleModel(a);
@@ -49,7 +46,7 @@ namespace BlogAPI.Controllers
             return articleView;
         }
 
-        [Authorize(Policy=("IsAdmin"))]
+        [Authorize(Policy = ("IsAdmin"))]
         // POST api/<controller>
         [HttpPost]
         public void Post([FromBody]ArticleViewModel article)
@@ -74,7 +71,7 @@ namespace BlogAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            var article = _db.GetArticle(id);
+            ArticleModel article = _db.GetArticle(id);
             _db.DeleteArticle(article);
         }
     }

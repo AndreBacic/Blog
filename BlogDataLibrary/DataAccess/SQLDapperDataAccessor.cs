@@ -1,12 +1,11 @@
 ﻿using BlogDataLibrary.Models;
+using BlogDataLibrary.Security;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Dapper;
-using System.Text;
 using System.Linq;
-using BlogDataLibrary.Security;
 
 namespace BlogDataLibrary.DataAccess
 {
@@ -33,7 +32,7 @@ namespace BlogDataLibrary.DataAccess
             }
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Title", article.Title);
                 parameters.Add("@DatePosted", article.DatePosted);
                 parameters.Add("@AuthorName", article.AuthorName);
@@ -48,7 +47,7 @@ namespace BlogDataLibrary.DataAccess
 
             if (article.Comments.Any())
             {
-                foreach (var comment in article.Comments)
+                foreach (CommentModel comment in article.Comments)
                 {
                     CreateComment(comment, article.Id);
                 }
@@ -66,7 +65,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ArticleId", articleId);
                 parameters.Add("@DatePosted", comment.DatePosted);
                 parameters.Add("@ContentText", comment.ContentText);
@@ -98,7 +97,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@FirstName", user.FirstName);
                 parameters.Add("@LastName", user.LastName);
                 parameters.Add("@EmailAddress", user.EmailAddress);
@@ -118,7 +117,7 @@ namespace BlogDataLibrary.DataAccess
         public void DeleteArticle(ArticleModel article)
         {
             // delete all comments attached to the article
-            foreach (var comment in article.Comments)
+            foreach (CommentModel comment in article.Comments)
             {
                 DeleteComment(comment.Id);
             }
@@ -126,7 +125,7 @@ namespace BlogDataLibrary.DataAccess
             // delete the article
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", article.Id);
 
                 connection.Execute("dbo.spArticles_Delete", parameters, commandType: CommandType.StoredProcedure);
@@ -137,7 +136,7 @@ namespace BlogDataLibrary.DataAccess
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
 
                 connection.Execute("dbo.spComments_Delete", parameters, commandType: CommandType.StoredProcedure);
@@ -154,12 +153,12 @@ namespace BlogDataLibrary.DataAccess
                                     .ToList();
             }
 
-            foreach (var article in output)
+            foreach (ArticleModel article in output)
             {
                 article.Comments = GetAllCommentsInArticle(article.Id);
             }
 
-            return output;            
+            return output;
         }
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId)
@@ -169,14 +168,14 @@ namespace BlogDataLibrary.DataAccess
             // Get comments by article
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ArticleId", articleId);
 
                 output = connection.Query<CommentModel>("dbo.spComments_GetByArticle", parameters, commandType: CommandType.StoredProcedure)
                                     .ToList();
             }
-            
-            foreach (var comment in output)
+
+            foreach (CommentModel comment in output)
             {
                 comment.Author = GetUser(comment.AuthorId);
             }
@@ -202,7 +201,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
 
                 output = connection.Query<ArticleModel>("dbo.spArticles_GetById", parameters, commandType: CommandType.StoredProcedure)
@@ -220,7 +219,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@UserId", id);
 
                 output = connection.Query<UserModel>("dbo.spUsers_GetById", parameters, commandType: CommandType.StoredProcedure)
@@ -240,13 +239,13 @@ namespace BlogDataLibrary.DataAccess
             }
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", article.Id, DbType.Int32);
                 parameters.Add("@Title", article.Title);
                 parameters.Add("@LastEdited", article.LastEdited);
                 parameters.Add("@AuthorName", article.AuthorName);
                 parameters.Add("@dbTags", article.dbTags);
-                parameters.Add("@ContentText", article.ContentText);                
+                parameters.Add("@ContentText", article.ContentText);
 
                 connection.Execute("dbo.spArticles_Update", parameters, commandType: CommandType.StoredProcedure);
             }
@@ -262,7 +261,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", comment.Id, DbType.Int32);
                 parameters.Add("@LastEdited", comment.LastEdited);
                 parameters.Add("@ContentText", comment.ContentText);
@@ -283,7 +282,7 @@ namespace BlogDataLibrary.DataAccess
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", user.Id, DbType.Int32);
                 parameters.Add("@FirstName", user.FirstName);
                 parameters.Add("@LastName", user.LastName);
@@ -303,7 +302,7 @@ namespace BlogDataLibrary.DataAccess
             // store hashed password in database
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
-                var parameters = new DynamicParameters();
+                DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", user.Id, DbType.Int32);
                 parameters.Add("@PasswordHash", passwordHashModel.ToDbString());
 

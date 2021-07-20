@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
-using BlogAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,7 +27,7 @@ namespace BlogAPI.Controllers
             List<CommentModel> comments = _db.GetAllCommentsInArticle(articleId);
 
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
-            foreach (var c in comments)
+            foreach (CommentModel c in comments)
             {
                 CommentViewModel commentView = new CommentViewModel();
                 commentView.SetThisToDbCommentModel(c);

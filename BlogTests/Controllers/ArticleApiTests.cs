@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using Xunit;
-using Moq;
-using Autofac.Extras.Moq;
-using BlogDataLibrary.DataAccess;
+﻿using Autofac.Extras.Moq;
 using BlogAPI.Controllers;
-using BlogDataLibrary.Models;
 using BlogAPI.Models;
+using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Models;
+using System.Linq;
+using Xunit;
 
 namespace BlogDataLibrary.Tests.Controllers
 {
@@ -14,15 +13,15 @@ namespace BlogDataLibrary.Tests.Controllers
         [Fact]
         public void Get_ShouldWork()
         {
-            using (var mock = AutoMock.GetLoose())
+            using (AutoMock mock = AutoMock.GetLoose())
             {
                 mock.Mock<IBlogDbAccessor>()
                     .Setup(x => x.GetAllArticles())
                     .Returns(ApiSampleData.GetSampleArticles());
 
-                var ctrl = mock.Create<ArticleApiController>();
-                var expected = ApiSampleData.GetSampleArticles();
-                var actual = ctrl.Get();
+                ArticleApiController ctrl = mock.Create<ArticleApiController>();
+                System.Collections.Generic.List<ArticleModel> expected = ApiSampleData.GetSampleArticles();
+                System.Collections.Generic.List<ArticleViewModel> actual = ctrl.Get();
 
                 Assert.NotNull(actual);
                 Assert.Equal(expected.Count, actual.Count);
@@ -32,16 +31,16 @@ namespace BlogDataLibrary.Tests.Controllers
         [InlineData(1)]
         public void Put_ShouldWork(int id)
         {
-            var model = ApiSampleData.GetSampleArticles().Where(x => x.Id == id).First();
-            var viewModel = new ArticleViewModel();
+            ArticleModel model = ApiSampleData.GetSampleArticles().Where(x => x.Id == id).First();
+            ArticleViewModel viewModel = new ArticleViewModel();
             viewModel.SetThisToDbArticleModel(model);
 
-            using (var mock = AutoMock.GetLoose())
+            using (AutoMock mock = AutoMock.GetLoose())
             {
                 mock.Mock<IBlogDbAccessor>()
                     .Setup(x => x.UpdateArticle(model));
 
-                var ctrl = mock.Create<ArticleApiController>();
+                ArticleApiController ctrl = mock.Create<ArticleApiController>();
 
                 ctrl.Put(id, viewModel);
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BlogDataLibrary.Models
+﻿namespace BlogDataLibrary.Models
 {
     public class UserModel
     {

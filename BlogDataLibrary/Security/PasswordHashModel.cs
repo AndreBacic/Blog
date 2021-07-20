@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BlogDataLibrary.Security
 {
@@ -40,7 +38,8 @@ namespace BlogDataLibrary.Security
         }
         public byte[] PasswordHash { get; set; }
         public byte[] Salt { get; set; }
-        public string PasswordHashString {
+        public string PasswordHashString
+        {
             get
             {
                 return Convert.ToBase64String(this.PasswordHash);

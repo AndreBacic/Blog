@@ -1,7 +1,4 @@
 ﻿using BlogDataLibrary.Security;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace BlogDataLibrary.Tests.Security
@@ -14,7 +11,7 @@ namespace BlogDataLibrary.Tests.Security
             // Arrange
             string password = "Test";
             // Act
-            var model = HashAndSalter.HashAndSalt(password);
+            PasswordHashModel model = HashAndSalter.HashAndSalt(password);
             // Assert
             Assert.NotNull(model);
             Assert.True(model.PasswordHashString.Length == 44);
@@ -26,7 +23,7 @@ namespace BlogDataLibrary.Tests.Security
             // Arrange
             string password = "";
             // Act/assert
-            var model = HashAndSalter.HashAndSalt(password);
+            PasswordHashModel model = HashAndSalter.HashAndSalt(password);
             //Assert.ThrowsAny<Exception>(() => HashAndSalter.HashAndSalt(password)); // <- doesn't throw any exceptions
             Assert.NotNull(model);
             Assert.True(model.PasswordHashString.Length == 44);
@@ -38,7 +35,7 @@ namespace BlogDataLibrary.Tests.Security
             string password1 = "Pass123";
             string password2 = "Pass321";
             // Act
-            var model1 = HashAndSalter.HashAndSalt(password1);
+            PasswordHashModel model1 = HashAndSalter.HashAndSalt(password1);
 
             (bool password1IsHash, bool needsUpgrade1) = HashAndSalter.PasswordEqualsHash(password1, model1);
             (bool password2IsHash, bool needsUpgrade2) = HashAndSalter.PasswordEqualsHash(password2, model1);
