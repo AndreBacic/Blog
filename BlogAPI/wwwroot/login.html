@@ -34,7 +34,11 @@
                 LoginAsync(emailInput.value, passwordInput.value).then(() => {
                     emailInput.value = "";
                     passwordInput.value = "";
-                    window.location = "index.html";
+                    if (isUserLoggedIn()) {
+                        window.location = "index.html";
+                    } else {
+                        window.alert("Incorrect email or password\n(no we don't actually know which one is wrong)")
+                    }
                 })
             }
         </script>

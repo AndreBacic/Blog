@@ -33,6 +33,11 @@ async function LoginAsync(email, password) {
             })
         })
     let jwt = await somePromise.json()
+    let user = JSON.stringify(jwt)
+    if (user.value === "Invalid password") {
+        return
+    }
+    // Only log in user if the password was valid
     localStorage.setItem('user', JSON.stringify(jwt))
 }
 async function LogoutAsync() {

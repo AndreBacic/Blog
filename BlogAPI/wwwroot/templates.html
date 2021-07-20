@@ -64,6 +64,16 @@
                 let last_name_input = document.getElementById("Last_Name")
                 let email_address_input = document.getElementById("Email_address")
                 let password_input = document.getElementById("Password")
+
+                if (ValidateRegisterData(first_name_input.value,
+                    last_name_input.value,
+                    email_address_input.value,
+                    password_input.value) === false)
+                {
+                    alert("Invalid sign up form input.")
+                    return
+                }
+
                 let user = {
                     FirstName: first_name_input.value,
                     LastName: last_name_input.value,
@@ -72,15 +82,30 @@
                     DoesReceiveNotifications: true
                 }
                 let success = await CreateAccountAsync(user)
+                let email_address = email_address_input.value
+                let password = password_input.value
                 first_name_input.value = "";
                 last_name_input.value = "";
                 email_address_input.value = "";
                 password_input.value = "";
 
                 if (success === true) {
+                    await LoginAsync(email_address, password)
                     window.alert("Successfully signed up!")
+                    window.location.reload()
                 } else {
                     window.alert("There was a problem registering you.")
+                }
+            }
+            function ValidateRegisterData(first_name, last_name, email_address, password) {
+                if (first_name &&
+                    last_name &&
+                    email_address.match(/[@]/g) &&
+                    password.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/g))
+                {
+                    return true
+                } else {
+                    return false
                 }
             }
         </script>

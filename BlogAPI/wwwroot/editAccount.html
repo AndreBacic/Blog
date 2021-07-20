@@ -83,6 +83,7 @@
                 }
 
                 let success = await EditAccountAsync(user)
+                await FillOutKnownUserDataAsync()
             }
 
             let oldPasswordInput = document.getElementById("oldPasswordInput")
@@ -96,6 +97,9 @@
                 newPasswordInput.value === confirmPasswordInput.value)
             {
                 let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
+                oldPasswordInput.value = ""
+                newPasswordInput.value = ""
+                confirmPasswordInput.value = ""
             }
         }
     </script>
