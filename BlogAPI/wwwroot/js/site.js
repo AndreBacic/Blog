@@ -247,50 +247,6 @@ function GetUrlSearch() {
 }
 
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Data Model Classes  //////////////////////////////////////////////////////////////////////////////
-
-class UserModel {
-    constructor(firstName, lastName, emailAddress, id = null) {
-        this.firstName = firstName
-        this.lastName = lastName
-        this.emailAddress = emailAddress
-        this.id = id
-    }
-
-    get Name() {
-        return `${this.firstName} ${this.lastName}`
-    }
-}
-
-class CommentModel {
-    constructor(datePosted, author, contentText, articleId, lastEdited = null, id = null) {
-        this.datePosted = datePosted
-        this.lastEdited = lastEdited
-        this.author = author // should be UserModel
-        this.contentText = contentText
-        this.articleId = articleId
-        this.id = id
-    }
-}
-
-class ArticleModel {
-    constructor(authorName, title, contentText, datePosted, lastEdited = null, comments = [], tags = [], id = null) {
-        this.authorName = authorName
-        this.title = title
-        this.contentText = contentText
-        this.datePosted = datePosted
-        this.lastEdited = lastEdited
-        this.comments = comments
-        this.tags = tags
-        this.id = id
-    }
-}
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /// DOM Rendering Methods  ///////////////////////////////////////////////////////////////////////////
@@ -309,29 +265,33 @@ async function RenderArticles() {
 }
 
 function RenderPreviewOfArticle(articleJSON) {
-    const article = document.createElement("article")
-    article.className = "flex-item"
-
     const link = document.createElement("a")
     link.href = `article.html?${articleJSON.id}`
+    link.className = "flex-item"
 
-    const header = document.createElement("h4")
+    const article = document.createElement("article")
+    article.className = "flex-item"
+    
+    const header = document.createElement("h2")
     header.textContent = articleJSON.title
-    link.appendChild(header)
+    article.appendChild(header)
 
-    const content = document.createElement("p")
-    content.textContent = articleJSON.contentText
-    link.appendChild(content)
+    //const content = document.createElement("p")
+    //content.textContent = articleJSON.contentText
+    //link.appendChild(content)
 
     const authorNameLabel = document.createElement("p")
+    authorNameLabel.textContent = 'Written by '
+
     const citedAuthorName = document.createElement("cite")
     citedAuthorName.textContent = articleJSON.authorName
+
     authorNameLabel.appendChild(citedAuthorName)
-    link.appendChild(authorNameLabel)
+    article.appendChild(authorNameLabel)
 
-    article.appendChild(link)
+    link.appendChild(article)
 
-    return article
+    return link
 }
 
 async function RenderTempletesAsync(haveSearch = true) {

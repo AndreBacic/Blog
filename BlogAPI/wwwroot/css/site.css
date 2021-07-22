@@ -23,39 +23,59 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    font-family: Verdana, sans-serif;
-}
-p, h3, h4, h5, h6 {
-    font-size: 1.3em;
-    color: darkred;
+    font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
 main {
     flex-grow: 1;
 }
+main > h1 {
+    margin: 6px 0px 6px 20px;
+    border: 0;
+    border-bottom: 2px solid var(--blog-theme-color-dark);    
+    display: inline-block;
+}
 
 .flex-container-column {
     display: flex;
+    margin: 5px;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
+.flex-container-column a {
+    text-decoration: none;
+}
+
 .flex-item {
-    border: 3px groove #0bebfa;
-    border-radius: 12px 30px 30px 30px;
-    padding: 0px 10px 5px 20px;
     flex-grow: 1;
     flex-shrink: 1;
     margin: 2px;
 }
 article.flex-item {
-    background-color: #e5f7fc;
-    height: 300px;
-    width: 500px;
+    background-color: var(--blog-back-color);
+    height: 140px;
+    min-width: 290px;
+    max-width: 720px;
     font-stretch: expanded;
-    color: #0b20c3;
+    border: 2px groove var(--blog-theme-color);
+    border-radius: 45px;
+    padding: 30px 35px;
+    color: var(--blog-forward-color);
     overflow: hidden;
+    -webkit-box-shadow: 1px 1px 5px -2px var(--blog-theme-color);
+    box-shadow: 1px 1px 5px -2px var(--blog-theme-color);
+    transition: all .3s ease-in-out;
+}
+article.flex-item:hover {
+    transform: scale(1.02);
+}
+article.flex-item h1, article.flex-item h2, article.flex-item h3 {
+    margin: 0;
+    padding-bottom: 8px;
+    border: 0;
+    border-bottom: 2px solid var(--blog-theme-color-dark);
 }
 
 .header {
@@ -120,7 +140,6 @@ article.flex-item {
 }
 .footer-signup-prompt {
     font-size: 2em;
-    font-family: sans-serif;
     font-weight: 300;
     color: var(--blog-theme-color);
     padding: 20px 10px;
@@ -198,6 +217,9 @@ article.flex-item {
     .flex-container-column {
         flex-direction: column;
         flex-wrap: nowrap;
+    }
+    article.flex-item {
+        width: 95vw;
     }
     #nav-no-search {
         min-height: 4.44em;
