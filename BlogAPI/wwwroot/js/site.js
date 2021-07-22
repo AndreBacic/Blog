@@ -278,7 +278,7 @@ function RenderPreviewOfArticle(articleJSON) {
 
     //const content = document.createElement("p")
     //content.textContent = articleJSON.contentText
-    //link.appendChild(content)
+    //article.appendChild(content)
 
     const authorNameLabel = document.createElement("p")
     authorNameLabel.textContent = 'Written by '
@@ -336,7 +336,61 @@ async function RenderTempletesAsync(haveSearch = true) {
 async function RenderArticlePageMainAsync() {
     let id = parseInt(GetUrlSearch())
     let json = await GetArticleByIdAsync(id)
-    let article = RenderPreviewOfArticle(json)
+    let article = RenderFullArticle(json)
     document.getElementById("main").appendChild(article)
-    document.title = json.title
+    document.title = `${json.title} - Blog` // todo: give this site a better name than 'Blog'
+}
+
+function RenderFullArticle(articleJSON) {
+    const article = document.createElement("article")
+    article.className = "full-article"
+
+    const header = document.createElement("h1")
+    header.textContent = articleJSON.title
+    article.appendChild(header)
+
+    const content = document.createElement("p")
+    // innerHTML because we want the html code in the article to be rendered.
+    content.innerHTML = articleJSON.contentText
+    article.appendChild(content)
+
+    const infoDiv = document.createElement("div")
+    infoDiv.className = "article-info-div"
+
+    const authorNameLabel = document.createElement("p")
+    authorNameLabel.textContent = 'Written by '
+
+    const citedAuthorName = document.createElement("cite")
+    citedAuthorName.textContent = articleJSON.authorName
+    authorNameLabel.appendChild(citedAuthorName)
+
+    const datePostedParagraph = document.createElement("p")
+    datePosted = new Date(articleJSON.datePosted)
+    datePostedParagraph.textContent = formatDateForArticle(datePosted, 'Date Posted:')
+    datePostedParagraph.style = "float: right;"
+
+    // append elements
+    infoDiv.appendChild(authorNameLabel)
+
+    if (articleJSON.lastEdited != '') {
+        lastEdited = new Date(articleJSON.lastEdited)
+        if (lastEdited.getUTCFullYear() != 1) {
+            const lastEditedParagraph = document.createElement("p")
+            lastEditedParagraph.textContent = formatDateForArticle(lastEdited, 'LastEdited:')
+            lastEditedParagraph.style = "float: right;"
+            infoDiv.appendChild(lastEditedParagraph)
+        }
+    }
+
+    infoDiv.appendChild(datePostedParagraph)
+
+    article.appendChild(infoDiv)
+
+    // TODO: Fill in comments at the bottom
+
+    return article
+}
+
+function formatDateForArticle(date, statement) {
+    return `${statement} ${date.getUTCMonth()} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
 }
