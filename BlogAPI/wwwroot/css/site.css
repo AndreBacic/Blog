@@ -2,9 +2,10 @@
 :root {
     --blog-forward-color: black;
     --blog-back-color: white;
-    --blog-theme-color: hsl(180, 100%, 50%);
-    --blog-theme-color-dark: hsl(180, 100%, 39%);
-    --blog-theme-color-extra-dark: hsl(180, 100%, 28%);
+    --blog-theme-color-hue: 180;
+    --blog-theme-color: hsl(var(--blog-theme-color-hue), 100%, 50%);
+    --blog-theme-color-dark: hsl(var(--blog-theme-color-hue), 100%, 39%);
+    --blog-theme-color-extra-dark: hsl(var(--blog-theme-color-hue), 100%, 24%);
 }
 * {
     box-sizing: border-box;
@@ -69,8 +70,10 @@ article.flex-item {
 .navbar {
     width: 100%;
     height: 2.22em;
-    background-color: none;
-    background-image: linear-gradient(var(--blog-forward-color), var(--blog-theme-color-extra-dark));
+    background-color: var(--blog-forward-color);
+    background-image: linear-gradient(var(--blog-theme-color-extra-dark), 
+                                        var(--blog-forward-color), 
+                                        var(--blog-theme-color-extra-dark));
     padding: 0px 30px;
     margin: 0px;
 }
@@ -80,7 +83,7 @@ article.flex-item {
     display: inline-block;
     text-align: center;
     text-decoration: none;    
-    padding: 1.1vh 1vw 1.1vh;
+    padding: 8px 1vw 8px;
     margin: 0px;
     float: left;
 }
@@ -91,7 +94,15 @@ article.flex-item {
 .navbar a.right {
     float: right;
 }
-
+.navbar #search-bar {
+    background: none;
+    border: none;
+    border-bottom: solid 1px var(--blog-theme-color);
+    color: var(--blog-back-color);
+}
+.navbar #search-bar:focus {
+    box-shadow: 0px 0px 5px 5px var(--blog-theme-color-extra-dark);
+}
 
 .footer {
     width: 100%;
@@ -169,6 +180,12 @@ article.flex-item {
     background-color: var(--blog-theme-color-dark);
 }
 
+#access-denied-main-header {
+    font-size: 60px;
+    font-weight: 400;
+    color: hsl(0, 100%, 50%);
+    text-align: center;
+}
 
 @media screen and (max-width: 768px) {
     .flex-container-column {

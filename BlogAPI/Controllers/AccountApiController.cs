@@ -10,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -50,7 +52,7 @@ namespace BlogAPI.Controllers
                 PasswordHashModel passwordHash = new PasswordHashModel();
                 passwordHash.FromDbString(user.PasswordHash);
 
-                (bool IsPasswordCorrect, bool iterationsNeedsUpgrade) = HashAndSalter.PasswordEqualsHash(password, passwordHash);
+                (bool IsPasswordCorrect, _) = HashAndSalter.PasswordEqualsHash(password, passwordHash);
 
                 if (IsPasswordCorrect)
                 {
@@ -117,15 +119,32 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public bool CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
-            // 1 Ensure that there are no users with the new email
+            // 1 Check that email is a valid email
+            if (IsValidEmailAddress(createAccountViewModel.EmailAddress) == false)
+            {
+                return false;
+            }
+            // 2 Ensure that there are no users with the new email
             List<UserModel> users = _db.GetAllUsers();
             if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
             {
                 return false;
             }
-            // 2 ok that email isn't used so this account can be created
+            // 3 ok that email isn't used so this account can be created
             _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
             return true;
+        }
+        private bool IsValidEmailAddress(string emailAddress) // todo: move this method to an emailing class once there are more emailing methods.
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailAddress);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
 
         /// <summary>
