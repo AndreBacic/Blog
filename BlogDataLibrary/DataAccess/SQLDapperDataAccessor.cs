@@ -45,7 +45,7 @@ namespace BlogDataLibrary.DataAccess
                 article.Id = parameters.Get<int>("@id");
             }
 
-            if (article.Comments.Any())
+            if (article.Comments != null && article.Comments.Any())
             {
                 foreach (CommentModel comment in article.Comments)
                 {

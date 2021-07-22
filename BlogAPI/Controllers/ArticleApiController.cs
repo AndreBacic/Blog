@@ -3,7 +3,10 @@ using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -49,20 +52,27 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsAdmin"))]
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]ArticleViewModel article)
+        public void Post([FromBody]CreateOrEditArticleViewModel article)
         {
             // TODO: Validate user input before saving to the db.
-            _db.CreateArticle(article.GetAsDbArticleModel());
+            ArticleModel dbArticle = article.GetAsDbArticleModel();
+            dbArticle.DatePosted = DateTime.UtcNow;
+            if (string.IsNullOrWhiteSpace(dbArticle.AuthorName))
+            {
+                dbArticle.AuthorName = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Name).First().Value;
+            }
+            _db.CreateArticle(dbArticle);
         }
 
         [Authorize(Policy = ("IsAdmin"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]ArticleViewModel article)
+        public void Put(int id, [FromBody]CreateOrEditArticleViewModel article)
         {
             // TODO: Validate user input before saving to the db.
             ArticleModel dbArticle = article.GetAsDbArticleModel();
             dbArticle.Id = id;
+            dbArticle.LastEdited = DateTime.UtcNow;
             _db.UpdateArticle(dbArticle);
         }
 

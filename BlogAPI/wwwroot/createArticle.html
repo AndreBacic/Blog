@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="css/site.css" />
+    <script async src="js/site.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        form {
+            grid-template-rows: auto auto auto auto auto auto;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        window.onload = function () {
+            this.RenderTempletesAsync().then()
+        }
+    </script>
+    <main>
+        <form action="javascript:void(0)" onsubmit="GetArticleDataAndSubmitAsync().then()" class="account-form">
+            <h1>Create New Article</h1>
+            <div>
+                <label for="titleInput">Title: </label><br />
+                <input id="titleInput" type="text" class="account-text-input" contenteditable="true" />
+            </div>
+            <div>
+                <label for="tagsInput">Tags: </label><br />
+                <input id="tagsInput" type="text" class="account-text-input" contenteditable="true" />
+            </div>
+            <div>
+                <label for="nameInput">Author Name: </label><br />
+                <input id="nameInput" type="text" class="account-text-input" contenteditable="true" />
+            </div>
+            <div>
+                <label for="contentInput">Content: </label><br />
+                <textarea id="contentInput" style="height: 300px;" class="account-text-input" placeholder="Add article content" contenteditable="true"></textarea>
+            </div>
+            <input type="submit" class="blog-button" value="Submit" />
+        </form>
+        <script>
+            async function GetArticleDataAndSubmitAsync() {
+                let titleInput = document.getElementById("titleInput")
+                let tagsInput = document.getElementById("tagsInput")
+                let nameInput = document.getElementById("nameInput")
+                let contentInput = document.getElementById("contentInput")
+
+                let tags = tagsInput.value.split(' ')
+
+                const article = {
+                    Title: titleInput.value,
+                    Tags: tags,
+                    AuthorName: nameInput.value,
+                    ContentText: contentInput.value
+                }
+                await CreateArticleAsync(article)
+
+                window.location.reload()
+            }
+        </script>
+    </main>
+</body>
+</html>
