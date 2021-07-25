@@ -33,8 +33,7 @@ async function LoginAsync(email, password) {
             })
         })
     let jwt = await somePromise.json()
-    let user = JSON.stringify(jwt)
-    if (user.value === "Invalid password") {
+    if (jwt.value === "Invalid password" || jwt.value === "Invalid email address") {
         return
     }
     // Only log in user if the password was valid
@@ -337,8 +336,15 @@ async function RenderArticlePageMainAsync() {
     let id = parseInt(GetUrlSearch())
     let json = await GetArticleByIdAsync(id)
     let article = RenderFullArticle(json)
-    document.getElementById("main").appendChild(article)
+    document.getElementById("main").prepend(article)
     document.title = `${json.title} - Blog` // todo: give this site a better name than 'Blog'
+
+    RenderPostCommentForm()
+    if (json.comments.length > 0) {
+        RenderCommentList(json)
+    } else {
+        // todo: render 'no comments' instead of comment list
+    }
 }
 
 function RenderFullArticle(articleJSON) {
@@ -386,11 +392,24 @@ function RenderFullArticle(articleJSON) {
 
     article.appendChild(infoDiv)
 
-    // TODO: Fill in comments at the bottom
-
     return article
 }
 
 function formatDateForArticle(date, statement) {
     return `${statement} ${date.getUTCMonth()} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
+}
+
+function RenderPostCommentForm() {
+    // TODO: Finish this method
+    if (isUserLoggedIn()) {
+
+    } else {
+
+    }
+}
+
+function RenderCommentList(articleJSON) {
+    articleJSON.comments.forEach((value, index) => {
+        // todo: render comments
+    })    
 }
