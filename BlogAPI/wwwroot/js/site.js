@@ -425,6 +425,7 @@ function RenderPostCommentForm() {
         postCommentButton.onclick = postComment
         postCommentButton.className = "blog-button"
         postCommentButton.textContent = "Submit"
+        postCommentButton.type = "button"
         form.appendChild(postCommentButton)
 
         // TODO: have edit comment option for the comment's owner

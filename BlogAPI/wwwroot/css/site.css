@@ -249,7 +249,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 #post-comment-form {
-    margin: 2px 10vw 5px;
+    margin: 12px 10vw 5px;
     padding: 10px 20px;
     border: 1px solid var(--blog-theme-color-dark);
     border-radius: 15px;
