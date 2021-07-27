@@ -7,7 +7,7 @@ const commentURI = "api/CommentApi"
 function getAuthToken() {
     let authToken = null;
     try {
-        authToken = JSON.parse(localStorage.getItem('user'))
+        authToken = JSON.parse(localStorage.getItem('authToken'))
     } catch {
         return null
     }
@@ -37,7 +37,9 @@ async function LoginAsync(email, password) {
         return
     }
     // Only log in user if the password was valid
-    localStorage.setItem('user', JSON.stringify(jwt))
+    localStorage.setItem('authToken', JSON.stringify(jwt))
+    let user = await GetLoggedInUserAsync()
+    localStorage.setItem('user', JSON.stringify(user))
 }
 async function LogoutAsync() {
     //let somePromise = await fetch(`${accountURI}/logout`,
@@ -48,6 +50,7 @@ async function LogoutAsync() {
     //        }
     //    })
     //let success = await somePromise.text()
+    localStorage.removeItem('authToken')
     localStorage.removeItem('user')
 }
 
@@ -92,6 +95,10 @@ async function EditAccountAsync(user) {
             body: JSON.stringify(user)
         })
     let success = await createPromise.json()
+    if (success === true) {
+        let user = await GetLoggedInUserAsync()
+        localStorage.setItem('user', JSON.stringify(user))
+    }
     return success
 }
 
@@ -242,7 +249,7 @@ async function DeleteCommentAsync(id) {
 
 function GetUrlSearch() {
     let url = window.location.search
-    return url.slice(1)
+    return url.split('?')[1]
 }
 
 
@@ -409,15 +416,18 @@ function RenderPostCommentForm() {
         form.appendChild(formHeader)
 
         const commentInput = document.createElement("textarea")
+        commentInput.id = "commentInput"
         commentInput.contentEditable = true
         commentInput.placeholder = "Your comment"
         form.appendChild(commentInput)
 
         const postCommentButton = document.createElement("button")
-        postCommentButton.onclick = "postComment().then()"
+        postCommentButton.onclick = postComment
         postCommentButton.className = "blog-button"
         postCommentButton.textContent = "Submit"
         form.appendChild(postCommentButton)
+
+        // TODO: have edit comment option for the comment's owner
 
     } else {
         const paragraph = document.createElement("p")
@@ -430,6 +440,11 @@ function RenderPostCommentForm() {
 function RenderCommentList(articleJSON) {
     let commentList = document.getElementById("comment-list")
     if (articleJSON.comments.length > 0) {
+        const commentsTitle = document.createElement("h3")
+        commentsTitle.textContent = `Comments:`
+        commentsTitle.style.margin = "15px 5px 5px 10px"
+        commentList.appendChild(commentsTitle)
+
         articleJSON.comments.forEach((value, index) => {
             const newComment = document.createElement("div")
             newComment.className = "comment"
@@ -438,11 +453,13 @@ function RenderCommentList(articleJSON) {
             contentP.textContent = `${value.author.name}: ${value.contentText}`
 
             const datesP = document.createElement("p")
-            datesP.textContent = `${formatDateForArticle(value.datePosted, 'Posted')}`
+            datePosted = new Date(value.datePosted)
+            datesP.textContent = `${formatDateForArticle(datePosted, 'Posted')}`
+
             if (value.lastEdited != '') {
                 lastEdited = new Date(value.lastEdited)
                 if (lastEdited.getUTCFullYear() != 1) {
-                    datesP.textContent += `, ${formatDateForArticle(value.datePosted, 'Last Edited')}`
+                    datesP.textContent += `, ${formatDateForArticle(lastEdited, 'Last Edited')}`
                 }
             }
             newComment.appendChild(contentP)
@@ -459,6 +476,16 @@ function RenderCommentList(articleJSON) {
     }
 }
 
-async function postComment() {
-
+function postComment() {
+    let comment_content_input = document.getElementById("commentInput")
+    if (comment_content_input.value.replace(/\s/g, '').length) {
+        let user = JSON.parse(localStorage.getItem('user'))
+        let articleId = parseInt(GetUrlSearch())
+        comment = {
+            author: user,
+            contentText: comment_content_input.value,
+            articleId: articleId
+        }
+        CreateCommentAsync(comment).then()
+    }
 }

@@ -58,7 +58,7 @@
     </form>
     <script>
         async function FillOutKnownUserDataAsync() {
-            let user = await GetLoggedInUserAsync()
+            let user = JSON.parse(localStorage.getItem('user'))
             document.getElementById("firstNameInput").value = user.firstName
             document.getElementById("lastNameInput").value = user.lastName
             document.getElementById("emailInput").value = user.emailAddress

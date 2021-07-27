@@ -113,6 +113,10 @@
 </template>
 <template id="footer-user-logged-in">
     <footer id="footer" class="footer">
-        <h1 style="text-align: center;">(You Are Logged In)</h1>
+        <h1 id="footer-header"></h1>
+        <script>
+            let user = JSON.parse(localStorage.getItem('user'))
+            document.getElementById("footer-header").textContent = `You are logged in as: ${user.name}`
+        </script>
     </footer>
 </template>

@@ -3,6 +3,7 @@ using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,12 +50,14 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsCommenter"))]
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]CommentViewModel comment)
+        public void Post([FromBody]CreateOrEditCommentViewModel comment)
         {
             // TODO: Validate user input before saving to the db.
             if (comment.ArticleId > 0)
             {
-                _db.CreateComment(comment.GetAsDbCommentModel(), comment.ArticleId);
+                CommentModel dbComment = comment.GetAsDbCommentModel();
+                dbComment.DatePosted = DateTime.UtcNow;
+                _db.CreateComment(dbComment, comment.ArticleId);
             }
             else
             {
@@ -65,11 +68,12 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsCommenter"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]CommentViewModel comment)
+        public void Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
         {
             // TODO: Validate user input before saving to the db.
             CommentModel dbComment = comment.GetAsDbCommentModel();
             dbComment.Id = id;
+            dbComment.LastEdited = DateTime.UtcNow;
             _db.UpdateComment(dbComment);
         }
 
@@ -78,6 +82,7 @@ namespace BlogAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            // TODO: Validate that the comment id is for the logged in user's comment and not just a random comment.
             _db.DeleteComment(id);
         }
     }
