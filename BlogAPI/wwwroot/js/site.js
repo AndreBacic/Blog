@@ -250,6 +250,47 @@ function GetUrlSearch() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /// DOM Rendering Methods  ///////////////////////////////////////////////////////////////////////////
 
+async function RenderTempletesAsync(haveSearch = true) {
+    let isLoggedIn = isUserLoggedIn()
+
+    let promisething = await fetch("templates.html")
+    let data = await promisething.text()
+    parser = new DOMParser()
+    let templates = parser.parseFromString(data, 'text/html')
+
+    let navbar = null;
+    if (haveSearch) {
+        if (isLoggedIn) {
+            navbar = templates.querySelector('#navbar-logged-in-with-search')
+        } else {
+            navbar = templates.querySelector('#navbar-with-search')
+        }
+    } else {
+        if (isLoggedIn) {
+            navbar = templates.querySelector('#navbar-logged-in-no-search')
+        } else {
+            navbar = templates.querySelector('#navbar-no-search')
+        }
+    }
+    let navClone = navbar.content.cloneNode(true)
+    document.body.prepend(navClone)
+
+    let header = templates.querySelector('#header')
+    let headerClone = header.content.cloneNode(true)
+    document.body.prepend(headerClone)
+
+    let footer = null;
+    if (isLoggedIn) {
+        footer = templates.querySelector('#footer-user-logged-in')
+    } else {
+        footer = templates.querySelector('#footer-not-logged-in')
+    }
+    let footerClone = footer.content.cloneNode(true)
+    document.body.append(footerClone)
+}
+
+
+
 async function RenderArticles() {
     articles = await GetAllArticlesAsync()
     let articleList = document.getElementById("articleList")
@@ -293,44 +334,8 @@ function RenderPreviewOfArticle(articleJSON) {
     return link
 }
 
-async function RenderTempletesAsync(haveSearch = true) {
-    let isLoggedIn = isUserLoggedIn()
 
-    let promisething = await fetch("templates.html")
-    let data = await promisething.text()
-    parser = new DOMParser()
-    let templates = parser.parseFromString(data, 'text/html')
 
-    let navbar = null;
-    if (haveSearch) {
-        if (isLoggedIn) {
-            navbar = templates.querySelector('#navbar-logged-in-with-search')
-        } else {
-            navbar = templates.querySelector('#navbar-with-search')
-        }
-    } else {
-        if (isLoggedIn) {
-            navbar = templates.querySelector('#navbar-logged-in-no-search')
-        } else {
-            navbar = templates.querySelector('#navbar-no-search')
-        }
-    }
-    let navClone = navbar.content.cloneNode(true)
-    document.body.prepend(navClone)
-
-    let header = templates.querySelector('#header')
-    let headerClone = header.content.cloneNode(true)
-    document.body.prepend(headerClone)
-
-    let footer = null;
-    if (isLoggedIn) {
-        footer = templates.querySelector('#footer-user-logged-in')
-    } else {
-        footer = templates.querySelector('#footer-not-logged-in')
-    }
-    let footerClone = footer.content.cloneNode(true)
-    document.body.append(footerClone)
-}
 
 async function RenderArticlePageMainAsync() {
     let id = parseInt(GetUrlSearch())
@@ -396,20 +401,45 @@ function RenderFullArticle(articleJSON) {
 }
 
 function formatDateForArticle(date, statement) {
-    return `${statement} ${date.getUTCMonth()} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
+    return `${statement} ${date.toLocaleDateString('default', { month: 'long' })} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
 }
 
 function RenderPostCommentForm() {
     // TODO: Finish this method
+    let form = document.getElementById("post-comment-form")
+
     if (isUserLoggedIn()) {
 
     } else {
-
+        const paragraph = document.createElement("p")
+        paragraph.innerHTML = "Please <a href='login.html'>log in</a> to post comments."
+        form.appendChild(paragraph)
+        form.style.textAlign = "center"
+        form.style.color = "hsl(0, 0%, 0%)"
     }
 }
 
 function RenderCommentList(articleJSON) {
+    let commentList = document.getElementById("comment-list")
     articleJSON.comments.forEach((value, index) => {
-        // todo: render comments
-    })    
+        const newComment = document.createElement("div")
+        newComment.className = "comment"
+
+        const contentP = document.createElement("p")
+        contentP.textContent = `${value.author.name}: ${value.contentText}`
+
+        const datesP = document.createElement("p")
+        datesP.textContent = `${formatDateForArticle(value.datePosted, 'Posted')}`
+        if (value.lastEdited != '') {
+            lastEdited = new Date(value.lastEdited)
+            if (lastEdited.getUTCFullYear() != 1) {
+                datesP.textContent += `, ${formatDateForArticle(value.datePosted, 'Last Edited')}`
+            }
+        }
+        newComment.appendChild(contentP)
+        newComment.appendChild(datesP)
+
+        commentList.appendChild(newComment)
+    })
 }
+

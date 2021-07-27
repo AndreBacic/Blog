@@ -1,7 +1,8 @@
 ﻿/* Has padding and borders included in width and height of all elements */
 :root {
     --blog-forward-color: black;
-    --blog-back-color: white;
+    --blog-back-color: hsl(0, 0%, 95%);
+    --blog-content-back-color: hsl(0, 0%, 100%);
     --blog-theme-color-hue: 180;
     --blog-theme-color: hsl(var(--blog-theme-color-hue), 100%, 50%);
     --blog-theme-color-dark: hsl(var(--blog-theme-color-hue), 100%, 39%);
@@ -54,7 +55,7 @@ main > h1 {
     margin: 2px;
 }
 article.flex-item {
-    background-color: var(--blog-back-color);
+    background-color: var(--blog-content-back-color);
     height: 140px;
     min-width: 290px;
     max-width: 720px;
@@ -83,6 +84,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border: 2px solid var(--blog-theme-color-dark);
     border-radius: 3px;
     padding: 8px;
+    background-color: var(--blog-content-back-color);
 }
 .full-article h1, .full-article h2, .full-article h3, .full-article h4, .full-article h5, .full-article h6 {
     margin: 0px 2px;
@@ -92,6 +94,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border: none;
     border-top: 1px solid var(--blog-theme-color-dark);
     width: 100%;
+    background-color: var(--blog-content-back-color);
 }
 .article-info-div p {
     display: inline-block;
@@ -166,11 +169,11 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 .footer-signup-form {
     display: inline-grid;
     grid-template-columns: 100%;
-    grid-template-rows: auto auto auto auto auto;
+    grid-template-rows: repeat(5, auto);
     grid-row-gap: 12px;
 }
 .footer-signup-input {
-    background-color: var(--blog-back-color);
+    background-color: var(--blog-content-back-color);
     border: 2px solid var(--blog-theme-color);
     border-radius: 0;
     height: 35px;
@@ -188,17 +191,17 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     grid-row-gap: 1.5vh;
 }
 .login-form {
-    grid-template-rows: auto auto auto auto;
+    grid-template-rows: repeat(4, auto);
 }
 .register-form {
-    grid-template-rows: auto auto auto auto auto auto auto auto;
+    grid-template-rows: repeat(8, auto);
 }
 .edit-account-form {
-    grid-template-rows: auto auto auto auto auto auto auto auto;
+    grid-template-rows: repeat(8, auto);
 }
 
 .account-text-input {
-    background-color: var(--blog-back-color);
+    background-color: var(--blog-content-back-color);
     border: 3px solid var(--blog-theme-color);
     border-radius: 0;
     height: 25px;
@@ -225,11 +228,23 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     background-color: var(--blog-theme-color-dark);
 }
 
+.comment {
+
+}
+
 #access-denied-main-header {
     font-size: 60px;
     font-weight: 400;
     color: hsl(0, 100%, 50%);
     text-align: center;
+}
+
+#post-comment-form {
+    margin: 2px 10vw 5px;
+    padding: 10px 20px;
+    border: 1px solid var(--blog-theme-color-dark);
+    border-radius: 15px;
+    background-color: var(--blog-content-back-color);
 }
 
 @media screen and (max-width: 768px) {
