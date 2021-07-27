@@ -345,11 +345,7 @@ async function RenderArticlePageMainAsync() {
     document.title = `${json.title} - Blog` // todo: give this site a better name than 'Blog'
 
     RenderPostCommentForm()
-    if (json.comments.length > 0) {
-        RenderCommentList(json)
-    } else {
-        // todo: render 'no comments' instead of comment list
-    }
+    RenderCommentList(json)
 }
 
 function RenderFullArticle(articleJSON) {
@@ -405,41 +401,64 @@ function formatDateForArticle(date, statement) {
 }
 
 function RenderPostCommentForm() {
-    // TODO: Finish this method
     let form = document.getElementById("post-comment-form")
 
     if (isUserLoggedIn()) {
+        const formHeader = document.createElement("h4")
+        formHeader.textContent = `Leave a comment`
+        form.appendChild(formHeader)
+
+        const commentInput = document.createElement("textarea")
+        commentInput.contentEditable = true
+        commentInput.placeholder = "Your comment"
+        form.appendChild(commentInput)
+
+        const postCommentButton = document.createElement("button")
+        postCommentButton.onclick = "postComment().then()"
+        postCommentButton.className = "blog-button"
+        postCommentButton.textContent = "Submit"
+        form.appendChild(postCommentButton)
 
     } else {
         const paragraph = document.createElement("p")
         paragraph.innerHTML = "Please <a href='login.html'>log in</a> to post comments."
         form.appendChild(paragraph)
         form.style.textAlign = "center"
-        form.style.color = "hsl(0, 0%, 0%)"
     }
 }
 
 function RenderCommentList(articleJSON) {
     let commentList = document.getElementById("comment-list")
-    articleJSON.comments.forEach((value, index) => {
-        const newComment = document.createElement("div")
-        newComment.className = "comment"
+    if (articleJSON.comments.length > 0) {
+        articleJSON.comments.forEach((value, index) => {
+            const newComment = document.createElement("div")
+            newComment.className = "comment"
 
-        const contentP = document.createElement("p")
-        contentP.textContent = `${value.author.name}: ${value.contentText}`
+            const contentP = document.createElement("p")
+            contentP.textContent = `${value.author.name}: ${value.contentText}`
 
-        const datesP = document.createElement("p")
-        datesP.textContent = `${formatDateForArticle(value.datePosted, 'Posted')}`
-        if (value.lastEdited != '') {
-            lastEdited = new Date(value.lastEdited)
-            if (lastEdited.getUTCFullYear() != 1) {
-                datesP.textContent += `, ${formatDateForArticle(value.datePosted, 'Last Edited')}`
+            const datesP = document.createElement("p")
+            datesP.textContent = `${formatDateForArticle(value.datePosted, 'Posted')}`
+            if (value.lastEdited != '') {
+                lastEdited = new Date(value.lastEdited)
+                if (lastEdited.getUTCFullYear() != 1) {
+                    datesP.textContent += `, ${formatDateForArticle(value.datePosted, 'Last Edited')}`
+                }
             }
-        }
-        newComment.appendChild(contentP)
-        newComment.appendChild(datesP)
+            newComment.appendChild(contentP)
+            newComment.appendChild(datesP)
 
-        commentList.appendChild(newComment)
-    })
+            commentList.appendChild(newComment)
+        })
+    } else {
+        const notice = document.createElement("p")
+        notice.textContent = "This article has no comments yet."
+
+        commentList.appendChild(notice)
+        commentList.style.textAlign = "center"
+    }
 }
 
+async function postComment() {
+
+}

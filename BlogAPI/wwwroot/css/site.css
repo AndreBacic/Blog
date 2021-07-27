@@ -26,6 +26,9 @@ body {
     flex-direction: column;
     font-family: Trebuchet MS, Helvetica, sans-serif;
 }
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
 
 main {
     flex-grow: 1;
@@ -229,7 +232,12 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 .comment {
-
+    margin: 2px 10vw 5px;
+    padding: 10px 20px;
+    border: 1px solid var(--blog-theme-color);
+    border-top: 3px solid var(--blog-theme-color-dark);
+    border-radius: 1px;
+    background-color: var(--blog-content-back-color);
 }
 
 #access-denied-main-header {
@@ -245,6 +253,25 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border: 1px solid var(--blog-theme-color-dark);
     border-radius: 15px;
     background-color: var(--blog-content-back-color);
+}
+#post-comment-form textarea {
+    width: calc(100% - 130px);
+    height: 50px;
+    border: none;
+    box-shadow: 0px 0px 6px 1px var(--blog-theme-color);
+}
+#post-comment-form textarea:focus {
+    border: 1px solid var(--blog-theme-color-dark);
+}
+
+#post-comment-form button {
+    float: right;
+}
+#post-comment-form h4 {
+    margin: 10px 0px;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--blog-theme-color-dark);
 }
 
 @media screen and (max-width: 768px) {
