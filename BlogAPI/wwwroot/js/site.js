@@ -487,6 +487,9 @@ function postComment() {
             contentText: comment_content_input.value,
             articleId: articleId
         }
-        CreateCommentAsync(comment).then()
+        CreateCommentAsync(comment).then(() => {
+            comment_content_input.value = ""
+            window.location.reload()
+        })
     }
 }
