@@ -336,7 +336,22 @@ function RenderPreviewOfArticle(articleJSON) {
     citedAuthorName.textContent = articleJSON.authorName
 
     authorNameLabel.appendChild(citedAuthorName)
+    authorNameLabel.innerHTML += "<br />"
+
+    const datesP = document.createElement("p")
+    datePosted = new Date(articleJSON.datePosted)
+    datesP.textContent = `${formatDateForArticle(datePosted, 'Posted')}`
+
+    if (articleJSON.lastEdited != '') {
+        lastEdited = new Date(articleJSON.lastEdited)
+        if (lastEdited.getUTCFullYear() != 1) {
+            datesP.textContent += `, ${formatDateForArticle(lastEdited, 'Last Edited')}`
+        }
+    }
+    authorNameLabel.appendChild(datesP)
+
     article.appendChild(authorNameLabel)
+
 
     if (articleJSON.tags.length > 0) {
         const tagsDiv = document.createElement("div")
@@ -415,8 +430,26 @@ function RenderFullArticle(articleJSON) {
             infoDiv.appendChild(lastEditedParagraph)
         }
     }
-
     infoDiv.appendChild(datePostedParagraph)
+
+    if (articleJSON.tags.length > 0) {
+        infoDiv.innerHTML += "<br />"
+        const tagsDiv = document.createElement("div")
+        tagsDiv.className = "tags-container"
+
+        const tagsHeader = document.createElement("h4")
+        tagsHeader.textContent = "Tags: "
+        tagsDiv.appendChild(tagsHeader)
+
+        articleJSON.tags.forEach((tag) => {
+            let newTag = document.createElement("p")
+            newTag.className = "tag"
+            newTag.textContent = tag
+            tagsDiv.appendChild(newTag)
+        })
+
+        infoDiv.appendChild(tagsDiv)
+    }
 
     article.appendChild(infoDiv)
 
