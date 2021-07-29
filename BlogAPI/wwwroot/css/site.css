@@ -58,6 +58,8 @@ main > h1 {
     margin: 2px;
 }
 article.flex-item {
+    margin-left: auto;
+    margin-right: auto;
     background-color: var(--blog-content-back-color);
     height: 140px;
     min-width: 290px;

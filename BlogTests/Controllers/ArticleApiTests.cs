@@ -32,8 +32,13 @@ namespace BlogDataLibrary.Tests.Controllers
         public void Put_ShouldWork(int id)
         {
             ArticleModel model = ApiSampleData.GetSampleArticles().Where(x => x.Id == id).First();
-            ArticleViewModel viewModel = new ArticleViewModel();
-            viewModel.SetThisToDbArticleModel(model);
+            CreateOrEditArticleViewModel viewModel = new CreateOrEditArticleViewModel
+            {
+                AuthorName = model.AuthorName,
+                ContentText = model.ContentText,
+                Tags = model.Tags,
+                Title = model.Title
+            };
 
             using (AutoMock mock = AutoMock.GetLoose())
             {
