@@ -9,8 +9,8 @@
     <nav class="navbar">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a class="right" href="#footer">Sign Up</a>
-        <a class="right" href="login.html">Login</a>
+        <a class="right" href="#footer" id="sign-up-link">Sign Up</a>
+        <a class="right" href="login.html" id="login-link">Login</a>
         <div style="float:right;">
             <label for="search-bar">Search:</label>
             <input id="search-bar" type="text" class="navbar-input" contenteditable="true" />
@@ -21,8 +21,8 @@
     <nav id="nav-no-search" class="navbar">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a class="right" href="#footer">Sign Up</a>
-        <a class="right" href="login.html">Login</a>
+        <a class="right" href="#footer" id="sign-up-link">Sign Up</a>
+        <a class="right" href="login.html" id="login-link">Login</a>
     </nav>
 </template>
 <template id="navbar-logged-in-with-search">
@@ -50,10 +50,10 @@
     <footer id="footer" class="footer">
         <aside class="footer-signup-prompt">Please subscribe:</aside>
         <form class="footer-signup-form" id="register-form" action="javascript:void(0)">
-            <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" />
-            <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" />
-            <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" />
-            <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" />
+            <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" required/>
+            <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" required/>
+            <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" required/>
+            <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" required/>
             <div style="display: inline-block;">
                 <button type="button" class="blog-button" onclick="GetRegisterDataAndLoginAsync().then()" style="float:right;">Sign Up</button>
             </div>

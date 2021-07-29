@@ -267,19 +267,21 @@ async function RenderTempletesAsync(haveSearch = true) {
 
     let navbar = null;
     if (haveSearch) {
-        if (isLoggedIn) {
-            navbar = templates.querySelector('#navbar-logged-in-with-search')
-        } else {
-            navbar = templates.querySelector('#navbar-with-search')
-        }
+        navbar = templates.querySelector('#navbar-with-search')        
     } else {
-        if (isLoggedIn) {
-            navbar = templates.querySelector('#navbar-logged-in-no-search')
-        } else {
-            navbar = templates.querySelector('#navbar-no-search')
-        }
+        navbar = templates.querySelector('#navbar-no-search')
     }
     let navClone = navbar.content.cloneNode(true)
+    
+    if (isLoggedIn) {
+        edit_account_link = navClone.querySelector("#sign-up-link")
+        edit_account_link.value = "Edit Account"
+        edit_account_link.href = "editAccount.html"
+
+        logout_link = navClone.querySelector("#login-link")
+        logout_link.value = "Logout"
+        logout_link.href = "javascript:void(LogoutAsync().then(window.location = 'index.html'))"
+    }
     document.body.prepend(navClone)
 
     let header = templates.querySelector('#header')

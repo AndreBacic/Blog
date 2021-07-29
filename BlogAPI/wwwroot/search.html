@@ -11,8 +11,22 @@
 <body>
     <script>
         window.onload = function () {
-            this.RenderTempletesAsync(true).then()
+            this.RenderTempletesAsync(false).then()
         }
     </script>
+    <main>
+        <div id="search-fields">
+            <label for="search-bar">Search:</label>
+            <input id="search-bar" type="text" class="account-text-input" contenteditable="true" />
+
+            <label for="tag-selector">Filter by tag:</label>
+            <select id="tag-selector">
+            </select>
+        </div>
+        <h1>Search results:</h1>
+        <div id="articleList" class="flex-container-column">
+
+        </div>
+    </main>
 </body>
 </html>
