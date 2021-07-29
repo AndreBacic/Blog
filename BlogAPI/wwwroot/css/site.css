@@ -61,8 +61,8 @@ article.flex-item {
     margin-left: auto;
     margin-right: auto;
     background-color: var(--blog-content-back-color);
-    height: 140px;
-    min-width: 290px;
+    min-height: 140px;
+    min-width: 360px;
     max-width: 720px;
     font-stretch: expanded;
     border: 2px groove var(--blog-theme-color);
@@ -90,6 +90,8 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border-radius: 3px;
     padding: 8px;
     background-color: var(--blog-content-back-color);
+    overflow: hidden;
+    text-wrap: normal;
 }
 .full-article h1, .full-article h2, .full-article h3, .full-article h4, .full-article h5, .full-article h6 {
     margin: 0px 2px;
@@ -161,18 +163,23 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     width: 100%;
     background-color: var(--blog-forward-color);
     padding: 18px;
-    display: inline-grid;
-    grid-template-columns: 40% 60%;
-    grid-template-rows: 100%;
+    display: grid;
+    grid-template-areas: "prompt input"
+                         "copyr input";
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: minmax(0, 3fr) minmax(0, 1fr);
+    grid-gap: 16px;
     font-weight: 200;
 }
 .footer-signup-prompt {
+    grid-area: prompt;
     font-size: 2rem;
     font-weight: 300;
     color: var(--blog-theme-color);
     padding: 20px 10px;
 }
 .footer-signup-form {
+    grid-area: input;
     display: inline-grid;
     grid-template-columns: 100%;
     grid-template-rows: repeat(5, auto);
@@ -187,6 +194,12 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 .footer-signup-input:focus {
     border-width: 4px;
     box-shadow: 0px 0px 5px 5px var(--blog-theme-color-extra-dark);
+}
+.footer-copyright {
+    grid-area: copyr;
+    border: none;
+    border-top: 2px solid var(--blog-theme-color);
+    color: var(--blog-theme-color);
 }
 
 .account-form {
@@ -242,6 +255,18 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border-radius: 1px;
     background-color: var(--blog-content-back-color);
 }
+.tags-container {
+    margin: 2px;
+    display: inline-block;
+    float: right;
+}
+.tag {
+    margin: 1px;
+    border: 1px solid var(--blog-theme-color-dark);
+    padding: 2px 3px;
+    font-size: 0.875rem;
+    color: var(--blog-theme-color-extra-dark);
+}
 
 #access-denied-main-header {
     font-size: 3.75rem;
@@ -256,12 +281,14 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border: 1px solid var(--blog-theme-color-dark);
     border-radius: 15px;
     background-color: var(--blog-content-back-color);
+    overflow: hidden;
 }
 #post-comment-form textarea {
     width: calc(100% - 130px);
-    height: 50px;
+    height: 40px;
     border: none;
     box-shadow: 0px 0px 6px 1px var(--blog-theme-color);
+    resize: vertical;
 }
 #post-comment-form textarea:focus {
     border: 1px solid var(--blog-theme-color-dark);
@@ -300,6 +327,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     }
     article.flex-item {
         width: 95vw;
+        min-width: 250px;
     }
     .navbar {
         min-height: 6.66em;
@@ -311,6 +339,12 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     .navbar div {
         width: 100%;
         height: 33.3%;
+    }
+    .footer {
+        grid-template-areas: "prompt" "input" "copyr";
+        grid-template-columns: 100%;
+        grid-template-rows: minmax(0, 3fr) minmax(0, 9fr) minmax(0, 2fr);
+        grid-gap: 8px;
     }
     #nav-no-search {
         min-height: 4.44em;
@@ -325,12 +359,6 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 @media screen and (max-width: 450px) {
-    #nav-no-search {
-        min-height: 8.88em;
-    }
-    #nav-no-search a {
-        height: 25%;
-    }
     .navbar {
         min-height: 11.1em;
     }
@@ -340,11 +368,28 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     }
     .footer {
         padding: 15px;
-        grid-template-columns: 100%;
-        grid-template-rows: 25% 75%;
+    }
+    .footer-signup-prompt {
+        font-size: 1.625rem;
     }
     .flex-container-column {
         flex-direction: column;
         flex-wrap: nowrap;
+    }
+    #nav-no-search {
+        min-height: 8.88em;
+    }
+    #nav-no-search a {
+        height: 25%;
+    }
+
+    #post-comment-form textarea {
+        width: 100%;
+    }
+    #post-comment-form button {
+        float: none;
+        margin-top: 3px;
+        margin-left: calc(50% - 60px);
+        margin-right: calc(50% - 60px);
     }
 }

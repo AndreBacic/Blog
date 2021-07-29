@@ -329,6 +329,7 @@ function RenderPreviewOfArticle(articleJSON) {
     //article.appendChild(content)
 
     const authorNameLabel = document.createElement("p")
+    authorNameLabel.style = "display: inline-block;"
     authorNameLabel.textContent = 'Written by '
 
     const citedAuthorName = document.createElement("cite")
@@ -336,6 +337,24 @@ function RenderPreviewOfArticle(articleJSON) {
 
     authorNameLabel.appendChild(citedAuthorName)
     article.appendChild(authorNameLabel)
+
+    if (articleJSON.tags.length > 0) {
+        const tagsDiv = document.createElement("div")
+        tagsDiv.className = "tags-container"
+
+        const tagsHeader = document.createElement("h4")
+        tagsHeader.textContent = "Tags: "
+        tagsDiv.appendChild(tagsHeader)
+
+        articleJSON.tags.forEach((tag) => {
+            let newTag = document.createElement("p")
+            newTag.className = "tag"
+            newTag.textContent = tag
+            tagsDiv.appendChild(newTag)
+        })
+
+        article.appendChild(tagsDiv)
+    }
 
     link.appendChild(article)
 
