@@ -275,11 +275,11 @@ async function RenderTempletesAsync(haveSearch = true) {
     
     if (isLoggedIn) {
         edit_account_link = navClone.querySelector("#sign-up-link")
-        edit_account_link.value = "Edit Account"
+        edit_account_link.innerText = "Edit Account"
         edit_account_link.href = "editAccount.html"
 
         logout_link = navClone.querySelector("#login-link")
-        logout_link.value = "Logout"
+        logout_link.innerText = "Logout"
         logout_link.href = "javascript:void(LogoutAsync().then(window.location = 'index.html'))"
     }
     document.body.prepend(navClone)
@@ -300,8 +300,7 @@ async function RenderTempletesAsync(haveSearch = true) {
 
 
 
-async function RenderArticles() {
-    articles = await GetAllArticlesAsync()
+async function RenderArticles(articles) {
     let articleList = document.getElementById("articleList")
     while (articleList.firstChild) {
         articleList.removeChild(articleList.firstChild)

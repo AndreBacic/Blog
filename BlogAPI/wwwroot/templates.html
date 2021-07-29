@@ -15,6 +15,15 @@
             <label for="search-bar">Search:</label>
             <input id="search-bar" type="text" class="navbar-input" contenteditable="true" />
         </div>
+        <script>
+            const search_bar = document.querySelector("#search-bar")
+            search_bar.addEventListener("keyup", function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    window.location = `search.html?${search_bar.value}`
+                }
+            })
+        </script>
     </nav>
 </template>
 <template id="navbar-no-search">
@@ -23,26 +32,6 @@
         <a href="about.html">About</a>
         <a class="right" href="#footer" id="sign-up-link">Sign Up</a>
         <a class="right" href="login.html" id="login-link">Login</a>
-    </nav>
-</template>
-<template id="navbar-logged-in-with-search">
-    <nav class="navbar">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a class="right" href="editAccount.html">Edit Account</a>
-        <a class="right" href="javascript:void(LogoutAsync().then(window.location = 'index.html'))">Logout</a>
-        <div style="float:right;">
-            <label for="search-bar">Search:</label>
-            <input id="search-bar" type="text" class="navbar-input" contenteditable="true" />
-        </div>
-    </nav>
-</template>
-<template id="navbar-logged-in-no-search">
-    <nav id="nav-no-search" class="navbar">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a class="right" href="editAccount.html">Edit Account</a>
-        <a class="right" href="javascript:void(LogoutAsync().then(window.location = 'index.html'))">Logout</a>
     </nav>
 </template>
 

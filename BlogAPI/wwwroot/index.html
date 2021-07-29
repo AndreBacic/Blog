@@ -10,9 +10,9 @@
 </head>
 <body>
     <script>
+        GetAllArticlesAsync().then((articles) => RenderArticles(articles).then())
         window.onload = function () {
-            this.RenderTempletesAsync().then()
-            RenderArticles(true).then()
+            this.RenderTempletesAsync().then()            
         }
     </script>
     <main>
