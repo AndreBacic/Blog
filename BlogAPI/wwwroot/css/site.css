@@ -150,7 +150,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     width: 140px;
     position: relative;
     top: 0px;
-    font-size: 16px;
+    font-size: 0.875rem;
     font-family: Verdana, sans-serif;
 }
 .navbar #search-bar:focus {
@@ -167,7 +167,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     font-weight: 200;
 }
 .footer-signup-prompt {
-    font-size: 2em;
+    font-size: 2rem;
     font-weight: 300;
     color: var(--blog-theme-color);
     padding: 20px 10px;
@@ -244,7 +244,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 #access-denied-main-header {
-    font-size: 60px;
+    font-size: 3.75rem;
     font-weight: 400;
     color: hsl(0, 100%, 50%);
     text-align: center;
@@ -282,8 +282,14 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     text-align: center;
     color: var(--blog-theme-color);
     font-weight: inherit;
-    font-size: 24px;
+    font-size: 1.5rem;
     grid-column: 1 / span 2
+}
+
+#search-fields {
+    margin: 10px 20px;
+    display: grid;
+    grid-template-columns: 70% 30%;
 }
 
 
@@ -295,12 +301,6 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     article.flex-item {
         width: 95vw;
     }
-    #nav-no-search {
-        min-height: 4.44em;
-    }
-    #nav-no-search a {
-        height: 50%;
-    }
     .navbar {
         min-height: 6.66em;
     }
@@ -311,6 +311,16 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     .navbar div {
         width: 100%;
         height: 33.3%;
+    }
+    #nav-no-search {
+        min-height: 4.44em;
+    }
+    #nav-no-search a {
+        height: 50%;
+    }
+    #search-fields {
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
     }
 }
 

@@ -14,22 +14,24 @@
         GetAllArticlesAsync().then((data) => {
             articles = data
             renderTagOptions()
+            searchBasedOnUrlQuery()
         })
         window.onload = function () {
             this.RenderTempletesAsync(false).then()
-            this.document.querySelector('#search-bar').value = this.GetUrlSearch()
-            searchByInputs()
         }
     </script>
     <main>
         <div id="search-fields">
-            <label for="search-bar">Search:</label>
-            <input id="search-bar" type="text" class="account-text-input" contenteditable="true" />
-
-            <label for="tag-selector">Filter by tag:</label>
-            <select id="tag-selector" onchange="searchByInputs()">
-                <option>(Any)</option>
-            </select>
+            <div>
+                <label for="search-bar">Search:</label>
+                <input id="search-bar" type="text" class="account-text-input" contenteditable="true" />
+            </div>
+            <div>
+                <label for="tag-selector">Filter by tag:</label>
+                <select id="tag-selector" onchange="searchByInputs()">
+                    <option>(Any)</option>
+                </select>
+            </div>
         </div>
         <h1>Search results:</h1>
         <div id="articleList" class="flex-container-column">
@@ -46,6 +48,13 @@
                 searchByInputs()
             }
         })
+
+        function searchBasedOnUrlQuery() {            
+            let urlString = GetUrlSearch().replace('%20', ' ').toLowerCase()
+            if (urlString === "undefigned") { urlString = "" }
+            search_bar.value = urlString
+            searchByInputs()
+        }
 
         function searchByInputs() {
             const search_string = search_bar.value
