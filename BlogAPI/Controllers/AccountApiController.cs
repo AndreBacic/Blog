@@ -64,8 +64,7 @@ namespace BlogAPI.Controllers
                         new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
                         new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.UtcNow.AddHours(12)).ToUnixTimeSeconds().ToString())
                     }; // TODO: Learn how to refresh a token like every 5 minutes
-
-
+                    
                     JwtSecurityToken token = new JwtSecurityToken(
                         new JwtHeader(
                             new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetValue<string>("JWTPrivateKey"))),

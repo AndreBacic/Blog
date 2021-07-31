@@ -7,6 +7,7 @@
     --blog-theme-color: hsl(var(--blog-theme-color-hue), 100%, 50%);
     --blog-theme-color-dark: hsl(var(--blog-theme-color-hue), 100%, 39%);
     --blog-theme-color-extra-dark: hsl(var(--blog-theme-color-hue), 100%, 24%);
+    --blog-theme-color-translucent: hsla(var(--blog-theme-color-hue), 100%, 50%, 0.75);
 }
 * {
     box-sizing: border-box;
@@ -36,7 +37,7 @@ main {
 main > h1 {
     margin: 6px 0px 6px 20px;
     border: 0;
-    border-bottom: 2px solid var(--blog-theme-color-dark);    
+    border-bottom: 2px solid var(--blog-theme-color-dark);
     display: inline-block;
 }
 
@@ -110,10 +111,33 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 .header {
     position: relative;
     top: 0;
-    background-color: var(--blog-theme-color);
+    background-color: var(--blog-theme-color-extra-dark);
+    background-image: url('../images/header code background.jpg');
     text-align: center;
+    min-height: 8rem;
     width: 100%;
-    padding: 40px;
+}
+.header div {
+    margin: 0px 30px;
+    height: 100%;
+    width: auto;
+    border: solid 3px var(--blog-theme-color);
+    border-top: none;
+    border-bottom: none;
+    background-color: var(--blog-theme-color-translucent);
+    color: var(--blog-forward-color);
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.header p {
+    margin: 0px;
+    width: 440px;
+    border: none;
+    border-top: 2px solid var(--blog-theme-color-extra-dark);
 }
 
 .navbar {
@@ -147,7 +171,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     background: none;
     border: none;
     border-bottom: solid 1px var(--blog-theme-color);
-    color: hsl(0, 0%, 92%);
+    color: var(--blog-back-color);
     height: 20px; 
     width: 140px;
     position: relative;
@@ -358,7 +382,21 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     }
 }
 
+@media screen and (max-width: 545px) {
+    .header p {
+        width: auto;
+        padding: 0px 20px;
+        margin: 0px 12px;
+    }
+    .header h1 {
+        margin: 0px 12px;
+    }
+}
+
 @media screen and (max-width: 450px) {
+    .header {
+        min-height: 12rem;
+    }
     .navbar {
         min-height: 11.1em;
     }
