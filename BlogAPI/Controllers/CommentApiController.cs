@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +26,15 @@ namespace BlogAPI.Controllers
         [HttpGet("{articleId}")]
         public List<CommentViewModel> Get(int articleId)
         {
-            List<CommentModel> comments = _db.GetAllCommentsInArticle(articleId);
+            List<CommentModel> comments = new List<CommentModel>();
+            try
+            {
+                comments = _db.GetAllCommentsInArticle(articleId);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
             foreach (CommentModel c in comments)
@@ -39,12 +48,19 @@ namespace BlogAPI.Controllers
         [HttpGet("articleId")] // data is entered like: https://[domain]/api/CommentApiController/Get/5?id=3
         public CommentViewModel Get(int articleId, int id)
         {
-            // note: id is the id of the comment we're getting
-            CommentModel comment = _db.GetAllCommentsInArticle(articleId)
-                                    .Where(c => c.Id == id).First();
-            CommentViewModel commentView = new CommentViewModel();
-            commentView.SetThisToDbCommentModel(comment);
-            return commentView;
+            try
+            {
+                // note: id is the id of the comment we're getting
+                CommentModel comment = _db.GetAllCommentsInArticle(articleId)
+                                        .Where(c => c.Id == id).First();
+                CommentViewModel commentView = new CommentViewModel();
+                commentView.SetThisToDbCommentModel(comment);
+                return commentView;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Authorize(Policy = ("IsCommenter"))]
@@ -53,7 +69,7 @@ namespace BlogAPI.Controllers
         public void Post([FromBody]CreateOrEditCommentViewModel comment)
         {
             // TODO: Validate user input before saving to the db.
-            if (comment.ArticleId > 0)
+            if (comment.ArticleId > 0 && _db.GetAllArticles().Any(x => x.Id == comment.ArticleId))
             {
                 CommentModel dbComment = comment.GetAsDbCommentModel();
                 dbComment.DatePosted = DateTime.UtcNow;
@@ -62,6 +78,7 @@ namespace BlogAPI.Controllers
             else
             {
                 // TODO: Figure out how to deal with trying to create a comment marked with an invalid article id.
+                return;
             }
         }
 
@@ -70,20 +87,43 @@ namespace BlogAPI.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
         {
-            // TODO: Validate user input before saving to the db.
-            CommentModel dbComment = comment.GetAsDbCommentModel();
-            dbComment.Id = id;
-            dbComment.LastEdited = DateTime.UtcNow;
-            _db.UpdateComment(dbComment);
+            if (IsLoggedInUsersComment(comment.ArticleId, id))
+            {
+                // todo: Validate user input before saving to the db.
+                CommentModel dbComment = comment.GetAsDbCommentModel();
+                dbComment.Id = id;
+                dbComment.LastEdited = DateTime.UtcNow;
+                _db.UpdateComment(dbComment); 
+            }
         }
 
         [Authorize(Policy = ("IsCommenter"))]
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("articleId")] // data is entered like: https://[domain]/api/CommentApiController/Delete/5?id=3
+        public void Delete(int articleId, int id)
         {
-            // TODO: Validate that the comment id is for the logged in user's comment and not just a random comment.
-            _db.DeleteComment(id);
+            if (IsLoggedInUsersComment(articleId, id))
+            {
+                _db.DeleteComment(id);
+            }
+        }
+
+        private bool IsLoggedInUsersComment(int articleId, int commentId)
+        {
+            try
+            {
+                CommentModel oldComment = _db.GetAllCommentsInArticle(articleId)
+                                                .Where(x => x.Id == commentId).First();
+
+                // So if there's no error, we check if the old comment was posted by the logged in user.
+                string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+
+                return String.Equals(oldComment.Author.EmailAddress, userEmail);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

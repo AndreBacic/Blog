@@ -43,10 +43,17 @@ namespace BlogAPI.Controllers
         [HttpGet("{id}")]
         public ArticleViewModel Get(int id)
         {
-            ArticleViewModel articleView = new ArticleViewModel();
-            articleView.SetThisToDbArticleModel(_db.GetArticle(id));
+            try
+            {
+                ArticleViewModel articleView = new ArticleViewModel();
+                articleView.SetThisToDbArticleModel(_db.GetArticle(id));
 
-            return articleView;
+                return articleView;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Authorize(Policy = ("IsAdmin"))]

@@ -84,8 +84,6 @@ namespace BlogAPI.Controllers
             {
                 return BadRequest(new UnauthorizedObjectResult("Invalid email address"));
             }
-
-            return NoContent();
         }
 
         [Route("logout")]
