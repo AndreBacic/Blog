@@ -3,7 +3,7 @@
     <header class="header">
         <div>
             <h1>The Blog of Andre Bacic</h1>
-            <p>A blog about code and a project demoing my skills</p>
+            <p>A blog about code and a project demonstrating my skills</p>
         </div>
     </header>
 </template>
@@ -107,8 +107,11 @@
     </footer>
 </template>
 <template id="footer-user-logged-in">
-    <footer id="footer" class="footer">
+    <footer id="footer" class="footer-logged-in footer">
         <h1 id="footer-header"></h1>
+        <aside class="footer-copyright">
+            <p>© 2021 by Andre Bacic</p>
+        </aside>
         <script>
             let user = JSON.parse(localStorage.getItem('user'))
             document.getElementById("footer-header").textContent = `You are logged in as: ${user.name}`
