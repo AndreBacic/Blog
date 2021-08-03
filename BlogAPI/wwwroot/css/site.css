@@ -8,7 +8,7 @@
     --blog-theme-color-dark: hsl(var(--blog-theme-color-hue), 100%, 39%);
     --blog-theme-color-extra-dark: hsl(var(--blog-theme-color-hue), 100%, 24%);
     --blog-theme-color-translucent: hsla(var(--blog-theme-color-hue), 100%, 32%, 0.83);
-    --blog-side-margin: calc(50vw - 354px)
+    --blog-side-margin: calc(44vw - 308px)
 }
 * {
     box-sizing: border-box;
@@ -57,6 +57,7 @@ main > h1 {
 }
 
 .flex-item {
+    width: 100%;
     flex-grow: 1;
     flex-shrink: 1;
     margin: 2px;
@@ -261,7 +262,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border: 3px solid var(--blog-theme-color);
     border-radius: 0;
     height: 25px;
-    width: 50vw;
+    width: 70%;
     margin-top: 3px;
 }
 .account-text-input:focus {
@@ -341,6 +342,11 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     border-bottom: 1px solid var(--blog-theme-color-dark);
 }
 
+#comment-list {
+    margin-top: 1rem;
+    margin-bottom: 1.125rem;
+}
+
 #footer-header {
     margin: 0px;
     margin-bottom: 0.875rem;
@@ -351,7 +357,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 #search-fields {
-    margin: 10px 20px;
+    margin: 10px var(--blog-side-margin);
     display: grid;
     grid-template-columns: 70% 30%;
 }
@@ -366,7 +372,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
         flex-wrap: nowrap;
     }
     article.flex-item {
-        width: 95vw;
+        width: 100%;
         min-width: 200px;
     }
     .navbar {
@@ -395,6 +401,9 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
         grid-template-columns: auto;
         grid-template-rows: 55% 45%;
         grid-gap: 4px;
+    }
+    .account-text-input {
+        width: 80%;
     }
     #nav-no-search {
         min-height: 4.44em;
@@ -440,6 +449,9 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
     .flex-container-column {
         flex-direction: column;
         flex-wrap: nowrap;
+    }
+    .account-text-input {
+        width: 90%;
     }
     #nav-no-search {
         min-height: 8.88em;
