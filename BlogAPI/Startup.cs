@@ -38,7 +38,8 @@ namespace BlogAPI
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(3)
+                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 

@@ -78,7 +78,34 @@ namespace BlogDataLibrary.DataAccess
             }
         }
 
-        public void CreateUser(UserModel user, bool isUserPasswordPlaintext = true)
+        public void CreateRefreshToken(RefreshTokenModel token)
+        {
+            if (String.IsNullOrWhiteSpace(token.Token) ||
+                token.Created == null ||
+                String.IsNullOrWhiteSpace(token.CreatedByIp) ||
+                token.Expires == null ||
+                token.OwnerId == 0)
+            {
+                throw new FormatException("Invalid format for parameter 'token' for method 'CreateRefreshToken': no token fields except token.Id may be null or whitespace");
+            }
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Token", token.Token);
+                parameters.Add("@Created", token.Created);
+                parameters.Add("@CreatedByIp", token.CreatedByIp);
+                parameters.Add("@Expires", token.Expires);
+                parameters.Add("@OwnerId", token.OwnerId);
+                parameters.Add("@id", 0, DbType.Int32, ParameterDirection.Output);
+
+                connection.Execute("dbo.spRefreshTokens_Insert", parameters, commandType: CommandType.StoredProcedure);
+
+                token.Id = parameters.Get<int>("@id");
+            }
+        }
+
+        public void CreateUser(UserModel user, bool isUserPasswordPlaintext)
         {
             if (user.FirstName == null ||
                 user.LastName == null ||
@@ -140,6 +167,28 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@id", id);
 
                 connection.Execute("dbo.spComments_Delete", parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public void DeleteRefreshToken(int id)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                connection.Execute("dbo.spRefreshTokens_Delete", parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public void DeleteUser(int id)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                connection.Execute("dbo.spUsers_Delete", parameters, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -210,6 +259,20 @@ namespace BlogDataLibrary.DataAccess
 
             output.Comments = GetAllCommentsInArticle(output.Id);
 
+            return output;
+        }
+
+        public List<RefreshTokenModel> GetRefreshTokensByUserId(int userId)
+        {
+            List<RefreshTokenModel> output = new List<RefreshTokenModel>();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@OwnerId", userId);
+
+                output = connection.Query<RefreshTokenModel>("dbo.spRefreshTokens_GetByUser", parameters, commandType: CommandType.StoredProcedure).ToList();
+            }
             return output;
         }
 

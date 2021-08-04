@@ -216,5 +216,31 @@ namespace BlogAPI.Controllers
             //_db.DeleteUser(userId);
             throw new NotImplementedException("We don't actually allow our users to delete their accounts as of now.");
         }
+
+        private string ipAddress()
+        {
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                return Request.Headers["X-Forwarded-For"];
+            else
+                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        }
+    }
+
+    public static class TokenService
+    {
+        public static string GenerateJwtToken(List<Claim> userClaims, string signingKey)
+        {
+            JwtSecurityToken token = new JwtSecurityToken(
+                        new JwtHeader(
+                            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
+                                                    SecurityAlgorithms.HmacSha256)),
+                        new JwtPayload(userClaims));
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public static RefreshTokenModel GenerateRefreshToken()
+        {
+
+        }
     }
 }

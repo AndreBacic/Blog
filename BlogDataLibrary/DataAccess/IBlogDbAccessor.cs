@@ -13,7 +13,7 @@ namespace BlogDataLibrary.DataAccess
         /// If password is specified as NOT being plaintext, ensure that it is in the form "iterations.salt.passwordHash"
         /// </summary>
         /// <param name="user"></param>
-        public void CreateUser(UserModel user, bool isUserPasswordPlaintext = true);
+        public void CreateUser(UserModel user, bool isUserPasswordPlaintext);
         /// <summary>
         /// Updates all user data BUT the password
         /// </summary>
@@ -25,6 +25,7 @@ namespace BlogDataLibrary.DataAccess
         /// <param name="user"></param>
         /// <param name="newPassword"></param>
         public void UpdateUserPassword(UserModel user, string newPassword);
+        public void DeleteUser(int id);
 
         public ArticleModel GetArticle(int id);
         public List<ArticleModel> GetAllArticles();
@@ -45,5 +46,9 @@ namespace BlogDataLibrary.DataAccess
         public void CreateComment(CommentModel comment, int articleId);
         public void UpdateComment(CommentModel comment);
         public void DeleteComment(int id);
+
+        public List<RefreshTokenModel> GetRefreshTokensByUserId(int userId);
+        public void CreateRefreshToken(RefreshTokenModel token);
+        public void DeleteRefreshToken(int id);
     }
 }
