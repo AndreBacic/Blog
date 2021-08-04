@@ -2,6 +2,9 @@
 const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
+const millisToJwtExpiration = 300000 // 5 min
+const millisDelayToRefreshToken = millisToJwtExpiration - 60000 // minus 1 minute
+
 
 // AccountApi methods   ////////////////////////////////////////////////////////////
 function getAuthToken() {
@@ -42,16 +45,29 @@ async function LoginAsync(email, password) {
     localStorage.setItem('user', JSON.stringify(user))
 }
 async function LogoutAsync() {
-    //let somePromise = await fetch(`${accountURI}/logout`,
-    //    {
-    //        method: 'POST',
-    //        headers: {
-    //            'Authorization': 'Bearer '+getAuthToken()
-    //        }
-    //    })
-    //let success = await somePromise.text()
+    let somePromise = await fetch(`${accountURI}/logout`,
+        {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+getAuthToken()
+            }
+        })
+    let success = await somePromise.text()
     localStorage.removeItem('authToken')
     localStorage.removeItem('user')
+    return success
+}
+
+function RefreshTokenCallbackLoop() {
+    let somePromise = fetch(`${accountURI}/refresh-token`,
+        {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
+        }).then()
+    console.log("callback time!")
+    setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
 }
 
 async function GetLoggedInUserAsync() {
@@ -545,4 +561,11 @@ function postComment() {
             window.location.reload()
         })
     }
+}
+
+
+
+// Run this each time the file is loaded:
+if (isUserLoggedIn()) {
+    RefreshTokenCallbackLoop()
 }

@@ -86,10 +86,14 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
-            RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
+            }
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
+        [Authorize(Policy = "IsCommenter")]
         [Route("refresh-token")]
         [HttpPost]
         public IActionResult RefreshToken()
@@ -99,8 +103,8 @@ namespace BlogAPI.Controllers
             List<RefreshTokenModel> refreshTokens = _db.GetRefreshTokensByUserId(user.Id);
             string refreshToken = Request.Cookies["refreshToken"];
 
-            if (!refreshTokens.Any(x => DateTime.Compare(x.Expires, DateTime.UtcNow) <= 0 &&
-                                        String.Equals(x.Token, refreshToken)))
+            if (!refreshTokens.Where(x => DateTime.Compare(x.Expires, DateTime.UtcNow) >= 0 &&
+                                        String.Equals(x.Token, refreshToken)).Any())
             {
                 RevokeUsersOldRefreshTokens(user.Id);
                 return Unauthorized("No valid refresh token. Please login again.");

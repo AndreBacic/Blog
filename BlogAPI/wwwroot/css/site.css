@@ -8,7 +8,7 @@
     --blog-theme-color-dark: hsl(var(--blog-theme-color-hue), 100%, 39%);
     --blog-theme-color-extra-dark: hsl(var(--blog-theme-color-hue), 100%, 24%);
     --blog-theme-color-translucent: hsla(var(--blog-theme-color-hue), 100%, 32%, 0.83);
-    --blog-side-margin: calc(44vw - 308px)
+    --blog-side-margin: calc(44% - 309px)
 }
 * {
     box-sizing: border-box;
@@ -57,7 +57,6 @@ main > h1 {
 }
 
 .flex-item {
-    width: 100%;
     flex-grow: 1;
     flex-shrink: 1;
     margin: 2px;
@@ -371,7 +370,7 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
         flex-direction: column;
         flex-wrap: nowrap;
     }
-    article.flex-item {
+    .flex-item {
         width: 100%;
         min-width: 200px;
     }
