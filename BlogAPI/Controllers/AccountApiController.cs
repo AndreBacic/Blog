@@ -3,6 +3,7 @@ using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using BlogDataLibrary.Security;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -61,18 +62,14 @@ namespace BlogAPI.Controllers
                         new Claim(ClaimTypes.Name, user.Name),
                         new Claim(ClaimTypes.Email, user.EmailAddress),
                         new Claim(ClaimTypes.Role, user.Role),
-                        new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.UtcNow.AddHours(12)).ToUnixTimeSeconds().ToString())
-                    }; // TODO: Learn how to refresh a token like every 5 minutes
+                    };
                     
-                    JwtSecurityToken token = new JwtSecurityToken(
-                        new JwtHeader(
-                            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetValue<string>("JWTPrivateKey"))),
-                                                    SecurityAlgorithms.HmacSha256)),
-                        new JwtPayload(userClaims));
-                    string handler = new JwtSecurityTokenHandler().WriteToken(token);
+                    string handler = TokenService.GenerateJwtToken(userClaims, 
+                                                _config.GetValue<string>("JWTPrivateKey"));
 
-                    return new ObjectResult(handler);
+                    RefreshTheRefreshToken(user.Id);
+
+                    return Ok(handler);
                 }
                 else
                 {
@@ -87,24 +84,49 @@ namespace BlogAPI.Controllers
 
         [Route("logout")]
         [HttpPost]
-        public void Logout()
+        public IActionResult Logout()
         {
-            throw new NotImplementedException("Log out from JWT token?"); // TODO: Either complete or remove this method
+            RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        [Route("refresh-token")]
+        [HttpPost]
+        public IActionResult RefreshToken()
+        {
+            var user = GetLoggedInDbUserByEmail();
+
+            List<RefreshTokenModel> refreshTokens = _db.GetRefreshTokensByUserId(user.Id);
+            string refreshToken = Request.Cookies["refreshToken"];
+
+            if (!refreshTokens.Any(x => DateTime.Compare(x.Expires, DateTime.UtcNow) <= 0 &&
+                                        String.Equals(x.Token, refreshToken)))
+            {
+                RevokeUsersOldRefreshTokens(user.Id);
+                return Unauthorized("No valid refresh token. Please login again.");
+            }
+
+            // There is a valid refresh token in the db; perform operations
+            RefreshTheRefreshToken(user.Id);
+
+            var jwt = TokenService.GenerateJwtToken(User.Claims.ToList(),
+                                    _config.GetValue<string>("JWTPrivateKey"));
+
+            return StatusCode(StatusCodes.Status201Created, jwt);
         }
 
         [Authorize(Policy = "IsCommenter")]
         [Route("getLoggedInUser")]
         [HttpGet]
-        public UserViewModel GetLoggedInUser()
+        public IActionResult GetLoggedInUser()
         {
             // Get logged in user by email
-            string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-            UserModel user = _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+            UserModel user = GetLoggedInDbUserByEmail();
 
             UserViewModel userViewModel = new UserViewModel();
             userViewModel.SetThisToDbUserModel(user);
 
-            return userViewModel;
+            return StatusCode(StatusCodes.Status200OK, userViewModel);
         }
 
         /// <summary>
@@ -113,7 +135,7 @@ namespace BlogAPI.Controllers
         /// <param name="createAccountViewModel"></param>
         /// <returns></returns>
         [Route("createAccount")]
-        [HttpPost]
+        [HttpPost] // TODO: Refactor APIs to return IActionResult http codes instead of booleans
         public bool CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Check that email is a valid email
@@ -154,7 +176,12 @@ namespace BlogAPI.Controllers
         [HttpPut]
         public bool EditAccount([FromBody]UserViewModel userViewModel)
         {
-            // 1 Ensure that there are no users with the new email
+            // 1 Ensure email is valid
+            if (IsValidEmailAddress(userViewModel.EmailAddress) == false)
+            {
+                return false;
+            }
+            // 2 Ensure that there are no users with the new email
             List<UserModel> users = _db.GetAllUsers();
 
             string originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
@@ -164,7 +191,7 @@ namespace BlogAPI.Controllers
                 return false;
             }
 
-            // 2 update user data in column with the original email
+            // 3 update user data in column with the original email
             UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail).First();
             userViewModel.Id = oldDbUser.Id;
             UserModel newDbUser = userViewModel.GetAsDbUserModel();
@@ -184,12 +211,13 @@ namespace BlogAPI.Controllers
         public bool EditPassword([FromBody]EditPasswordModel editPasswordModel)
         {
             // 1 Get logged in user by email
-            string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-            UserModel user = _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+            UserModel user = GetLoggedInDbUserByEmail();
 
             // 2 Make sure that old password really is the old password
             PasswordHashModel dbPassword = new PasswordHashModel();
             dbPassword.FromDbString(user.PasswordHash);
+
+            // todo: validate password with regex
 
             (bool isSamePassword, bool needsUpgrade) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
             if (isSamePassword == false)
@@ -214,33 +242,50 @@ namespace BlogAPI.Controllers
             //int userId = users.Where(x => x.EmailAddress == originalEmail.Value).First().Id;
             //// 3 delete user by id
             //_db.DeleteUser(userId);
-            throw new NotImplementedException("We don't actually allow our users to delete their accounts as of now.");
+            return false; // We don't actually allow our users to delete their accounts as of now.
         }
 
-        private string ipAddress()
+        private void RefreshTheRefreshToken(int userId)
+        {
+            RevokeUsersOldRefreshTokens(userId);
+
+            var refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
+            _db.CreateRefreshToken(refreshToken);
+
+            setTokenCookie(refreshToken.Token);
+        }
+
+        private void RevokeUsersOldRefreshTokens(int userId)
+        {
+            var existingTokens = _db.GetRefreshTokensByUserId(userId);
+            foreach (var token in existingTokens)
+            {
+                _db.DeleteRefreshToken(token.Id);
+            }
+        }
+
+        private UserModel GetLoggedInDbUserByEmail()
+        {
+            string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+            return _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+        }
+
+        private void setTokenCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
+        private string IpAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))
                 return Request.Headers["X-Forwarded-For"];
             else
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        }
-    }
-
-    public static class TokenService
-    {
-        public static string GenerateJwtToken(List<Claim> userClaims, string signingKey)
-        {
-            JwtSecurityToken token = new JwtSecurityToken(
-                        new JwtHeader(
-                            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
-                                                    SecurityAlgorithms.HmacSha256)),
-                        new JwtPayload(userClaims));
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public static RefreshTokenModel GenerateRefreshToken()
-        {
-
         }
     }
 }
