@@ -512,7 +512,7 @@ function RenderCommentList(articleJSON) {
     if (articleJSON.comments.length > 0) {
         const commentsTitle = document.createElement("h3")
         commentsTitle.textContent = `Comments:`
-        commentsTitle.style.margin = "15px 5px 5px 10px"
+        commentsTitle.style.margin = "15px 5px 5px 0px"
         commentList.appendChild(commentsTitle)
 
         articleJSON.comments.forEach((value, index) => {
