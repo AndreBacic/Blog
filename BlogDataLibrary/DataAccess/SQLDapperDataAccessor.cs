@@ -232,6 +232,18 @@ namespace BlogDataLibrary.DataAccess
             return output;
         }
 
+        public List<RefreshTokenModel> GetAllRefreshTokens()
+        {
+            List<RefreshTokenModel> output = new List<RefreshTokenModel>();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                output = connection.Query<RefreshTokenModel>("dbo.spRefreshTokens_GetAll", commandType: CommandType.StoredProcedure)
+                                    .ToList();
+            }
+            return output;
+        }
+
         public List<UserModel> GetAllUsers()
         {
             List<UserModel> output = new List<UserModel>();

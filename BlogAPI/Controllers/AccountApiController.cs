@@ -44,9 +44,9 @@ namespace BlogAPI.Controllers
             {
                 user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
             }
-            catch (InvalidOperationException error)
+            catch (InvalidOperationException)
             {
-                // todo: maybe do something with the error message.
+                return BadRequest(new UnauthorizedObjectResult("Invalid email address"));
             }
             if (user != null)
             {
@@ -57,14 +57,8 @@ namespace BlogAPI.Controllers
 
                 if (IsPasswordCorrect)
                 {
-                    List<Claim> userClaims = new List<Claim>()
-                    {
-                        new Claim(ClaimTypes.Name, user.Name),
-                        new Claim(ClaimTypes.Email, user.EmailAddress),
-                        new Claim(ClaimTypes.Role, user.Role),
-                    };
-                    
-                    string handler = TokenService.GenerateJwtToken(userClaims, 
+                    string handler = TokenService.GenerateJwtToken(
+                                                GenerateUserClaimsList(user), 
                                                 _config.GetValue<string>("JWTPrivateKey"));
 
                     RefreshTheRefreshToken(user.Id);
@@ -93,27 +87,34 @@ namespace BlogAPI.Controllers
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
-        [Authorize(Policy = "IsCommenter")]
         [Route("refresh-token")]
         [HttpPost]
         public IActionResult RefreshToken()
         {
-            var user = GetLoggedInDbUserByEmail();
-
-            List<RefreshTokenModel> refreshTokens = _db.GetRefreshTokensByUserId(user.Id);
-            string refreshToken = Request.Cookies["refreshToken"];
-
-            if (!refreshTokens.Where(x => DateTime.Compare(x.Expires, DateTime.UtcNow) >= 0 &&
-                                        String.Equals(x.Token, refreshToken)).Any())
+            List<RefreshTokenModel> refreshTokens = _db.GetAllRefreshTokens();
+            string oldCookieRefreshToken = Request.Cookies["refreshToken"];
+            RefreshTokenModel oldDbRefreshToken = null;
+            try
             {
-                RevokeUsersOldRefreshTokens(user.Id);
+                 oldDbRefreshToken = refreshTokens.First(x => x.Token == oldCookieRefreshToken);
+            } 
+            catch
+            {
+                return Unauthorized("No valid refresh token. Please login again.");
+            }
+            UserModel user = _db.GetUser(oldDbRefreshToken.OwnerId);
+
+            if (DateTime.Compare(oldDbRefreshToken.Expires, DateTime.UtcNow) < 0)
+            {
+                // Refresh token has expired or user is not logged in.
                 return Unauthorized("No valid refresh token. Please login again.");
             }
 
             // There is a valid refresh token in the db; perform operations
             RefreshTheRefreshToken(user.Id);
 
-            var jwt = TokenService.GenerateJwtToken(User.Claims.ToList(),
+            var jwt = TokenService.GenerateJwtToken(
+                                    GenerateUserClaimsList(user),
                                     _config.GetValue<string>("JWTPrivateKey"));
 
             return StatusCode(StatusCodes.Status201Created, jwt);
@@ -249,6 +250,7 @@ namespace BlogAPI.Controllers
             return false; // We don't actually allow our users to delete their accounts as of now.
         }
 
+        // Private helper methods //////////////////////////////////////////////
         private void RefreshTheRefreshToken(int userId)
         {
             RevokeUsersOldRefreshTokens(userId);
@@ -256,7 +258,7 @@ namespace BlogAPI.Controllers
             var refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
             _db.CreateRefreshToken(refreshToken);
 
-            setTokenCookie(refreshToken.Token);
+            SetTokenCookie(refreshToken.Token);
         }
 
         private void RevokeUsersOldRefreshTokens(int userId)
@@ -274,7 +276,7 @@ namespace BlogAPI.Controllers
             return _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
         }
 
-        private void setTokenCookie(string token)
+        private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
@@ -282,6 +284,16 @@ namespace BlogAPI.Controllers
                 Expires = DateTime.UtcNow.AddDays(7)
             };
             Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
+        private List<Claim> GenerateUserClaimsList(UserModel user)
+        {
+            return new List<Claim>()
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.EmailAddress),
+                    new Claim(ClaimTypes.Role, user.Role),
+                };
         }
 
         private string IpAddress()

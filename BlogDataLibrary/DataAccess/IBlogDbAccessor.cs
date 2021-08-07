@@ -47,6 +47,7 @@ namespace BlogDataLibrary.DataAccess
         public void UpdateComment(CommentModel comment);
         public void DeleteComment(int id);
 
+        public List<RefreshTokenModel> GetAllRefreshTokens();
         public List<RefreshTokenModel> GetRefreshTokensByUserId(int userId);
         public void CreateRefreshToken(RefreshTokenModel token);
         public void DeleteRefreshToken(int id);
