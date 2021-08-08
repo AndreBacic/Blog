@@ -36,7 +36,7 @@ async function LoginAsync(email, password) {
             })
         })
     let jwt = await somePromise.json()
-    if (jwt.value === "Invalid password" || jwt.value === "Invalid email address") {
+    if (somePromise.status >= 400 || jwt.value === "Invalid password" || jwt.value === "Invalid email address") {
         return
     }
     // Only log in user if the password was valid
@@ -53,9 +53,13 @@ async function LogoutAsync() {
             }
         })
     let success = await somePromise.text()
+    LogOutUser()
+
+    return success
+}
+function LogOutUser() {
     localStorage.removeItem('authToken')
     localStorage.removeItem('user')
-    return success
 }
 
 function RefreshTokenCallbackLoop() {
@@ -67,12 +71,21 @@ function RefreshTokenCallbackLoop() {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getAuthToken()
             }
-        }).then(response => response.json())
+        }).then(response => {
+            if (response.status < 400) {
+                return response.json()
+            } else {
+                LogOutUser()
+                window.location.reload()
+                throw response.status
+            }
+        })
         .then(jwt => {
             localStorage.setItem('authToken', JSON.stringify(jwt))
-            console.log("callback time!") // todo: remove for propuction
+            console.log("callback time!") // todo: remove for production
             setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
         })
+        .catch(err => console.log(err))
 }
 
 async function GetLoggedInUserAsync() {
@@ -301,7 +314,8 @@ async function RenderTempletesAsync(haveSearch = true) {
 
         logout_link = navClone.querySelector("#login-link")
         logout_link.innerText = "Logout"
-        logout_link.href = "javascript:void(LogoutAsync().then(window.location = 'index.html'))"
+        logout_link.href = "javascript:void(0)"
+        logout_link.onclick = LogOutButtonOnClick
     }
     document.body.prepend(navClone)
 
@@ -317,6 +331,10 @@ async function RenderTempletesAsync(haveSearch = true) {
     }
     let footerClone = footer.content.cloneNode(true)
     document.body.append(footerClone)
+}
+
+function LogOutButtonOnClick() {
+    LogoutAsync().then(window.location = 'index.html')
 }
 
 
