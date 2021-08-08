@@ -59,15 +59,20 @@ async function LogoutAsync() {
 }
 
 function RefreshTokenCallbackLoop() {
-    let somePromise = fetch(`${accountURI}/refresh-token`,
+    let somePromise = fetch(`${accountURI}/refreshToken`,
         {
             method: 'POST',
             headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getAuthToken()
             }
-        }).then()
-    console.log("callback time!")
-    setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
+        }).then(response => response.json())
+        .then(jwt => {
+            localStorage.setItem('authToken', JSON.stringify(jwt))
+            console.log("callback time!") // todo: remove for propuction
+            setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
+        })
 }
 
 async function GetLoggedInUserAsync() {
@@ -565,6 +570,12 @@ function postComment() {
 
 
 
+// just for fun :)
+// uncomment window event listener in navbar template to restore
+function windowOnResizeChangeColor() {
+    document.documentElement.style.setProperty('--blog-theme-color-hue',
+        document.documentElement.clientWidth)
+}
 // Run this each time the file is loaded:
 if (isUserLoggedIn()) {
     RefreshTokenCallbackLoop()

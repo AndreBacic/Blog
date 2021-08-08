@@ -87,7 +87,7 @@ namespace BlogAPI.Controllers
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
-        [Route("refresh-token")]
+        [Route("refreshToken")]
         [HttpPost]
         public IActionResult RefreshToken()
         {
