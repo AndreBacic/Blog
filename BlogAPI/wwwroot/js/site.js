@@ -52,10 +52,13 @@ async function LogoutAsync() {
                 'Authorization': 'Bearer '+getAuthToken()
             }
         })
-    let success = await somePromise.text()
     LogOutUser()
 
-    return success
+    if (somePromise.status < 400) {
+        return true
+    } else {
+        return false
+    }
 }
 function LogOutUser() {
     localStorage.removeItem('authToken')
@@ -113,12 +116,15 @@ async function CreateAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    let success = await createPromise.json()
-    return success
+    if (createPromise.status < 400) {
+        return true
+    } else {
+        return false
+    }
 }
 
 async function EditAccountAsync(user) {
-    let createPromise = await fetch(`${accountURI}/editAccount`,
+    let editPromise = await fetch(`${accountURI}/editAccount`,
         {
             method: 'PUT',
             headers: {
@@ -128,7 +134,8 @@ async function EditAccountAsync(user) {
             },
             body: JSON.stringify(user)
         })
-    let success = await createPromise.json()
+    let success = editPromise.status < 400
+
     if (success === true) {
         let user = await GetLoggedInUserAsync()
         localStorage.setItem('user', JSON.stringify(user))
@@ -137,7 +144,7 @@ async function EditAccountAsync(user) {
 }
 
 async function EditPasswordAsync(oldPassword, newPassword) {
-    let createPromise = await fetch(`${accountURI}/editPassword`,
+    let editPromise = await fetch(`${accountURI}/editPassword`,
         {
             method: 'PUT',
             headers: {
@@ -150,8 +157,7 @@ async function EditPasswordAsync(oldPassword, newPassword) {
                 "NewPassword": newPassword
             })
         })
-    let success = await createPromise.json()
-    return success
+    return editPromise.status < 400
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
@@ -594,6 +600,7 @@ function windowOnResizeChangeColor() {
     document.documentElement.style.setProperty('--blog-theme-color-hue',
         document.documentElement.clientWidth)
 }
+
 // Run this each time the file is loaded:
 if (isUserLoggedIn()) {
     RefreshTokenCallbackLoop()

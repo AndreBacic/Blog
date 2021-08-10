@@ -2,6 +2,7 @@
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace BlogAPI.Controllers
         }
         // GET: api/<controller>
         [HttpGet("{articleId}")]
-        public List<CommentViewModel> Get(int articleId)
+        public IActionResult Get(int articleId)
         {
             List<CommentModel> comments = new List<CommentModel>();
             try
@@ -33,7 +34,7 @@ namespace BlogAPI.Controllers
             }
             catch (Exception)
             {
-                return null;
+                return StatusCode(StatusCodes.Status404NotFound);
             }
 
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
@@ -43,10 +44,10 @@ namespace BlogAPI.Controllers
                 commentView.SetThisToDbCommentModel(c);
                 commentViews.Add(commentView);
             }
-            return commentViews;
+            return StatusCode(StatusCodes.Status200OK, commentViews);
         }
         [HttpGet("articleId")] // data is entered like: https://[domain]/api/CommentApiController/Get/5?id=3
-        public CommentViewModel Get(int articleId, int id)
+        public IActionResult Get(int articleId, int id)
         {
             try
             {
@@ -55,18 +56,18 @@ namespace BlogAPI.Controllers
                                         .Where(c => c.Id == id).First();
                 CommentViewModel commentView = new CommentViewModel();
                 commentView.SetThisToDbCommentModel(comment);
-                return commentView;
+                return StatusCode(StatusCodes.Status200OK, commentView);
             }
             catch (Exception)
             {
-                return null;
+                return StatusCode(StatusCodes.Status404NotFound);
             }
         }
 
         [Authorize(Policy = ("IsCommenter"))]
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]CreateOrEditCommentViewModel comment)
+        public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
         {
             // TODO: Validate user input before saving to the db.
             if (comment.ArticleId > 0 && _db.GetAllArticles().Any(x => x.Id == comment.ArticleId))
@@ -74,18 +75,20 @@ namespace BlogAPI.Controllers
                 CommentModel dbComment = comment.GetAsDbCommentModel();
                 dbComment.DatePosted = DateTime.UtcNow;
                 _db.CreateComment(dbComment, comment.ArticleId);
+
+                return StatusCode(StatusCodes.Status201Created);
             }
             else
             {
                 // TODO: Figure out how to deal with trying to create a comment marked with an invalid article id.
-                return;
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
         }
 
         [Authorize(Policy = ("IsCommenter"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
+        public IActionResult Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
         {
             if (IsLoggedInUsersComment(comment.ArticleId, id))
             {
@@ -93,19 +96,23 @@ namespace BlogAPI.Controllers
                 CommentModel dbComment = comment.GetAsDbCommentModel();
                 dbComment.Id = id;
                 dbComment.LastEdited = DateTime.UtcNow;
-                _db.UpdateComment(dbComment); 
+                _db.UpdateComment(dbComment);
+                return StatusCode(StatusCodes.Status200OK);
             }
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
 
         [Authorize(Policy = ("IsCommenter"))]
         // DELETE api/<controller>/5
         [HttpDelete("articleId")] // data is entered like: https://[domain]/api/CommentApiController/Delete/5?id=3
-        public void Delete(int articleId, int id)
+        public IActionResult Delete(int articleId, int id)
         {
             if (IsLoggedInUsersComment(articleId, id))
             {
                 _db.DeleteComment(id);
+                return StatusCode(StatusCodes.Status200OK);
             }
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
 
         private bool IsLoggedInUsersComment(int articleId, int commentId)

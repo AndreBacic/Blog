@@ -83,8 +83,9 @@ namespace BlogAPI.Controllers
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
+                return StatusCode(StatusCodes.Status204NoContent);
             }
-            return StatusCode(StatusCodes.Status204NoContent);
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
 
         [Route("refreshToken")]
@@ -140,37 +141,25 @@ namespace BlogAPI.Controllers
         /// <param name="createAccountViewModel"></param>
         /// <returns></returns>
         [Route("createAccount")]
-        [HttpPost] // TODO: Refactor APIs to return IActionResult http codes instead of booleans
-        public bool CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
+        [HttpPost]
+        public IActionResult CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Check that email is a valid email
             if (IsValidEmailAddress(createAccountViewModel.EmailAddress) == false)
             {
-                return false;
+                return StatusCode(StatusCodes.Status401Unauthorized);
             }
             // 2 Ensure that there are no users with the new email
             List<UserModel> users = _db.GetAllUsers();
             if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
             {
-                return false;
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             // 3 ok that email isn't used so this account can be created
             _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
-            return true;
+            return StatusCode(StatusCodes.Status200OK);
         }
-        private bool IsValidEmailAddress(string emailAddress) // todo: move this method to an emailing class once there are more emailing methods.
-        {
-            try
-            {
-                MailAddress m = new MailAddress(emailAddress);
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }
-
+        
         /// <summary>
         /// Returns whether or not the account was successfully edited.
         /// </summary>
@@ -179,12 +168,12 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = "IsCommenter")]
         [Route("editAccount")]
         [HttpPut]
-        public bool EditAccount([FromBody]UserViewModel userViewModel)
+        public IActionResult EditAccount([FromBody]UserViewModel userViewModel)
         {
             // 1 Ensure email is valid
             if (IsValidEmailAddress(userViewModel.EmailAddress) == false)
             {
-                return false;
+                return StatusCode(StatusCodes.Status401Unauthorized);
             }
             // 2 Ensure that there are no users with the new email
             List<UserModel> users = _db.GetAllUsers();
@@ -193,7 +182,7 @@ namespace BlogAPI.Controllers
 
             if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress && x.EmailAddress != originalEmail))
             {
-                return false;
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
 
             // 3 update user data in column with the original email
@@ -202,7 +191,7 @@ namespace BlogAPI.Controllers
             UserModel newDbUser = userViewModel.GetAsDbUserModel();
             newDbUser.Role = oldDbUser.Role;
             _db.UpdateUser(newDbUser);
-            return true;
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         /// <summary>
@@ -213,7 +202,7 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = "IsCommenter")]
         [Route("editPassword")]
         [HttpPut]
-        public bool EditPassword([FromBody]EditPasswordModel editPasswordModel)
+        public IActionResult EditPassword([FromBody]EditPasswordModel editPasswordModel)
         {
             // 1 Get logged in user by email
             UserModel user = GetLoggedInDbUserByEmail();
@@ -227,18 +216,18 @@ namespace BlogAPI.Controllers
             (bool isSamePassword, bool needsUpgrade) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
             if (isSamePassword == false)
             {
-                return false;
+                return StatusCode(StatusCodes.Status401Unauthorized);
             }
 
             // 3 if the old password is correct, replace it with the new one
             _db.UpdateUserPassword(user, editPasswordModel.NewPassword);
-            return true;
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Authorize(Policy = "IsCommenter")]
         [Route("deleteAccount")]
         [HttpDelete]
-        public bool DeleteAccount()
+        public IActionResult DeleteAccount()
         {
             //// 1 Get email from token
             //Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
@@ -247,7 +236,7 @@ namespace BlogAPI.Controllers
             //int userId = users.Where(x => x.EmailAddress == originalEmail.Value).First().Id;
             //// 3 delete user by id
             //_db.DeleteUser(userId);
-            return false; // We don't actually allow our users to delete their accounts as of now.
+            return StatusCode(StatusCodes.Status501NotImplemented); // We don't actually allow our users to delete their accounts as of now.
         }
 
         // Private helper methods //////////////////////////////////////////////
@@ -294,6 +283,18 @@ namespace BlogAPI.Controllers
                     new Claim(ClaimTypes.Email, user.EmailAddress),
                     new Claim(ClaimTypes.Role, user.Role),
                 };
+        }
+        private bool IsValidEmailAddress(string emailAddress) // todo: move this method to an emailing class once there are more emailing methods.
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailAddress);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
 
         private string IpAddress()

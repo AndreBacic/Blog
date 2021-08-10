@@ -2,6 +2,7 @@
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace BlogAPI.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public List<ArticleViewModel> Get()
+        public IActionResult Get()
         {
             List<ArticleModel> dbArticles = _db.GetAllArticles();
             List<ArticleViewModel> output = new List<ArticleViewModel>();
@@ -36,30 +37,30 @@ namespace BlogAPI.Controllers
                 articleView.SetThisToDbArticleModel(a);
                 output.Add(articleView);
             }
-            return output;
+            return StatusCode(StatusCodes.Status200OK, output);
         }
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public ArticleViewModel Get(int id)
+        public IActionResult Get(int id)
         {
             try
             {
                 ArticleViewModel articleView = new ArticleViewModel();
                 articleView.SetThisToDbArticleModel(_db.GetArticle(id));
 
-                return articleView;
+                return StatusCode(StatusCodes.Status200OK, articleView);
             }
             catch (Exception)
             {
-                return null;
+                return StatusCode(StatusCodes.Status404NotFound);
             }
         }
 
         [Authorize(Policy = ("IsAdmin"))]
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]CreateOrEditArticleViewModel article)
+        public IActionResult Post([FromBody]CreateOrEditArticleViewModel article)
         {
             // TODO: Validate user input before saving to the db.
             ArticleModel dbArticle = article.GetAsDbArticleModel();
@@ -69,27 +70,30 @@ namespace BlogAPI.Controllers
                 dbArticle.AuthorName = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Name).First().Value;
             }
             _db.CreateArticle(dbArticle);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [Authorize(Policy = ("IsAdmin"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]CreateOrEditArticleViewModel article)
+        public IActionResult Put(int id, [FromBody]CreateOrEditArticleViewModel article)
         {
             // TODO: Validate user input before saving to the db.
             ArticleModel dbArticle = article.GetAsDbArticleModel();
             dbArticle.Id = id;
             dbArticle.LastEdited = DateTime.UtcNow;
             _db.UpdateArticle(dbArticle);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Authorize(Policy = ("IsAdmin"))]
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
             ArticleModel article = _db.GetArticle(id);
             _db.DeleteArticle(article);
+            return StatusCode(StatusCodes.Status200OK);
         }
     }
 }
