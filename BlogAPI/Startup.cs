@@ -1,4 +1,5 @@
 using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Messaging;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +65,7 @@ namespace BlogAPI
             services.AddCors();
             services.AddControllers();
             services.AddSingleton<IBlogDbAccessor, SQLDapperDataAccessor>();
+            services.AddSingleton<EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

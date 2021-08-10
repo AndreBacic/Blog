@@ -85,7 +85,6 @@ function RefreshTokenCallbackLoop() {
         })
         .then(jwt => {
             localStorage.setItem('authToken', JSON.stringify(jwt))
-            console.log("callback time!") // todo: remove for production
             setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
         })
         .catch(err => console.log(err))

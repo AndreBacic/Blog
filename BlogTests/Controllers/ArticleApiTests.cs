@@ -3,6 +3,7 @@ using BlogAPI.Controllers;
 using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -20,8 +21,8 @@ namespace BlogDataLibrary.Tests.Controllers
                     .Returns(ApiSampleData.GetSampleArticles());
 
                 ArticleApiController ctrl = mock.Create<ArticleApiController>();
-                System.Collections.Generic.List<ArticleModel> expected = ApiSampleData.GetSampleArticles();
-                System.Collections.Generic.List<ArticleViewModel> actual = ctrl.Get();
+                List<ArticleModel> expected = ApiSampleData.GetSampleArticles();
+                List<ArticleViewModel> actual = (List<ArticleViewModel>)ctrl.Get();
 
                 Assert.NotNull(actual);
                 Assert.Equal(expected.Count, actual.Count);

@@ -1,5 +1,6 @@
 ﻿using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Messaging;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,10 +19,12 @@ namespace BlogAPI.Controllers
     public class ArticleApiController : Controller
     {
         private readonly IBlogDbAccessor _db;
+        private readonly EmailService _emailService;
 
-        public ArticleApiController(IBlogDbAccessor db)
+        public ArticleApiController(IBlogDbAccessor db, EmailService emailService)
         {
             _db = db;
+            _emailService = emailService;
         }
 
         // GET: api/<controller>

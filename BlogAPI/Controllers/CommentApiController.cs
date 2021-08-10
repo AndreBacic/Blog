@@ -80,7 +80,7 @@ namespace BlogAPI.Controllers
             }
             else
             {
-                // TODO: Figure out how to deal with trying to create a comment marked with an invalid article id.
+                // todo: Figure out how to deal with trying to create a comment marked with an invalid article id.
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
         }

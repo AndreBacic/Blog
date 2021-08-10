@@ -1,5 +1,6 @@
 ﻿using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Messaging;
 using BlogDataLibrary.Models;
 using BlogDataLibrary.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -26,11 +27,15 @@ namespace BlogAPI.Controllers
     {
         private readonly IBlogDbAccessor _db;
         private readonly IConfiguration _config;
+        private readonly EmailService _emailService;
 
-        public AccountApiController(IBlogDbAccessor db, IConfiguration configuration)
+        public AccountApiController(IBlogDbAccessor db, 
+                                    IConfiguration configuration,
+                                    EmailService emailService)
         {
             _db = db;
             _config = configuration;
+            _emailService = emailService;
         }
 
         [Route("login")]
@@ -145,7 +150,7 @@ namespace BlogAPI.Controllers
         public IActionResult CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
         {
             // 1 Check that email is a valid email
-            if (IsValidEmailAddress(createAccountViewModel.EmailAddress) == false)
+            if (_emailService.IsValidEmailAddress(createAccountViewModel.EmailAddress) == false)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
@@ -171,7 +176,7 @@ namespace BlogAPI.Controllers
         public IActionResult EditAccount([FromBody]UserViewModel userViewModel)
         {
             // 1 Ensure email is valid
-            if (IsValidEmailAddress(userViewModel.EmailAddress) == false)
+            if (_emailService.IsValidEmailAddress(userViewModel.EmailAddress) == false)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
@@ -284,19 +289,7 @@ namespace BlogAPI.Controllers
                     new Claim(ClaimTypes.Role, user.Role),
                 };
         }
-        private bool IsValidEmailAddress(string emailAddress) // todo: move this method to an emailing class once there are more emailing methods.
-        {
-            try
-            {
-                MailAddress m = new MailAddress(emailAddress);
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }
-
+        
         private string IpAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))
