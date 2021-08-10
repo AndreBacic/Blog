@@ -21,7 +21,8 @@ namespace BlogAPI.Controllers
         private readonly IBlogDbAccessor _db;
         private readonly EmailService _emailService;
 
-        public ArticleApiController(IBlogDbAccessor db, EmailService emailService)
+        public ArticleApiController(IBlogDbAccessor db, 
+                                    EmailService emailService)
         {
             _db = db;
             _emailService = emailService;
@@ -73,6 +74,21 @@ namespace BlogAPI.Controllers
                 dbArticle.AuthorName = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Name).First().Value;
             }
             _db.CreateArticle(dbArticle);
+
+            // Notify users of new article
+            var users = _db.GetAllUsers().Where(x => x.DoesReceiveNotifications == true).ToList();
+            var subject = $"{dbArticle.AuthorName} Just Posted a New Article";
+
+            var articleLink = $"https://{HttpContext.Request.Host.Value}/article.html?{dbArticle.Id}";
+            var unsubLink = $"https://{HttpContext.Request.Host.Value}/login.html";
+            var body = $@"<div style='text-align:center;font-family:sans-serif;'>
+                              <h2>{dbArticle.AuthorName} just wrote</h2>
+                              <h1>{dbArticle.Title}</h1>
+                              <p style='margin-top:2.5rem;'>To read this new article, click <a href='{articleLink}'>here</a></p>
+                              <p style='margin-top:5rem;font-size:0.75rem;'>To unsubscribe, click <a href='{unsubLink}'>here</a></p>
+                          </div>";
+            _emailService.SendEmail(new List<UserModel>(), users, subject, body, false);
+
             return StatusCode(StatusCodes.Status201Created);
         }
 

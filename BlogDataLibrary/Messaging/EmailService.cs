@@ -10,13 +10,11 @@ namespace BlogDataLibrary.Messaging
 {
     public class EmailService
     {
-        private readonly string _senderEmail;
-        private readonly string _senderDisplayName;
+        private readonly IConfiguration _config;
 
         public EmailService(IConfiguration configuration)
         {
-            _senderEmail = configuration.GetValue<string>("senderEmail");
-            _senderDisplayName = configuration.GetValue<string>("senderDisplayName");
+            _config = configuration;
         }
         public void SendEmail(UserModel to, string subject, string plainTextBody)
         {
@@ -26,7 +24,10 @@ namespace BlogDataLibrary.Messaging
         public void SendEmail(List<UserModel> to, List<UserModel> bcc, string subject, string body, bool isPlainTextBody)
         {
             MimeMessage mailMessage = new MimeMessage();
-            mailMessage.From.Add(new MailboxAddress(_senderDisplayName, _senderEmail));
+            mailMessage.From.Add(
+                new MailboxAddress(GetAppSetting("senderDisplayName"), 
+                                   GetAppSetting("senderEmail")));
+
             foreach (var user in to)
             {
                 mailMessage.To.Add(new MailboxAddress(user.Name, user.EmailAddress));
@@ -43,8 +44,8 @@ namespace BlogDataLibrary.Messaging
 
             using (SmtpClient client = new SmtpClient())
             {
-                client.Connect("smtp.gmail.com", 587, true);
-                client.Authenticate("user", "password");
+                client.Connect(GetAppSetting("Host"), int.Parse(GetAppSetting("port")), bool.Parse(GetAppSetting("UseSsl")));
+                //client.Authenticate(GetAppSetting("Username"), GetAppSetting("Password"));
                 client.Send(mailMessage);
                 client.Disconnect(true);
             }
@@ -60,6 +61,11 @@ namespace BlogDataLibrary.Messaging
             {
                 return false;
             }
+        }
+
+        private string GetAppSetting(string appSetting)
+        {
+            return _config.GetValue<string>($"Smtp:{appSetting}");
         }
     }
 }
