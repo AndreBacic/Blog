@@ -169,7 +169,11 @@ async function GetAllArticlesAsync() {
             }
         })
     let articles = await infoPromise.json()
-    return articles;
+    return articles.sort((a, b) => {
+        d1 = new Date(a.datePosted)
+        d2 = new Date(b.datePosted)
+        return d2 - d1
+    });
 }
 
 async function GetArticleByIdAsync(id) {
@@ -316,6 +320,7 @@ async function RenderTempletesAsync(haveSearch = true) {
         edit_account_link = navClone.querySelector("#sign-up-link")
         edit_account_link.innerText = "Edit Account"
         edit_account_link.href = "editAccount.html"
+        edit_account_link.id = "edit-account-link"
 
         logout_link = navClone.querySelector("#login-link")
         logout_link.innerText = "Logout"
@@ -592,6 +597,19 @@ function postComment() {
 }
 
 
+function signUpAnimation() {
+    if (document.body.scrollHeight <= document.body.clientHeight + 200 || window.innerWidth > 768) {
+        let footer = document.getElementById("footer")
+        footer.classList.add("sign-up-animated")
+
+        let scrollingElement = (document.scrollingElement || document.body)
+        let keepScrollDown = setInterval(() => { scrollingElement.scrollTop = scrollingElement.scrollHeight}, 20)
+        setTimeout(() => {
+            footer.classList.remove("sign-up-animated")
+            clearInterval(keepScrollDown)
+        }, 1200)
+    }
+}
 
 // just for fun :)
 // uncomment window event listener in navbar template to restore

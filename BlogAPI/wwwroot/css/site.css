@@ -374,6 +374,19 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 
 
+@keyframes sign-up-popup {
+    0% { padding-bottom: 30px; }
+    50% { padding-bottom: 150px; }
+    100% { padding-bottom: 30px; }
+}
+.sign-up-animated {
+    animation-name: sign-up-popup;
+    animation-duration: 1.2s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+}
+
+
 @media screen and (max-width: 768px) {
     :root {
         --blog-side-margin: 30px;

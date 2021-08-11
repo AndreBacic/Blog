@@ -6,17 +6,17 @@
     <link rel="stylesheet" href="css/site.css" />
     <script src="js/site.js"></script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
 </head>
 <body>
     <script>
-        GetAllArticlesAsync().then((articles) => RenderArticles(articles).then())
+        GetAllArticlesAsync().then((articles) => RenderArticles(articles.slice(0, 8)).then())
         window.onload = function () {
             this.RenderTempletesAsync().then()            
         }
     </script>
     <main>
-        <h1>Andre's Blog</h1>
+        <h1>Latest Articles</h1>
         <div id="articleList" class="flex-container-column">
         </div>
     </main>

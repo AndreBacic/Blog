@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/site.css" />
     <script src="js/site.js"></script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
 </head>
 <body>
     <script>
@@ -50,9 +50,11 @@
         })
 
         function searchBasedOnUrlQuery() {            
-            let urlString = GetUrlSearch().replace('%20', ' ').toLowerCase()
-            if (urlString === "undefigned") { urlString = "" }
-            search_bar.value = urlString
+            let urlString = GetUrlSearch()
+            if (urlString === undefined) { search_bar.value = "" }
+            else {
+                search_bar.value = urlString.replace('%20', ' ').toLowerCase()
+            }
             searchByInputs()
         }
 
