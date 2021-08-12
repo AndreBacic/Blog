@@ -389,12 +389,12 @@ function RenderPreviewOfArticle(articleJSON) {
 
     const datesP = document.createElement("p")
     datePosted = new Date(articleJSON.datePosted)
-    datesP.textContent = `${formatDateForArticle(datePosted, 'Posted')}`
+    datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
 
     if (articleJSON.lastEdited != '') {
         lastEdited = new Date(articleJSON.lastEdited)
         if (lastEdited.getUTCFullYear() != 1) {
-            datesP.textContent += `, ${formatDateForArticle(lastEdited, 'Last Edited')}`
+            datesP.textContent += `, ${formatUTCDateForDisplayAsLocal(lastEdited, 'Last Edited')}`
         }
     }
     authorNameLabel.appendChild(datesP)
@@ -464,7 +464,7 @@ function RenderFullArticle(articleJSON) {
 
     const datePostedParagraph = document.createElement("p")
     datePosted = new Date(articleJSON.datePosted)
-    datePostedParagraph.textContent = formatDateForArticle(datePosted, 'Date Posted:')
+    datePostedParagraph.textContent = formatUTCDateForDisplayAsLocal(datePosted, 'Date Posted:')
     datePostedParagraph.style = "float: right;"
 
     // append elements
@@ -474,7 +474,7 @@ function RenderFullArticle(articleJSON) {
         lastEdited = new Date(articleJSON.lastEdited)
         if (lastEdited.getUTCFullYear() != 1) {
             const lastEditedParagraph = document.createElement("p")
-            lastEditedParagraph.textContent = formatDateForArticle(lastEdited, 'LastEdited:')
+            lastEditedParagraph.textContent = formatUTCDateForDisplayAsLocal(lastEdited, 'LastEdited:')
             lastEditedParagraph.style = "float: right;"
             infoDiv.appendChild(lastEditedParagraph)
         }
@@ -505,8 +505,8 @@ function RenderFullArticle(articleJSON) {
     return article
 }
 
-function formatDateForArticle(date, statement) {
-    return `${statement} ${date.toLocaleDateString('default', { month: 'long' })} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
+function formatUTCDateForDisplayAsLocal(date, statement) {
+    return `${statement} ${date.toLocaleDateString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`
 }
 
 function RenderPostCommentForm() {
@@ -557,12 +557,12 @@ function RenderCommentList(articleJSON) {
 
             const datesP = document.createElement("p")
             datePosted = new Date(value.datePosted)
-            datesP.textContent = `${formatDateForArticle(datePosted, 'Posted')}`
+            datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
 
             if (value.lastEdited != '') {
                 lastEdited = new Date(value.lastEdited)
                 if (lastEdited.getUTCFullYear() != 1) {
-                    datesP.textContent += `, ${formatDateForArticle(lastEdited, 'Last Edited')}`
+                    datesP.textContent += `, ${formatUTCDateForDisplayAsLocal(lastEdited, 'Last Edited')}`
                 }
             }
             newComment.appendChild(contentP)
