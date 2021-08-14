@@ -5,6 +5,9 @@ const commentURI = "api/CommentApi"
 const millisToJwtExpiration = 300000 // 5 min
 const millisDelayToRefreshToken = millisToJwtExpiration - 60000 // minus 1 minute
 
+const initialMaxNumArticlesDisplayed = 8;
+const incrementMaxNumArticlesDisplayed = 6;
+let MaxNumArticlesDisplayed = initialMaxNumArticlesDisplayed
 
 // AccountApi methods   ////////////////////////////////////////////////////////////
 function getAuthToken() {
@@ -425,7 +428,20 @@ function RenderPreviewOfArticle(articleJSON) {
     return link
 }
 
+function GetMoreArticlesToBeRendered(allArticles) {
+    if (MaxNumArticlesDisplayed >= allArticles.length) {
+        document.getElementById("load-more-articles-button").textContent = "That is All"
+        return allArticles
+    } else {
+        MaxNumArticlesDisplayed += incrementMaxNumArticlesDisplayed
+        articlesToRender = allArticles.slice(0, MaxNumArticlesDisplayed)
 
+        if (MaxNumArticlesDisplayed >= allArticles.length) {
+            document.getElementById("load-more-articles-button").textContent = "That is All"
+        }
+        return articlesToRender        
+    }
+}
 
 
 async function RenderArticlePageMainAsync() {

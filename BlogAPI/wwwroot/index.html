@@ -10,15 +10,30 @@
 </head>
 <body>
     <script>
-        GetAllArticlesAsync().then((articles) => RenderArticles(articles.slice(0, 8)).then())
+        let articles = []
+        GetAllArticlesAsync().then((dbarticles) => {
+            articles = dbarticles
+            if (articles.length > initialMaxNumArticlesDisplayed) {
+                this.document.getElementById("load-more-articles-button")
+                    .style.display = "inherit"
+            }
+            RenderArticles(articles.slice(0, initialMaxNumArticlesDisplayed)).then()
+        })
         window.onload = function () {
-            this.RenderTempletesAsync().then()            
+            this.RenderTempletesAsync().then()
         }
     </script>
     <main>
         <h1>Latest Articles</h1>
         <div id="articleList" class="flex-container-column">
         </div>
+        <button id="load-more-articles-button" class="button-article-list" onclick="LoadMoreArticles()" type="button">Load More</button>
+        <script>
+            function LoadMoreArticles() {
+                articlesToBeRendered = GetMoreArticlesToBeRendered(articles)
+                RenderArticles(articlesToBeRendered).then()
+            }
+        </script>
     </main>
 </body>
 </html>

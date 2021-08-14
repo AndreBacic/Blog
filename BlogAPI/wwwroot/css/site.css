@@ -57,6 +57,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 main {
+    margin-bottom: 20px;
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
        -moz-box-flex: 1;
@@ -452,6 +453,27 @@ article.flex-item h1, article.flex-item h2, article.flex-item h3 {
 }
 .blog-button:hover {
     background-color: var(--blog-theme-color-dark);
+}
+
+.button-article-list {
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--blog-theme-color-extra-dark);
+    background-color: var(--blog-content-back-color);
+    width: 150px;
+    height: 45px;
+    padding: 10px;
+    border: 2px solid var(--blog-theme-color-dark);
+    -webkit-border-radius: 7px;
+       -moz-border-radius: 7px;
+            border-radius: 7px;
+    margin: 25px auto 15px auto;
+    display: none;
+}
+.button-article-list:hover {
+    color: var(--blog-forward-color);
+    background-color: var(--blog-theme-color);
 }
 
 .comment {

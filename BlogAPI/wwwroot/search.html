@@ -17,7 +17,7 @@
             searchBasedOnUrlQuery()
         })
         window.onload = function () {
-            this.RenderTempletesAsync(false).then()
+            this.RenderTempletesAsync(false).then()            
         }
     </script>
     <main>
@@ -28,7 +28,7 @@
             </div>
             <div>
                 <label for="tag-selector">Filter by tag:</label>
-                <select id="tag-selector" onchange="searchByInputs()">
+                <select id="tag-selector" onchange="RenderByInputs()">
                     <option>(Any)</option>
                 </select>
             </div>
@@ -37,6 +37,7 @@
         <div id="articleList" class="flex-container-column">
 
         </div>
+        <button id="load-more-articles-button" class="button-article-list" onclick="LoadMoreArticles()" type="button">Load More</button>
     </main>
     <script>
         const search_bar = document.querySelector("#search-bar")
@@ -45,7 +46,7 @@
         search_bar.addEventListener("keyup", function(event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                searchByInputs()
+                RenderByInputs()
             }
         })
 
@@ -55,7 +56,25 @@
             else {
                 search_bar.value = urlString.replace('%20', ' ').toLowerCase()
             }
-            searchByInputs()
+            RenderByInputs()
+        }
+
+        function RenderByInputs() {
+            MaxNumArticlesDisplayed = initialMaxNumArticlesDisplayed - incrementMaxNumArticlesDisplayed
+            articlesByInputs = searchByInputs()
+            articlesToBeRendered = GetMoreArticlesToBeRendered(articlesByInputs)
+
+            LoadMoreButton = document.getElementById("load-more-articles-button")
+
+            if (articlesToBeRendered.length < initialMaxNumArticlesDisplayed || 
+                articlesToBeRendered.length === articlesByInputs.length) {
+
+                LoadMoreButton.style.display = "none"
+            } else {
+                LoadMoreButton.style.display = "inherit"
+                LoadMoreButton.textContent = "Load More"
+            }
+            RenderArticles(articlesToBeRendered).then()
         }
 
         function searchByInputs() {
@@ -69,8 +88,7 @@
                     articles_to_be_rendered.push(article)
                 }
             })
-
-            RenderArticles(articles_to_be_rendered).then()
+            return articles_to_be_rendered
         }
 
         function renderTagOptions() {
@@ -90,6 +108,12 @@
                 newOption.textContent = tag
                 tag_selector.appendChild(newOption)
             })
+        }
+
+        function LoadMoreArticles() {
+            articlesByInputs = searchByInputs()
+            articlesToBeRendered = GetMoreArticlesToBeRendered(articlesByInputs)
+            RenderArticles(articlesToBeRendered).then()
         }
     </script>
 </body>
