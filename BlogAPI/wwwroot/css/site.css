@@ -480,13 +480,36 @@ main > h1 {
 
 .comment {
     margin: 10px 0px;
-    padding: 10px 20px;
+    padding: 10px 8px 10px 20px;
     border: 1px solid var(--blog-theme-color);
     border-top: 3px solid var(--blog-theme-color-dark);
     -webkit-border-radius: 1px;
        -moz-border-radius: 1px;
             border-radius: 1px;
     background-color: var(--blog-content-back-color);
+}
+.comment-button {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--blog-theme-color-extra-dark);
+    background-color: var(--blog-content-back-color);
+    border: 1px solid var(--blog-theme-color-extra-dark);
+    border-radius: 5px;
+    padding: 4px;
+    margin-left: 4px;
+    float: right;
+}
+.comment-button:hover {
+    color: var(--blog-forward-color);
+    background-color: var(--blog-theme-color);
+}
+.delete-comment-button {
+    border-color: hsl(0, 100%, 43%);
+    color: hsl(0, 100%, 43%);
+}
+.delete-comment-button:hover {
+    color: var(--blog-content-back-color);
+    background-color: hsl(0, 100%, 43%);
 }
 .tags-container {
     margin: 2px;

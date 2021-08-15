@@ -104,7 +104,7 @@ namespace BlogAPI.Controllers
 
         [Authorize(Policy = ("IsCommenter"))]
         // DELETE api/<controller>/5
-        [HttpDelete("articleId")] // data is entered like: https://[domain]/api/CommentApiController/Delete/5?id=3
+        [HttpDelete("{articleId}")] // data is entered like: https://[domain]/api/CommentApiController/Delete/5?id=3
         public IActionResult Delete(int articleId, int id)
         {
             if (IsLoggedInUsersComment(articleId, id))

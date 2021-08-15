@@ -282,8 +282,8 @@ async function UpdateCommentAsync(id, comment) {
     //let success = await updatePromise.json()
 }
 
-async function DeleteCommentAsync(id) {
-    let deletePromise = await fetch(`${commentURI}/${id}`,
+async function DeleteCommentAsync(id, commentId) {
+    let deletePromise = await fetch(`${commentURI}/${id}?${commentId}`,
         {
             method: 'DELETE',
             headers: {
@@ -582,6 +582,29 @@ function RenderCommentList(articleJSON) {
                 }
             }
             newComment.appendChild(contentP)
+
+            if (isUserLoggedIn()) {
+                let user = JSON.parse(localStorage.getItem('user'))
+                if (value.author.id === user.id) {
+                    const editButton = document.createElement("button")
+                    editButton.textContent = 'Edit'
+                    editButton.classList.add("comment-button")
+                    editButton.onclick = `UpdateCommentAsync(${articleJSON.id},${value}).then()`
+
+                    const deleteButton = document.createElement("button")
+                    deleteButton.textContent = 'Delete'
+                    deleteButton.classList.add("comment-button")
+                    deleteButton.classList.add("delete-comment-button")
+                    deleteButton.onclick = () => {
+                        DeleteCommentAsync(articleJSON.id, index).then()
+                        window.location.reload()
+                    }
+
+                    datesP.appendChild(deleteButton)
+                    datesP.appendChild(editButton)
+                }
+            }
+            datesP.style = "padding: 5px 0px;"
             newComment.appendChild(datesP)
 
             commentList.appendChild(newComment)
