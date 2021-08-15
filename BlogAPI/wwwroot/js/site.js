@@ -370,7 +370,7 @@ function RenderPreviewOfArticle(articleJSON) {
     link.className = "flex-item"
 
     const article = document.createElement("article")
-    article.className = "flex-item"
+    article.className = "article-flex-item"
     
     const header = document.createElement("h2")
     header.textContent = articleJSON.title
