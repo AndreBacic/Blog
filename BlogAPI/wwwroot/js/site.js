@@ -283,7 +283,7 @@ async function UpdateCommentAsync(id, comment) {
 }
 
 async function DeleteCommentAsync(id, commentId) {
-    let deletePromise = await fetch(`${commentURI}/${id}?${commentId}`,
+    let deletePromise = await fetch(`${commentURI}/${id}?id=${commentId}`,
         {
             method: 'DELETE',
             headers: {
@@ -589,14 +589,16 @@ function RenderCommentList(articleJSON) {
                     const editButton = document.createElement("button")
                     editButton.textContent = 'Edit'
                     editButton.classList.add("comment-button")
-                    editButton.onclick = `UpdateCommentAsync(${articleJSON.id},${value}).then()`
+                    editButton.onclick = () => {
+                        //UpdateCommentAsync(articleJSON.id, value).then()
+                    }
 
                     const deleteButton = document.createElement("button")
                     deleteButton.textContent = 'Delete'
                     deleteButton.classList.add("comment-button")
                     deleteButton.classList.add("delete-comment-button")
                     deleteButton.onclick = () => {
-                        DeleteCommentAsync(articleJSON.id, index).then()
+                        DeleteCommentAsync(articleJSON.id, value.id).then()
                         window.location.reload()
                     }
 
