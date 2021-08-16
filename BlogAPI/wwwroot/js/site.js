@@ -244,7 +244,7 @@ async function GetAllCommentsInArticle(articleId) {
 }
 
 async function GetCommentByArticleAndId(articleId, commentId) {
-    let infoPromise = await fetch(`${commentURI}/${articleId}?id=${commentId}`,
+    let infoPromise = await fetch(`${commentURI}/${articleId}/${commentId}`,
         {
             method: 'GET',
             headers: {
@@ -283,7 +283,7 @@ async function UpdateCommentAsync(id, comment) {
 }
 
 async function DeleteCommentAsync(id, commentId) {
-    let deletePromise = await fetch(`${commentURI}/${id}?id=${commentId}`,
+    let deletePromise = await fetch(`${commentURI}/${id}/${commentId}`,
         {
             method: 'DELETE',
             headers: {
@@ -564,16 +564,20 @@ function RenderCommentList(articleJSON) {
         commentsTitle.style.margin = "15px 5px 5px 0px"
         commentList.appendChild(commentsTitle)
 
-        articleJSON.comments.forEach((value, index) => {
+        articleJSON.comments.forEach((value) => {
             const newComment = document.createElement("div")
             newComment.className = "comment"
 
             const contentP = document.createElement("p")
-            contentP.textContent = `${value.author.name}: ${value.contentText}`
+            contentP.innerHTML = `${value.author.name}: <p id="comment${value.id}-content">${value.contentText}</p>`
+
+            const datesAndFormsContainer = document.createElement("div")
+            datesAndFormsContainer.style = "display: inline-block; width: 100%;"
 
             const datesP = document.createElement("p")
             datePosted = new Date(value.datePosted)
             datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
+            datesP.style = "padding: 5px 0px; display: inline-block;"
 
             if (value.lastEdited != '') {
                 lastEdited = new Date(value.lastEdited)
@@ -581,18 +585,18 @@ function RenderCommentList(articleJSON) {
                     datesP.textContent += `, ${formatUTCDateForDisplayAsLocal(lastEdited, 'Last Edited')}`
                 }
             }
-            newComment.appendChild(contentP)
+            datesAndFormsContainer.appendChild(datesP)
 
             if (isUserLoggedIn()) {
                 let user = JSON.parse(localStorage.getItem('user'))
 
                 if (value.author.id === user.id) {
-                    datesP.appendChild(createCommentEditDeleteButtons(value, articleJSON.id))
+                    datesAndFormsContainer.appendChild(createCommentEditDeleteButtons(value, articleJSON.id))
                 }
             }
-            
-            datesP.style = "padding: 5px 0px;"
-            newComment.appendChild(datesP)
+
+            newComment.appendChild(contentP)
+            newComment.appendChild(datesAndFormsContainer)
 
             commentList.appendChild(newComment)
         })
@@ -609,44 +613,80 @@ function createCommentEditDeleteButtons(comment, articleId) {
     const buttonContainer = document.createElement("div")
     buttonContainer.className = "comment-button-container"
 
+    // float is right for the buttons so they're rendered the opposite order than written here
     buttonContainer.innerHTML = `
         <button class="comment-button delete-comment-button" onclick="toggleDeletePopup(true, ${comment.id})">Delete</button>
         <div id="delete-popup${comment.id}" class="comment-button-popup">
-            <p style="text-align: center; width: 100%;">Are you sure you want to delete your comment?</p>
+            <p style="text-align: center; width: 100%;">Do you want to delete your comment?</p>
 
             <button class="comment-button comment-form-button" onclick="toggleDeletePopup(false, ${comment.id})">Cancel</button>
             <button class="comment-button comment-form-button delete-comment-button" 
                     onclick="DeleteCommentAsync(${articleId}, ${comment.id}).then(); window.location.reload()">Delete</button>
         </div>
 
-        <button class="comment-button" onclick="toggleEditPopup(true, ${comment.id})">Edit</button>
+        <button id="edit-button" class="comment-button">Edit</button>
         <div id="edit-popup${comment.id}" class="comment-button-popup">
             <p style="text-align: center; width: 100%;">Do you want to submit your edits?</p>
 
-            <button class="comment-button comment-form-button" onclick="toggleEditPopup(false, ${comment.id})">Cancel</button>
-            <button class="comment-button comment-form-button" onclick="SubmitCommentEdit(${articleId}, ${comment})">Submit</button>
+            <button class="comment-button comment-form-button">Cancel</button>
+            <button class="comment-button comment-form-button" onclick="SubmitCommentEdit(${articleId}, ${comment.id})">Submit</button>
         </div>
         `
+    buttonContainer.querySelector(`#edit-button`).onclick = () => {
+        toggleEditPopup(true, comment.id, comment.contentText)
+    }
+    buttonContainer.querySelector(`#edit-popup${comment.id}`).childNodes.item(3).onclick = () => {
+        toggleEditPopup(false, comment.id, comment.contentText)
+    }
+    buttonContainer.id = `button-container${comment.id}`
 
     return buttonContainer
 }
 
-function toggleEditPopup(doesPopup, commentId) {
+function toggleEditPopup(doesPopup, commentId, commentText) {
+    const editPopup = document.getElementById(`edit-popup${commentId}`)
+    const buttonContainer = document.getElementById(`button-container${commentId}`)
+    const commentContent = document.getElementById(`comment${commentId}-content`)
+    
     if (doesPopup) {
-        document.getElementById(`edit-popup${commentId}`).style.display = "grid";
+        editPopup.style.display = "grid";
+        buttonContainer.style.minHeight = "4.25rem";
+
+        const editCommentInput = document.createElement("textarea")
+        editCommentInput.textContent = commentText
+        editCommentInput.className = "edit-comment-textarea"
+        editCommentInput.contentEditable = true
+        commentContent.innerHTML = ""
+        commentContent.appendChild(editCommentInput)
+
     } else {
-        document.getElementById(`edit-popup${commentId}`).style.display = "none";
+        editPopup.style.display = "none";
+        buttonContainer.style.minHeight = "initial";
+
+        commentContent.innerHTML = commentText
     }
 }
 function toggleDeletePopup(doesPopup, commentId) {
+    const buttonContainer = document.getElementById(`button-container${commentId}`)
+    const deletePopup = document.getElementById(`delete-popup${commentId}`)
+
     if (doesPopup) {
-        document.getElementById(`delete-popup${commentId}`).style.display = "grid";
+        deletePopup.style.display = "grid";
+        buttonContainer.style.minHeight = "4.25rem";
     } else {
-        document.getElementById(`delete-popup${commentId}`).style.display = "none";
+        deletePopup.style.display = "none";
+        buttonContainer.style.minHeight = "initial";
     }
 }
-function SubmitCommentEdit(articleId, comment) {
-    UpdateCommentAsync(articleId, comment).then()
+function SubmitCommentEdit(articleId, commentId) {
+    let comment = null
+    const commentContent = document.getElementById(`comment${commentId}-content`).firstElementChild.value
+
+    GetCommentByArticleAndId(articleId, commentId).then((data) => {
+            comment = data
+            comment.contentText = commentContent
+            UpdateCommentAsync(commentId, comment).then(() => { window.location.reload() })
+    })
 }
 
 function postComment() {
@@ -665,6 +705,9 @@ function postComment() {
         })
     }
 }
+
+
+
 
 
 function signUpAnimation() {

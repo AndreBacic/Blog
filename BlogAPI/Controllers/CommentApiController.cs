@@ -46,7 +46,7 @@ namespace BlogAPI.Controllers
             }
             return StatusCode(StatusCodes.Status200OK, commentViews);
         }
-        [HttpGet("{articleId}")] // data is entered like: https://[domain]/api/CommentApi/Get/5?id=3
+        [HttpGet("{articleId}/{id}")] // data is entered like: https://[domain]/api/CommentApi/Get/5/3
         public IActionResult Get(int articleId, int id)
         {
             try
@@ -55,7 +55,7 @@ namespace BlogAPI.Controllers
                 CommentModel comment = _db.GetAllCommentsInArticle(articleId)
                                         .Where(c => c.Id == id).First();
                 CommentViewModel commentView = new CommentViewModel();
-                commentView.SetThisToDbCommentModel(comment);
+                commentView.SetThisToDbCommentModel(comment, articleId);
                 return StatusCode(StatusCodes.Status200OK, commentView);
             }
             catch (Exception)
@@ -104,7 +104,7 @@ namespace BlogAPI.Controllers
 
         [Authorize(Policy = ("IsCommenter"))]
         // DELETE api/<controller>/5
-        [HttpDelete("{articleId}")] // data is entered like: https://[domain]/api/CommentApi/Delete/5?id=3
+        [HttpDelete("{articleId}/{id}")] // data is entered like: https://[domain]/api/CommentApi/Delete/5/3
         public IActionResult Delete(int articleId, int id)
         {
             if (IsLoggedInUsersComment(articleId, id))
