@@ -585,27 +585,12 @@ function RenderCommentList(articleJSON) {
 
             if (isUserLoggedIn()) {
                 let user = JSON.parse(localStorage.getItem('user'))
+
                 if (value.author.id === user.id) {
-                    const editButton = document.createElement("button")
-                    editButton.textContent = 'Edit'
-                    editButton.classList.add("comment-button")
-                    editButton.onclick = () => {
-                        //UpdateCommentAsync(articleJSON.id, value).then()
-                    }
-
-                    const deleteButton = document.createElement("button")
-                    deleteButton.textContent = 'Delete'
-                    deleteButton.classList.add("comment-button")
-                    deleteButton.classList.add("delete-comment-button")
-                    deleteButton.onclick = () => {
-                        DeleteCommentAsync(articleJSON.id, value.id).then()
-                        window.location.reload()
-                    }
-
-                    datesP.appendChild(deleteButton)
-                    datesP.appendChild(editButton)
+                    datesP.appendChild(createCommentEditDeleteButtons(value, articleJSON.id))
                 }
             }
+            
             datesP.style = "padding: 5px 0px;"
             newComment.appendChild(datesP)
 
@@ -618,6 +603,50 @@ function RenderCommentList(articleJSON) {
         commentList.appendChild(notice)
         commentList.style.textAlign = "center"
     }
+}
+
+function createCommentEditDeleteButtons(comment, articleId) {
+    const buttonContainer = document.createElement("div")
+    buttonContainer.className = "comment-button-container"
+
+    buttonContainer.innerHTML = `
+        <button class="comment-button delete-comment-button" onclick="toggleDeletePopup(true, ${comment.id})">Delete</button>
+        <div id="delete-popup${comment.id}" class="comment-button-popup">
+            <p style="text-align: center; width: 100%;">Are you sure you want to delete your comment?</p>
+
+            <button class="comment-button comment-form-button" onclick="toggleDeletePopup(false, ${comment.id})">Cancel</button>
+            <button class="comment-button comment-form-button delete-comment-button" 
+                    onclick="DeleteCommentAsync(${articleId}, ${comment.id}).then(); window.location.reload()">Delete</button>
+        </div>
+
+        <button class="comment-button" onclick="toggleEditPopup(true, ${comment.id})">Edit</button>
+        <div id="edit-popup${comment.id}" class="comment-button-popup">
+            <p style="text-align: center; width: 100%;">Do you want to submit your edits?</p>
+
+            <button class="comment-button comment-form-button" onclick="toggleEditPopup(false, ${comment.id})">Cancel</button>
+            <button class="comment-button comment-form-button" onclick="SubmitCommentEdit(${articleId}, ${comment})">Submit</button>
+        </div>
+        `
+
+    return buttonContainer
+}
+
+function toggleEditPopup(doesPopup, commentId) {
+    if (doesPopup) {
+        document.getElementById(`edit-popup${commentId}`).style.display = "grid";
+    } else {
+        document.getElementById(`edit-popup${commentId}`).style.display = "none";
+    }
+}
+function toggleDeletePopup(doesPopup, commentId) {
+    if (doesPopup) {
+        document.getElementById(`delete-popup${commentId}`).style.display = "grid";
+    } else {
+        document.getElementById(`delete-popup${commentId}`).style.display = "none";
+    }
+}
+function SubmitCommentEdit(articleId, comment) {
+    UpdateCommentAsync(articleId, comment).then()
 }
 
 function postComment() {

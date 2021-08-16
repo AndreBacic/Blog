@@ -488,20 +488,47 @@ main > h1 {
             border-radius: 1px;
     background-color: var(--blog-content-back-color);
 }
+.comment-button-container {
+    float: right;
+    position: relative;
+    width: 10rem;
+}
+.comment-button-popup {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: -2rem;
+    width: 10rem;
+    background-color: var(--blog-content-back-color);
+    padding: 1px;
+    border: 1px solid var(--blog-theme-color);
+    border-radius: 3px;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+}
+.comment-button-popup > p {
+    grid-column: 1 / span 2;
+}
 .comment-button {
     text-align: center;
     font-size: 0.875rem;
+    font-weight: 600;
     color: var(--blog-theme-color-extra-dark);
     background-color: var(--blog-content-back-color);
-    border: 1px solid var(--blog-theme-color-extra-dark);
-    border-radius: 5px;
+    border: none;
     padding: 4px;
-    margin-left: 4px;
+    margin: 2px;
     float: right;
 }
 .comment-button:hover {
     color: var(--blog-forward-color);
     background-color: var(--blog-theme-color);
+}
+.comment-form-button {
+    font-weight: initial;
+    border: 1px solid var(--blog-theme-color-extra-dark);
+    border-radius: 5px;
+    float: initial;
 }
 .delete-comment-button {
     border-color: hsl(0, 100%, 43%);
@@ -511,6 +538,7 @@ main > h1 {
     color: var(--blog-content-back-color);
     background-color: hsl(0, 100%, 43%);
 }
+
 .tags-container {
     margin: 2px;
     display: inline-block;
