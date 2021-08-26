@@ -591,7 +591,7 @@ function RenderCommentList(articleJSON) {
                 let user = JSON.parse(localStorage.getItem('user'))
 
                 if (value.author.id === user.id) {
-                    datesAndFormsContainer.appendChild(createCommentEditDeleteButtons(value, articleJSON.id))
+                    datesAndFormsContainer.appendChild(createCommentEditDeleteButtons(value, articleJSON))
                 }
             }
 
@@ -609,7 +609,7 @@ function RenderCommentList(articleJSON) {
     }
 }
 
-function createCommentEditDeleteButtons(comment, articleId) {
+function createCommentEditDeleteButtons(comment, article) {
     const buttonContainer = document.createElement("div")
     buttonContainer.className = "comment-button-container"
 
@@ -621,22 +621,25 @@ function createCommentEditDeleteButtons(comment, articleId) {
 
             <button class="comment-button comment-form-button" onclick="toggleDeletePopup(false, ${comment.id})">Cancel</button>
             <button class="comment-button comment-form-button delete-comment-button" 
-                    onclick="DeleteCommentAsync(${articleId}, ${comment.id}).then(); window.location.reload()">Delete</button>
+                    onclick="DeleteCommentAsync(${article.id}, ${comment.id}).then(); window.location.reload()">Delete</button>
         </div>
 
         <button id="edit-button" class="comment-button">Edit</button>
         <div id="edit-popup${comment.id}" class="comment-button-popup">
             <p style="text-align: center; width: 100%;">Do you want to submit your edits?</p>
 
-            <button class="comment-button comment-form-button">Cancel</button>
-            <button class="comment-button comment-form-button" onclick="SubmitCommentEdit(${articleId}, ${comment.id})">Submit</button>
+            <button id="cancel-edit${comment.id}" class="comment-button comment-form-button">Cancel</button>
+            <button id="submit-edit${comment.id}" class="comment-button comment-form-button">Submit</button>
         </div>
         `
     buttonContainer.querySelector(`#edit-button`).onclick = () => {
         toggleEditPopup(true, comment.id, comment.contentText)
     }
-    buttonContainer.querySelector(`#edit-popup${comment.id}`).childNodes.item(3).onclick = () => {
+    buttonContainer.querySelector(`#cancel-edit${comment.id}`).onclick = () => {
         toggleEditPopup(false, comment.id, comment.contentText)
+    }
+    buttonContainer.querySelector(`#submit-edit${comment.id}`).onclick = () => {
+        SubmitCommentEdit(comment)
     }
     buttonContainer.id = `button-container${comment.id}`
 
@@ -678,15 +681,10 @@ function toggleDeletePopup(doesPopup, commentId) {
         buttonContainer.style.minHeight = "initial";
     }
 }
-function SubmitCommentEdit(articleId, commentId) {
-    let comment = null
+function SubmitCommentEdit(comment) {
     const commentContent = document.getElementById(`comment${commentId}-content`).firstElementChild.value
-
-    GetCommentByArticleAndId(articleId, commentId).then((data) => {
-            comment = data
-            comment.contentText = commentContent
-            UpdateCommentAsync(commentId, comment).then(() => { window.location.reload() })
-    })
+    comment.contentText = commentContent
+    UpdateCommentAsync(commentId, comment).then(() => { window.location.reload() })
 }
 
 function postComment() {

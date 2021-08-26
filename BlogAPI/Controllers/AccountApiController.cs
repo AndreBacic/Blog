@@ -7,15 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Mail;
 using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,7 +24,7 @@ namespace BlogAPI.Controllers
         private readonly IConfiguration _config;
         private readonly EmailService _emailService;
 
-        public AccountApiController(IBlogDbAccessor db, 
+        public AccountApiController(IBlogDbAccessor db,
                                     IConfiguration configuration,
                                     EmailService emailService)
         {
@@ -63,7 +58,7 @@ namespace BlogAPI.Controllers
                 if (IsPasswordCorrect)
                 {
                     string handler = TokenService.GenerateJwtToken(
-                                                GenerateUserClaimsList(user), 
+                                                GenerateUserClaimsList(user),
                                                 _config.GetValue<string>("JWTPrivateKey"));
 
                     RefreshTheRefreshToken(user.Id);
@@ -102,8 +97,8 @@ namespace BlogAPI.Controllers
             RefreshTokenModel oldDbRefreshToken = null;
             try
             {
-                 oldDbRefreshToken = refreshTokens.First(x => x.Token == oldCookieRefreshToken);
-            } 
+                oldDbRefreshToken = refreshTokens.First(x => x.Token == oldCookieRefreshToken);
+            }
             catch
             {
                 return Unauthorized("No valid refresh token. Please login again.");
@@ -119,7 +114,7 @@ namespace BlogAPI.Controllers
             // There is a valid refresh token in the db; perform operations
             RefreshTheRefreshToken(user.Id);
 
-            var jwt = TokenService.GenerateJwtToken(
+            string jwt = TokenService.GenerateJwtToken(
                                     GenerateUserClaimsList(user),
                                     _config.GetValue<string>("JWTPrivateKey"));
 
@@ -164,7 +159,7 @@ namespace BlogAPI.Controllers
             _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
             return StatusCode(StatusCodes.Status200OK);
         }
-        
+
         /// <summary>
         /// Returns whether or not the account was successfully edited.
         /// </summary>
@@ -249,7 +244,7 @@ namespace BlogAPI.Controllers
         {
             RevokeUsersOldRefreshTokens(userId);
 
-            var refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
+            RefreshTokenModel refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
             _db.CreateRefreshToken(refreshToken);
 
             SetTokenCookie(refreshToken.Token);
@@ -257,8 +252,8 @@ namespace BlogAPI.Controllers
 
         private void RevokeUsersOldRefreshTokens(int userId)
         {
-            var existingTokens = _db.GetRefreshTokensByUserId(userId);
-            foreach (var token in existingTokens)
+            List<RefreshTokenModel> existingTokens = _db.GetRefreshTokensByUserId(userId);
+            foreach (RefreshTokenModel token in existingTokens)
             {
                 _db.DeleteRefreshToken(token.Id);
             }
@@ -272,7 +267,7 @@ namespace BlogAPI.Controllers
 
         private void SetTokenCookie(string token)
         {
-            var cookieOptions = new CookieOptions
+            CookieOptions cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7)
@@ -289,13 +284,17 @@ namespace BlogAPI.Controllers
                     new Claim(ClaimTypes.Role, user.Role),
                 };
         }
-        
+
         private string IpAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))
+            {
                 return Request.Headers["X-Forwarded-For"];
+            }
             else
+            {
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            }
         }
     }
 }
