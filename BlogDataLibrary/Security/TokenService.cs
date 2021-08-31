@@ -37,9 +37,9 @@ namespace BlogDataLibrary.Security
 
         public static RefreshTokenModel GenerateRefreshToken(int userId, string ipAddress)
         {
-            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
+            using (RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider())
             {
-                var randomBytes = new byte[64];
+                byte[] randomBytes = new byte[64];
                 rngCryptoServiceProvider.GetBytes(randomBytes);
                 return new RefreshTokenModel
                 {

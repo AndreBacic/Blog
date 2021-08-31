@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BlogDataLibrary.Models;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using MailKit.Net.Smtp;
-using MimeKit;
-using BlogDataLibrary.Models;
 
 namespace BlogDataLibrary.Messaging
 {
@@ -25,14 +24,14 @@ namespace BlogDataLibrary.Messaging
         {
             MimeMessage mailMessage = new MimeMessage();
             mailMessage.From.Add(
-                new MailboxAddress(GetAppSetting("senderDisplayName"), 
+                new MailboxAddress(GetAppSetting("senderDisplayName"),
                                    GetAppSetting("senderEmail")));
 
-            foreach (var user in to)
+            foreach (UserModel user in to)
             {
                 mailMessage.To.Add(new MailboxAddress(user.Name, user.EmailAddress));
             }
-            foreach (var user in bcc)
+            foreach (UserModel user in bcc)
             {
                 mailMessage.Bcc.Add(new MailboxAddress(user.Name, user.EmailAddress));
             }

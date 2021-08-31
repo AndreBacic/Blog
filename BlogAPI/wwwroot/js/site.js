@@ -546,8 +546,6 @@ function RenderPostCommentForm() {
         postCommentButton.type = "button"
         form.appendChild(postCommentButton)
 
-        // TODO: have edit comment option for the comment's owner
-
     } else {
         const paragraph = document.createElement("p")
         paragraph.innerHTML = "Please <a href='login.html'>log in</a> to post comments."

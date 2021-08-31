@@ -21,7 +21,7 @@ namespace BlogAPI.Controllers
         private readonly IBlogDbAccessor _db;
         private readonly EmailService _emailService;
 
-        public ArticleApiController(IBlogDbAccessor db, 
+        public ArticleApiController(IBlogDbAccessor db,
                                     EmailService emailService)
         {
             _db = db;
@@ -76,12 +76,12 @@ namespace BlogAPI.Controllers
             _db.CreateArticle(dbArticle);
 
             // Notify users of new article
-            var users = _db.GetAllUsers().Where(x => x.DoesReceiveNotifications == true).ToList();
-            var subject = $"{dbArticle.AuthorName} Just Posted a New Article";
+            List<UserModel> users = _db.GetAllUsers().Where(x => x.DoesReceiveNotifications == true).ToList();
+            string subject = $"{dbArticle.AuthorName} Just Posted a New Article";
 
-            var articleLink = $"https://{HttpContext.Request.Host.Value}/article.html?{dbArticle.Id}";
-            var unsubLink = $"https://{HttpContext.Request.Host.Value}/login.html";
-            var body = $@"<div style='text-align:center;font-family:sans-serif;'>
+            string articleLink = $"https://{HttpContext.Request.Host.Value}/article.html?{dbArticle.Id}";
+            string unsubLink = $"https://{HttpContext.Request.Host.Value}/login.html";
+            string body = $@"<div style='text-align:center;font-family:sans-serif;'>
                               <h2>{dbArticle.AuthorName} just wrote</h2>
                               <h1>{dbArticle.Title}</h1>
                               <p style='margin-top:2.5rem;'>To read this new article, click <a href='{articleLink}'>here</a></p>
