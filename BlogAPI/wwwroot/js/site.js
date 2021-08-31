@@ -449,7 +449,7 @@ async function RenderArticlePageMainAsync() {
     let json = await GetArticleByIdAsync(id)
     let article = RenderFullArticle(json)
     document.getElementById("main").prepend(article)
-    document.title = `${json.title} - Blog` // todo: give this site a better name than 'Blog'
+    document.title = `${json.title} - The Blog of Andre Bacic`
 
     RenderPostCommentForm()
     RenderCommentList(json)
