@@ -1,5 +1,4 @@
-﻿using BlogDataLibrary.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BlogAPI.Models
 {
@@ -9,18 +8,5 @@ namespace BlogAPI.Models
         public List<string> Tags { get; set; }
         public string AuthorName { get; set; }
         public string ContentText { get; set; }
-
-        public ArticleModel GetAsDbArticleModel()
-        {
-            ArticleModel output = new ArticleModel
-            {
-                AuthorName = this.AuthorName,
-                Title = this.Title,
-                ContentText = this.ContentText,
-                Tags = this.Tags
-            };
-
-            return output;
-        }
     }
 }

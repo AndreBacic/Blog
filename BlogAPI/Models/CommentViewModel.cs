@@ -1,5 +1,4 @@
-﻿using BlogDataLibrary.Models;
-using System;
+﻿using System;
 
 namespace BlogAPI.Models
 {
@@ -14,26 +13,5 @@ namespace BlogAPI.Models
         /// Id of the article this belongs to
         /// </summary>
         public int ArticleId { get; set; }
-        public void SetThisToDbCommentModel(CommentModel comment, int articleId = -1)
-        {
-            this.Id = comment.Id;
-            this.Author.SetThisToDbUserModel(comment.Author);
-            this.DatePosted = comment.DatePosted;
-            this.LastEdited = comment.LastEdited;
-            this.ContentText = comment.ContentText;
-            this.ArticleId = articleId;
-        }
-        public CommentModel GetAsDbCommentModel()
-        {
-            CommentModel output = new CommentModel
-            {
-                Id = this.Id,
-                Author = this.Author.GetAsDbUserModel(),
-                DatePosted = this.DatePosted,
-                LastEdited = this.LastEdited,
-                ContentText = this.ContentText
-            };
-            return output;
-        }
     }
 }

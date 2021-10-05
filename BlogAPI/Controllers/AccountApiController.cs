@@ -83,9 +83,9 @@ namespace BlogAPI.Controllers
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
-                return StatusCode(StatusCodes.Status204NoContent);
+                return StatusCode(StatusCodes.Status200OK);
             }
-            return StatusCode(StatusCodes.Status400BadRequest);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
 
         [Route("refreshToken")]
@@ -228,16 +228,11 @@ namespace BlogAPI.Controllers
         [Route("deleteAccount")]
         [HttpDelete]
         public IActionResult DeleteAccount()
-        {
-            //// 1 Get email from token
-            //Claim originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First();
-            //// 2 Get id of logged in user 
-            //var users = _db.GetAllUsers();
-            //int userId = users.Where(x => x.EmailAddress == originalEmail.Value).First().Id;
-            //// 3 delete user by id
-            //_db.DeleteUser(userId);
-            return StatusCode(StatusCodes.Status501NotImplemented); // We don't actually allow our users to delete their accounts as of now.
+        {          
+            _db.DeleteUser(GetLoggedInDbUserByEmail().Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
+
 
         // Private helper methods //////////////////////////////////////////////
         private void RefreshTheRefreshToken(int userId)

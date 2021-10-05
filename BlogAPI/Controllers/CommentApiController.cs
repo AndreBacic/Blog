@@ -80,8 +80,8 @@ namespace BlogAPI.Controllers
             }
             else
             {
-                // todo: Figure out how to deal with trying to create a comment marked with an invalid article id.
-                return StatusCode(StatusCodes.Status400BadRequest);
+                // Comment is marked with an invalid article id.
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using BlogDataLibrary.Models;
-
-namespace BlogAPI.Models
+﻿namespace BlogAPI.Models
 {
     public class CreateOrEditCommentViewModel
     {
@@ -10,14 +8,5 @@ namespace BlogAPI.Models
         /// Id of the article this belongs to
         /// </summary>
         public int ArticleId { get; set; }
-        public CommentModel GetAsDbCommentModel()
-        {
-            CommentModel output = new CommentModel
-            {
-                Author = this.Author.GetAsDbUserModel(),
-                ContentText = this.ContentText
-            };
-            return output;
-        }
     }
 }

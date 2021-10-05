@@ -1,6 +1,4 @@
-﻿using BlogDataLibrary.Models;
-
-namespace BlogAPI.Models
+﻿namespace BlogAPI.Models
 {
     public class UserViewModel
     {
@@ -16,27 +14,6 @@ namespace BlogAPI.Models
             {
                 return this.FirstName + " " + this.LastName;
             }
-        }
-
-        public void SetThisToDbUserModel(UserModel user)
-        {
-            this.Id = user.Id;
-            this.FirstName = user.FirstName;
-            this.LastName = user.LastName;
-            this.EmailAddress = user.EmailAddress;
-            this.DoesReceiveNotifications = user.DoesReceiveNotifications;
-        }
-        public UserModel GetAsDbUserModel()
-        {
-            UserModel output = new UserModel
-            {
-                Id = this.Id,
-                FirstName = this.FirstName,
-                LastName = this.LastName,
-                EmailAddress = this.EmailAddress,
-                DoesReceiveNotifications = this.DoesReceiveNotifications
-            };
-            return output;
         }
     }
 }
