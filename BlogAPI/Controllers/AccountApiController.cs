@@ -232,8 +232,10 @@ namespace BlogAPI.Controllers
         [Route("deleteAccount")]
         [HttpDelete]
         public IActionResult DeleteAccount()
-        {          
-            _db.DeleteUser(GetLoggedInDbUserByEmail().Id);
+        {
+            int userId = GetLoggedInDbUserByEmail().Id;
+            RevokeUsersOldRefreshTokens(userId);
+            _db.DeleteUser(userId);
             return StatusCode(StatusCodes.Status200OK);
         }
 

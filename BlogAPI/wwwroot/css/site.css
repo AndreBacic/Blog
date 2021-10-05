@@ -54,6 +54,7 @@ body {
 }
 h1, h2, h3, h4, h5, h6, p {
     margin: 0;
+    white-space: pre-wrap;
 }
 
 main {
@@ -164,6 +165,8 @@ main > h1 {
     margin: 2px 2px 4px;
 }
 .article-info-div {
+    margin-top: 0.75rem;
+    padding-top: 0.25rem;
     display: inline-block;
     border: none;
     border-top: 1px solid var(--blog-theme-color-dark);
@@ -472,6 +475,11 @@ main > h1 {
        -moz-border-radius: 1px;
             border-radius: 1px;
     background-color: var(--blog-content-back-color);
+}
+.comment-title {
+    padding-bottom: 0.125rem;
+    border-bottom: 1px solid var(--blog-theme-color-dark);
+    margin-bottom: 0.25rem;
 }
 .comment-button-container {
     float: right;

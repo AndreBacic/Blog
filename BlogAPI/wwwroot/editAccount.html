@@ -1,11 +1,13 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>Edit Account - The Blog of Andre Bacic</title>
     <link rel="stylesheet" href="css/site.css" />
     <script src="js/site.js"></script>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+
+    <meta name="description" content="The Blog of Andre Bacic: Edit account information">
 
     <meta property="og:title" content="The Blog of Andre Bacic: Edit Account" />
     <meta property="og:type" content="website" />
@@ -78,8 +80,8 @@
 
             if (first_name_input.value &&
                 last_name_input.value &&
-                email_address_input.value.match(/[@]/g))
-            {
+                email_address_input.value.match(/[@]/g)) {
+
                 let user = {
                     FirstName: first_name_input.value,
                     LastName: last_name_input.value,
@@ -89,7 +91,11 @@
 
                 let success = await EditAccountAsync(user)
                 await FillOutKnownUserDataAsync()
-            } // todo: else{ do something with the bad data }
+                alert("Information successfully edited!")
+
+            } else {
+                alert("Invalid name or email input.")
+            }
 
             let oldPasswordInput = document.getElementById("oldPasswordInput")
             let newPasswordInput = document.getElementById("newPasswordInput")
@@ -99,13 +105,20 @@
                 newPasswordInput.value &&
                 confirmPasswordInput.value &&
                 newPasswordInput.value === confirmPasswordInput.value &&
-                newPasswordInput.match(passwordRegEx))
-            {
+                newPasswordInput.value.match(passwordRegEx)) {
+
                 let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
                 oldPasswordInput.value = ""
                 newPasswordInput.value = ""
                 confirmPasswordInput.value = ""
-            } // todo: else{ do something with the bad data }
+                alert("Password successfully changed!")
+
+            } else if (oldPasswordInput.value ||
+                       newPasswordInput.value ||
+                       confirmPasswordInput.value) {
+
+                alert("Invalid password input.")
+            }
         }
     </script>
 </body>

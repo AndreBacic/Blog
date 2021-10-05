@@ -569,7 +569,7 @@ function RenderCommentList(articleJSON) {
             newComment.className = "comment"
 
             const contentP = document.createElement("p")
-            contentP.innerHTML = `${value.author.name}: <p id="comment${value.id}-content">${value.contentText}</p>`
+            contentP.innerHTML = `<div class="comment-title">${value.author.name}:</div><p id="comment${value.id}-content">${value.contentText}</p>`
 
             const datesAndFormsContainer = document.createElement("div")
             datesAndFormsContainer.style = "display: inline-block; width: 100%;"
@@ -577,7 +577,7 @@ function RenderCommentList(articleJSON) {
             const datesP = document.createElement("p")
             datePosted = new Date(value.datePosted)
             datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
-            datesP.style = "padding: 5px 0px; display: inline-block;"
+            datesP.style = "padding: 0.875rem 0px 0.25rem; display: inline-block;"
 
             if (value.lastEdited != '') {
                 lastEdited = new Date(value.lastEdited)
@@ -682,9 +682,9 @@ function toggleDeletePopup(doesPopup, commentId) {
     }
 }
 function SubmitCommentEdit(comment) {
-    const commentContent = document.getElementById(`comment${commentId}-content`).firstElementChild.value
+    const commentContent = document.getElementById(`comment${comment.id}-content`).firstElementChild.value
     comment.contentText = commentContent
-    UpdateCommentAsync(commentId, comment).then(() => { window.location.reload() })
+    UpdateCommentAsync(comment.id, comment).then(() => { window.location.reload() })
 }
 
 function postComment() {

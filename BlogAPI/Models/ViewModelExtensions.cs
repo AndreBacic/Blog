@@ -8,6 +8,14 @@ namespace BlogAPI.Models
     {
         public static void SetThisToDbArticleModel(this ArticleViewModel @this, ArticleModel article)
         {
+            @this.Id = article.Id; // todo: encrypt ViewModel ids before sending them to the front end? That might not make a difference...
+            @this.AuthorName = article.AuthorName;
+            @this.Title = article.Title;
+            @this.ContentText = article.ContentText;
+            @this.DatePosted = article.DatePosted;
+            @this.LastEdited = article.LastEdited;
+            @this.Tags = article.Tags;
+
             List<CommentViewModel> commentViews = new List<CommentViewModel>();
             foreach (CommentModel c in article.Comments)
             {
@@ -16,14 +24,7 @@ namespace BlogAPI.Models
                 commentViews.Add(commentView);
             }
 
-            @this.Id = article.Id; // todo: encrypt ViewModel ids before sending them to the front end? That might not make a difference...
-            @this.AuthorName = article.AuthorName;
-            @this.Title = article.Title;
-            @this.ContentText = article.ContentText;
-            @this.DatePosted = article.DatePosted;
-            @this.LastEdited = article.LastEdited;
             @this.Comments = commentViews;
-            @this.Tags = article.Tags;
         }
 
         public static ArticleModel GetAsDbArticleModel(this ArticleViewModel @this)
