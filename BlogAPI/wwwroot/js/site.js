@@ -9,6 +9,8 @@ const initialMaxNumArticlesDisplayed = 8;
 const incrementMaxNumArticlesDisplayed = 6;
 let MaxNumArticlesDisplayed = initialMaxNumArticlesDisplayed
 
+const passwordRegEx = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/g
+
 // AccountApi methods   ////////////////////////////////////////////////////////////
 function getAuthToken() {
     let authToken = null;
@@ -90,7 +92,7 @@ function RefreshTokenCallbackLoop() {
             localStorage.setItem('authToken', JSON.stringify(jwt))
             setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
 }
 
 async function GetLoggedInUserAsync() {

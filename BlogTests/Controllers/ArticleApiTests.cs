@@ -3,6 +3,7 @@ using BlogAPI.Controllers;
 using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -22,7 +23,8 @@ namespace BlogDataLibrary.Tests.Controllers
 
                 ArticleApiController ctrl = mock.Create<ArticleApiController>();
                 List<ArticleModel> expected = ApiSampleData.GetSampleArticles();
-                List<ArticleViewModel> actual = (List<ArticleViewModel>)ctrl.Get();
+                ObjectResult get = (ObjectResult)ctrl.Get();
+                List<ArticleViewModel> actual = (List<ArticleViewModel>)get.Value;
 
                 Assert.NotNull(actual);
                 Assert.Equal(expected.Count, actual.Count);

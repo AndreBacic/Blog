@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace BlogDataLibrary.Messaging
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
 

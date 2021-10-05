@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BlogAPI.Controllers
 {
     [ApiController]
@@ -19,10 +17,10 @@ namespace BlogAPI.Controllers
     public class ArticleApiController : Controller
     {
         private readonly IBlogDbAccessor _db;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
         public ArticleApiController(IBlogDbAccessor db,
-                                    EmailService emailService)
+                                    IEmailService emailService)
         {
             _db = db;
             _emailService = emailService;
@@ -66,7 +64,12 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]CreateOrEditArticleViewModel article)
         {
-            // TODO: Validate user input before saving to the db.
+            // Validate user input before saving to the db.
+            if (IsValidArticle(article) == false)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            } 
+
             ArticleModel dbArticle = article.GetAsDbArticleModel();
             dbArticle.DatePosted = DateTime.UtcNow;
             if (string.IsNullOrWhiteSpace(dbArticle.AuthorName))
@@ -97,7 +100,12 @@ namespace BlogAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]CreateOrEditArticleViewModel article)
         {
-            // TODO: Validate user input before saving to the db.
+            // Validate user input before saving to the db.
+            if (IsValidArticle(article) == false)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            }
+
             ArticleModel dbArticle = article.GetAsDbArticleModel();
             dbArticle.Id = id;
             dbArticle.LastEdited = DateTime.UtcNow;
@@ -113,6 +121,13 @@ namespace BlogAPI.Controllers
             ArticleModel article = _db.GetArticle(id);
             _db.DeleteArticle(article);
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        private bool IsValidArticle(CreateOrEditArticleViewModel article)
+        {
+            return !string.IsNullOrWhiteSpace(article.AuthorName) &&
+                   !string.IsNullOrWhiteSpace(article.ContentText) &&
+                   !string.IsNullOrWhiteSpace(article.Title);
         }
     }
 }

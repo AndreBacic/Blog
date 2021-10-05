@@ -11,8 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.Text.RegularExpressions;
 
 namespace BlogAPI.Controllers
 {
@@ -22,11 +21,11 @@ namespace BlogAPI.Controllers
     {
         private readonly IBlogDbAccessor _db;
         private readonly IConfiguration _config;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
         public AccountApiController(IBlogDbAccessor db,
                                     IConfiguration configuration,
-                                    EmailService emailService)
+                                    IEmailService emailService)
         {
             _db = db;
             _config = configuration;
@@ -149,11 +148,12 @@ namespace BlogAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
-            // 2 Ensure that there are no users with the new email
+            // 2 Ensure that there are no users with the new email and that the password is ok.
             List<UserModel> users = _db.GetAllUsers();
-            if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress))
+            if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress) ||
+                IsValidPassword(createAccountViewModel.Password) == false)
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
             // 3 ok that email isn't used so this account can be created
             _db.CreateUser(createAccountViewModel.GetAsDbUserModel(), false);
@@ -204,22 +204,26 @@ namespace BlogAPI.Controllers
         [HttpPut]
         public IActionResult EditPassword([FromBody]EditPasswordModel editPasswordModel)
         {
-            // 1 Get logged in user by email
+            // 1 Validate model
+            if (IsValidPassword(editPasswordModel.NewPassword) == false)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            }
+
+            // 2 Get logged in user by email
             UserModel user = GetLoggedInDbUserByEmail();
 
-            // 2 Make sure that old password really is the old password
+            // 3 Make sure that old password really is the old password
             PasswordHashModel dbPassword = new PasswordHashModel();
             dbPassword.FromDbString(user.PasswordHash);
 
-            // todo: validate password with regex
-
-            (bool isSamePassword, bool needsUpgrade) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
+            (bool isSamePassword, _) = HashAndSalter.PasswordEqualsHash(editPasswordModel.OldPassword, dbPassword);
             if (isSamePassword == false)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
 
-            // 3 if the old password is correct, replace it with the new one
+            // 4 if the old password is correct, replace it with the new one
             _db.UpdateUserPassword(user, editPasswordModel.NewPassword);
             return StatusCode(StatusCodes.Status200OK);
         }
@@ -290,6 +294,13 @@ namespace BlogAPI.Controllers
             {
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             }
+        }
+
+        private bool IsValidPassword(string password)
+        {
+            Regex regex = new Regex(@"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,})$");
+
+            return regex.IsMatch(password);
         }
     }
 }

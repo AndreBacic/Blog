@@ -76,7 +76,6 @@
             let email_address_input = document.getElementById("emailInput")
             let doesReceiveNotificationsBox = document.getElementById("doesReceiveNotificationsBox")
 
-            // TODO: Implement full validation
             if (first_name_input.value &&
                 last_name_input.value &&
                 email_address_input.value.match(/[@]/g))
@@ -90,23 +89,23 @@
 
                 let success = await EditAccountAsync(user)
                 await FillOutKnownUserDataAsync()
-            }
+            } // todo: else{ do something with the bad data }
 
             let oldPasswordInput = document.getElementById("oldPasswordInput")
             let newPasswordInput = document.getElementById("newPasswordInput")
             let confirmPasswordInput = document.getElementById("confirmPasswordInput")
 
-            // TODO: Implement full validation
             if (oldPasswordInput.value &&
                 newPasswordInput.value &&
                 confirmPasswordInput.value &&
-                newPasswordInput.value === confirmPasswordInput.value)
+                newPasswordInput.value === confirmPasswordInput.value &&
+                newPasswordInput.match(passwordRegEx))
             {
                 let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
                 oldPasswordInput.value = ""
                 newPasswordInput.value = ""
                 confirmPasswordInput.value = ""
-            }
+            } // todo: else{ do something with the bad data }
         }
     </script>
 </body>

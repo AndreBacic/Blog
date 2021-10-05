@@ -114,7 +114,7 @@
                 if (first_name &&
                     last_name &&
                     email_address.match(/[@]/g) &&
-                    password.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/g))
+                    password.match(passwordRegEx))
                 {
                     return true
                 } else {

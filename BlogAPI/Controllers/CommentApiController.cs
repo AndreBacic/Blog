@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BlogAPI.Controllers
 {
     [ApiController]
@@ -27,7 +25,7 @@ namespace BlogAPI.Controllers
         [HttpGet("{articleId}")]
         public IActionResult Get(int articleId)
         {
-            List<CommentModel> comments = new List<CommentModel>();
+            List<CommentModel> comments;
             try
             {
                 comments = _db.GetAllCommentsInArticle(articleId);
@@ -69,20 +67,19 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
         {
-            // TODO: Validate user input before saving to the db.
-            if (comment.ArticleId > 0 && _db.GetAllArticles().Any(x => x.Id == comment.ArticleId))
+            // Validate user input before saving to the db.
+            if (IsValidComment(comment) == false ||
+                _db.GetAllArticles().Any(x => x.Id == comment.ArticleId) == false)
             {
-                CommentModel dbComment = comment.GetAsDbCommentModel();
-                dbComment.DatePosted = DateTime.UtcNow;
-                _db.CreateComment(dbComment, comment.ArticleId);
-
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            else
-            {
-                // Comment is marked with an invalid article id.
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
+
+            
+            CommentModel dbComment = comment.GetAsDbCommentModel();
+            dbComment.DatePosted = DateTime.UtcNow;
+            _db.CreateComment(dbComment, comment.ArticleId);
+
+            return StatusCode(StatusCodes.Status201Created);            
         }
 
         [Authorize(Policy = ("IsCommenter"))]
@@ -90,16 +87,22 @@ namespace BlogAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
         {
-            if (IsLoggedInUsersComment(comment.ArticleId, id))
+            // Validate user input before saving to the db.
+            if (IsValidComment(comment) == false)
             {
-                // todo: Validate user input before saving to the db.
-                CommentModel dbComment = comment.GetAsDbCommentModel();
-                dbComment.Id = id;
-                dbComment.LastEdited = DateTime.UtcNow;
-                _db.UpdateComment(dbComment);
-                return StatusCode(StatusCodes.Status200OK);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            return StatusCode(StatusCodes.Status401Unauthorized);
+
+            if (IsLoggedInUsersComment(comment.ArticleId, id) == false)
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
+
+            CommentModel dbComment = comment.GetAsDbCommentModel();
+            dbComment.Id = id;
+            dbComment.LastEdited = DateTime.UtcNow;
+            _db.UpdateComment(dbComment);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Authorize(Policy = ("IsCommenter"))]
@@ -125,12 +128,21 @@ namespace BlogAPI.Controllers
                 // So if there's no error, we check if the old comment was posted by the logged in user.
                 string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
 
-                return String.Equals(oldComment.Author.EmailAddress, userEmail);
+                return string.Equals(oldComment.Author.EmailAddress, userEmail);
             }
             catch (Exception)
             {
                 return false;
             }
+        }
+
+        private bool IsValidComment(CreateOrEditCommentViewModel comment)
+        {
+            return !string.IsNullOrWhiteSpace(comment.ContentText) &&
+                   comment.ArticleId > 0 &&
+                   !(comment.Author is null) &&
+                   !string.IsNullOrWhiteSpace(comment.Author.Name) &&
+                   !string.IsNullOrWhiteSpace(comment.Author.EmailAddress);
         }
     }
 }

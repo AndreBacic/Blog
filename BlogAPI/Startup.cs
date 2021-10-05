@@ -65,7 +65,7 @@ namespace BlogAPI
             services.AddCors();
             services.AddControllers();
             services.AddSingleton<IBlogDbAccessor, SQLDapperDataAccessor>();
-            services.AddSingleton<EmailService>();
+            services.AddSingleton<IEmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
