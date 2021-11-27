@@ -795,12 +795,13 @@ main > h1 {
         min-height: 11rem;
     }
 
-    .navbar-toggle:focus ~ .navbar-toggle-label > span {
+    .navbar-toggle:checked ~ .navbar-toggle-label > span {
         border: 1px solid var(--blog-theme-color);
         -webkit-border-radius: 3px;
            -moz-border-radius: 3px;
                 border-radius: 3px;
     }
+
     .navbar-toggle-label {
         position: relative;
         width: 100%;
@@ -841,10 +842,6 @@ main > h1 {
     .navbar-toggle-label > span > span:last-child {
         margin-bottom: 0;
     }
-    /*.navbar-toggle:checked ~ .navbar-toggle-label {
-        background-image: linear-gradient(var(--blog-theme-color-extra-dark), 
-                                        var(--blog-forward-color) 30%);
-    }*/
     .navbar-toggle:checked ~ .navbar {
         min-height: 11.1em;
         -webkit-transform: scale(1, 1);

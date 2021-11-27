@@ -378,10 +378,6 @@ function RenderPreviewOfArticle(articleJSON) {
     header.textContent = articleJSON.title
     article.appendChild(header)
 
-    //const content = document.createElement("p")
-    //content.textContent = articleJSON.contentText
-    //article.appendChild(content)
-
     const authorNameLabel = document.createElement("p")
     authorNameLabel.style = "display: inline-block;"
     authorNameLabel.textContent = 'Written by '
