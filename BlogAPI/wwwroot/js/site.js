@@ -305,7 +305,7 @@ function GetUrlSearch() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /// DOM Rendering Methods  ///////////////////////////////////////////////////////////////////////////
 
-async function RenderTempletesAsync(haveSearch = true) {
+async function RenderTemplatesAsync(haveSearch = true) {
     let isLoggedIn = isUserLoggedIn()
 
     let promisething = await fetch("templates.html")
@@ -447,7 +447,7 @@ async function RenderArticlePageMainAsync() {
     let json = await GetArticleByIdAsync(id)
     let article = RenderFullArticle(json)
     document.getElementById("main").prepend(article)
-    document.title = `${json.title} - The Blog of Andre Bacic`
+    document.title = `${json.title} - The Blog of Andre Bačić`
 
     RenderPostCommentForm()
     RenderCommentList(json)
