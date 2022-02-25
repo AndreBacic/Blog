@@ -60,17 +60,20 @@
     <footer id="footer" class="footer">
         <aside class="footer-signup-prompt">Please subscribe:</aside>
         <form class="footer-signup-form" id="register-form" action="javascript:void(0)">
-            <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" required/>
-            <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" required/>
-            <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" required/>
-            <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" required/>
+            <input type="text" class="footer-signup-input" id="First_Name" placeholder="First Name" contenteditable="true" required />
+            <input type="text" class="footer-signup-input" id="Last_Name" placeholder="Last Name" contenteditable="true" required />
+            <input type="email" class="footer-signup-input" id="Email_address" placeholder="Email address" contenteditable="true" required />
+            <input type="password" class="footer-signup-input" id="Password" placeholder="A New Password" contenteditable="true" required />
             <div style="display: inline-block;">
                 <button type="button" class="blog-button" onclick="GetRegisterDataAndLoginAsync().then()" style="float:right;">Sign Up</button>
             </div>
         </form>
         <aside class="footer-copyright">
-            <p>© 2021 by Andre Bačić</p>
+            <p>© <y id="year-display"></y> by Andre Bačić</p>
         </aside>
+        <script>
+            document.getElementById("year-display").textContent = (new Date()).getFullYear()
+        </script>
         <script>
             async function GetRegisterDataAndLoginAsync() {
                 let first_name_input = document.getElementById("First_Name")
@@ -81,8 +84,7 @@
                 if (ValidateRegisterData(first_name_input.value,
                     last_name_input.value,
                     email_address_input.value,
-                    password_input.value) === false)
-                {
+                    password_input.value) === false) {
                     alert("Invalid sign up form input.")
                     return
                 }
@@ -114,8 +116,7 @@
                 if (first_name &&
                     last_name &&
                     email_address.match(/[@]/g) &&
-                    password.match(passwordRegEx))
-                {
+                    password.match(passwordRegEx)) {
                     return true
                 } else {
                     return false
@@ -128,8 +129,11 @@
     <footer id="footer" class="footer-logged-in footer">
         <h1 id="footer-header"></h1>
         <aside class="footer-copyright">
-            <p>© 2021 by Andre Bačić</p>
+            <p>© <y id="year-display"></y> by Andre Bačić</p>
         </aside>
+        <script>
+            document.getElementById("year-display").textContent = (new Date()).getFullYear()
+        </script>
         <script>
             let user = JSON.parse(localStorage.getItem('user'))
             document.getElementById("footer-header").textContent = `You are logged in as: ${user.name}`
