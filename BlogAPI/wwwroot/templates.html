@@ -113,8 +113,8 @@
                 }
             }
             function ValidateRegisterData(first_name, last_name, email_address, password) {
-                if (first_name &&
-                    last_name &&
+                if (first_name != '' &&
+                    last_name != '' &&
                     email_address.match(/[@]/g) &&
                     password.match(passwordRegEx)) {
                     return true
