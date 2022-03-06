@@ -25,4 +25,9 @@ describe("Navigate the Blog app while logged out", () => {
 
         cy.get('select').select(1)
     })
+
+    // TODO: validate signup form rejects bad info
+    // TODO: validate login form rejects bad info
+    // TODO: validate about page
+    // TODO: validate createArticle.html rejects non-logged in user
 })

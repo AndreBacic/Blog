@@ -115,7 +115,7 @@
             function ValidateRegisterData(first_name, last_name, email_address, password) {
                 if (first_name != '' &&
                     last_name != '' &&
-                    email_address.match(/[@]/g) &&
+                    isValidEmail(email_address) &&
                     password.match(passwordRegEx)) {
                     return true
                 } else {

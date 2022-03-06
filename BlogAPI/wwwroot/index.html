@@ -19,6 +19,7 @@
 <body>
     <script>
         let articles = []
+        const haveSearch = true
         GetAllArticlesAsync().then((dbarticles) => {
             articles = dbarticles
             if (articles.length > initialMaxNumArticlesDisplayed) {
@@ -28,7 +29,7 @@
             RenderArticles(articles.slice(0, initialMaxNumArticlesDisplayed)).then()
         })
         window.onload = function () {
-            this.RenderTemplatesAsync().then()
+            this.RenderTemplatesAsync(haveSearch).then()
         }
     </script>
     <main>

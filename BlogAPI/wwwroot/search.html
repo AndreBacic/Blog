@@ -19,13 +19,14 @@
 <body>
     <script>
         let articles = []
+        const haveSearch = false
         GetAllArticlesAsync().then((data) => {
             articles = data
             renderTagOptions()
             searchBasedOnUrlQuery()
         })
         window.onload = function () {
-            this.RenderTemplatesAsync(false).then()            
+            this.RenderTemplatesAsync(haveSearch).then()            
         }
     </script>
     <main>
