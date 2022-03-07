@@ -107,7 +107,7 @@
                 if (success === true) {
                     await LoginAsync(email_address, password)
                     window.alert("Successfully signed up!")
-                    window.location.reload()
+                    ReRenderTemplates(haveSearch)
                 } else {
                     window.alert("There was a problem registering you.")
                 }

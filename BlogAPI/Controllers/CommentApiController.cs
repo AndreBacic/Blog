@@ -110,7 +110,7 @@ namespace BlogAPI.Controllers
         [HttpDelete("{articleId}/{id}")] // data is entered like: https://[domain]/api/CommentApi/Delete/5/3
         public IActionResult Delete(int articleId, int id)
         {
-            if (IsLoggedInUsersComment(articleId, id))
+            if (IsLoggedInUsersComment(articleId, id) || HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Role).First().Value == UserModel.ADMIN_ROLE)
             {
                 _db.DeleteComment(id);
                 return StatusCode(StatusCodes.Status200OK);

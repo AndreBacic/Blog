@@ -643,7 +643,7 @@ function createCommentEditDeleteButtons(comment, article) {
 
             <button class="comment-button comment-form-button" onclick="toggleDeletePopup(false, ${comment.id})">Cancel</button>
             <button class="comment-button comment-form-button delete-comment-button" 
-                    onclick="DeleteCommentAsync(${article.id}, ${comment.id}).then(); window.location.reload()">Delete</button>
+                    onclick="DeleteCommentAsync(${article.id}, ${comment.id}).then(() => { ReRenderCommentList(${article.id}).then() })">Delete</button>
         </div>
 
         <button id="edit-button" class="comment-button">Edit</button>
@@ -661,7 +661,7 @@ function createCommentEditDeleteButtons(comment, article) {
         toggleEditPopup(false, comment.id, comment.contentText)
     }
     buttonContainer.querySelector(`#submit-edit${comment.id}`).onclick = () => {
-        SubmitCommentEdit(comment)
+        SubmitCommentEdit(comment, article.id)
     }
     buttonContainer.id = `button-container${comment.id}`
 
@@ -703,10 +703,10 @@ function toggleDeletePopup(doesPopup, commentId) {
         buttonContainer.style.minHeight = "initial";
     }
 }
-function SubmitCommentEdit(comment) {
+function SubmitCommentEdit(comment, articleId) {
     const commentContent = document.getElementById(`comment${comment.id}-content`).firstElementChild.value
     comment.contentText = commentContent
-    UpdateCommentAsync(comment.id, comment).then(() => { window.location.reload() })
+    UpdateCommentAsync(comment.id, comment).then(() => { ReRenderCommentList(articleId).then() })
 }
 
 function postComment() {
@@ -721,9 +721,22 @@ function postComment() {
         }
         CreateCommentAsync(comment).then(() => {
             comment_content_input.value = ""
-            window.location.reload()
+            ReRenderCommentList(articleId).then()
         })
     }
+}
+
+async function ReRenderCommentList(articleId) {
+    let scrollY = window.scrollY
+
+    cl = document.getElementById("comment-list")
+    for (let i = 0; i < cl.children.length; i++) { cl.children[i].remove(); --i; }
+    let json = await GetArticleByIdAsync(articleId)    
+    RenderCommentList(json)
+
+    window.requestAnimationFrame(() => {
+        window.scroll(0, scrollY)
+    })
 }
 
 
