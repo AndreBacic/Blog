@@ -83,7 +83,7 @@
 
             if (first_name_input.value &&
                 last_name_input.value &&
-                email_address_input.value.match(/[@]/g)) {
+                isValidEmail(email_address_input.value)) {
 
                 let user = {
                     FirstName: first_name_input.value,
@@ -92,9 +92,16 @@
                     DoesReceiveNotifications: doesReceiveNotificationsBox.checked
                 }
 
-                let success = await EditAccountAsync(user)
-                await FillOutKnownUserDataAsync()
-                alert("Information successfully edited!")
+                EditAccountAsync(user).then((resp) => {
+                    if (resp) {
+                        FillOutKnownUserDataAsync().then(() => {
+                            alert("Information successfully edited!")
+                            ReRenderTemplates()
+                        })
+                    } else {
+                        alert("Invalid name or email input.")
+                    }
+                })
 
             } else {
                 alert("Invalid name or email input.")

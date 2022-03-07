@@ -78,13 +78,7 @@ async function LogoutAsync() {
 function LogOutUser() {
     localStorage.removeItem('authToken')
     localStorage.removeItem('user')
-
-    for (var i = 0; i < 4; i++) {
-        document.body.children.shift()
-    }
-    document.body.children.pop()
-    
-    RenderTemplatesAsync(haveSearch).then() // haveSearch exists already on every page
+    ReRenderTemplates()
 }
 
 function RefreshTokenCallbackLoop() {
@@ -364,6 +358,21 @@ async function RenderTemplatesAsync(haveSearch = true) {
     document.body.append(footerClone)
 }
 
+function ReRenderTemplates() {
+    let scrollY = window.scrollY
+    document.querySelector(".header").remove()
+    document.querySelector("#navbar-toggle").remove()
+    document.querySelector("label[for='navbar-toggle']").remove()
+    document.querySelector(".navbar").remove()
+    document.querySelector("#footer").remove()
+
+    RenderTemplatesAsync(haveSearch).then(() => { // haveSearch exists already on every page
+        window.requestAnimationFrame(() => {
+            window.scroll(0, scrollY)
+        })
+    })
+}
+
 function LogOutButtonOnClick() {
     LogoutAsync().then(window.location = 'index.html')
 }
@@ -459,6 +468,7 @@ function GetMoreArticlesToBeRendered(allArticles) {
 
 
 async function RenderArticlePageMainAsync() {
+    // TODO: have code to handle a url to article.html with an invalid id  ( ex: /article.html?-1 )
     let id = parseInt(GetUrlSearch())
     let json = await GetArticleByIdAsync(id)
     let article = RenderFullArticle(json)
