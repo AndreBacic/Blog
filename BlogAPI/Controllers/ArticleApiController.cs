@@ -83,7 +83,7 @@ namespace BlogAPI.Controllers
             string subject = $"{dbArticle.AuthorName} Just Posted a New Article";
 
             string articleLink = $"https://{HttpContext.Request.Host.Value}/article.html?{dbArticle.Id}";
-            string unsubLink = $"https://{HttpContext.Request.Host.Value}/login.html";
+            string unsubLink = $"https://{HttpContext.Request.Host.Value}/editAccount.html";
             string body = $@"<div style='text-align:center;font-family:sans-serif;'>
                               <h2>{dbArticle.AuthorName} just wrote</h2>
                               <h1>{dbArticle.Title}</h1>

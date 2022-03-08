@@ -17,6 +17,10 @@
 </head>
 <body>
     <script>
+        if (!isUserLoggedIn()) {
+            window.location = "login.html"
+        }
+
         const haveSearch = false
         window.onload = function () {
             this.RenderTemplatesAsync(haveSearch).then()

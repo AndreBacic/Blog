@@ -487,7 +487,7 @@ function RenderFullArticle(articleJSON) {
     header.textContent = articleJSON.title
     article.appendChild(header)
 
-    const content = document.createElement("p")
+    const content = document.createElement("div")
     // innerHTML because we want the html code in the article to be rendered.
     content.innerHTML = articleJSON.contentText
     article.appendChild(content)
