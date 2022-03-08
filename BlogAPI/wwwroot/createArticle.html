@@ -52,7 +52,7 @@
             const contentInput = document.getElementById("contentInput")
             
             async function GetArticleDataAndSubmitAsync() {
-                let tags = tagsInput.value.split(' ')
+                let tags = tagsInput.value.split(',')
 
                 const article = {
                     Title: titleInput.value,
@@ -62,10 +62,15 @@
                 }
                 resp = await CreateArticleAsync(article)
                 console.log(resp)
+                if (resp.status < 400) {
+                    titleInput.value = ""
+                    tagsInput.value = ""
+                    contentInput.value = ""
 
-                titleInput.value = ""
-                tagsInput.value = ""
-                contentInput.value = ""
+                    window.alert("Successfully created!")
+                } else {
+                    window.alert("There was a problem creating the article.")
+                }
             }
         </script>
     </main>

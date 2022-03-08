@@ -29,7 +29,9 @@
             <h1>Edit Article</h1>
             <div>
                 <label for="titleInput">Id (integer): </label><br />
-                <input id="idInput" type="number" class="account-text-input" contenteditable="true" />
+                <input style="width: 50%" id="idInput" type="number" class="account-text-input" contenteditable="true" />
+
+                <div style="display: inline-block;" class="blog-button" onclick="LoadButtonOnClick().then()">Load data</div>
             </div>
             <div>
                 <label for="titleInput">Title: </label><br />
@@ -51,12 +53,20 @@
         </form>
         <script>
             const idInput = document.getElementById("idInput")
+            idInput.value = 0
             const nameInput = document.getElementById("nameInput")
             const titleInput = document.getElementById("titleInput")
             const tagsInput = document.getElementById("tagsInput")
             const contentInput = document.getElementById("contentInput")
 
+            let Article = {id: 0}
+
             async function GetArticleDataAndSubmitAsync() {
+                let id = Number(idInput.value)
+                if (Article.id !== id) {
+                    await LoadButtonOnClick()
+                    return
+                }
                 let tags = tagsInput.value.split(' ')
 
                 const article = {
@@ -65,13 +75,40 @@
                     AuthorName: nameInput.value,
                     ContentText: contentInput.value
                 }
-                resp = await UpdateArticleAsync(idInput.value, article)
+                resp = await UpdateArticleAsync(id, article)
                 console.log(resp)
+                if (resp.status < 400) {
+                    idInput.value = 0
+                    titleInput.value = ""
+                    tagsInput.value = ""
+                    contentInput.value = ""
 
-                idInput.value = 0
-                titleInput.value = ""
-                tagsInput.value = ""
-                contentInput.value = ""
+                    window.alert("Successfully edited!")
+                } else {
+                    window.alert("There was a problem creating the article.")
+                }
+            }
+
+            async function LoadButtonOnClick() {
+                let id = Number(idInput.value)
+                let resp = await GetArticleByIdAsync(id)
+                if (resp.status == 404) {
+                    window.alert(`There is no article with an id of ${id}`)
+                    return
+                }
+                Article = resp
+                let tags = ""
+                Article.tags.forEach((t, i) => {
+                    if (i > 0) {
+                        tags += ","
+                    }
+                    tags += t
+                })
+
+                nameInput.value = Article.authorName
+                titleInput.value = Article.title
+                tagsInput.value = tags
+                contentInput.value = Article.contentText
             }
         </script>
     </main>
