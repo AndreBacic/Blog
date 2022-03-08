@@ -4,16 +4,19 @@ using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
 
 namespace BlogDataLibrary.Messaging
 {
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IConfiguration configuration, IWebHostEnvironment env)
         {
             _config = configuration;
+            _env = env;
         }
         public void SendEmail(UserModel to, string subject, string plainTextBody)
         {
@@ -44,7 +47,7 @@ namespace BlogDataLibrary.Messaging
             using (SmtpClient client = new SmtpClient())
             {
                 client.Connect(GetAppSetting("Host"), int.Parse(GetAppSetting("port")), bool.Parse(GetAppSetting("UseSsl")));
-                //client.Authenticate(GetAppSetting("Username"), GetAppSetting("Password"));
+                client.Authenticate(GetAppSetting("Username"), GetAppSetting("Password"));
                 client.Send(mailMessage);
                 client.Disconnect(true);
             }

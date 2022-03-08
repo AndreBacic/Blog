@@ -110,7 +110,9 @@
                     }
                 })
             })
-            tags.sort()
+            tags.sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            })
             // for each unique tag, put an option in the tags list for it.
             tags.forEach((tag) => {
                 const newOption = document.createElement('option')
