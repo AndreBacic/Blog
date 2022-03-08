@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Create New Article - The Blog of Andre Bačić</title>
+    <title>Edit Existing Article - The Blog of Andre Bačić</title>
     <link rel="stylesheet" href="css/site.css" />
     <script async src="js/site.js"></script>
 
@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
     <style>
         form {
-            grid-template-rows: repeat(6, auto);
+            grid-template-rows: repeat(7, auto);
         }
     </style>
 </head>
@@ -26,7 +26,11 @@
     </script>
     <main>
         <form action="javascript:void(0)" onsubmit="GetArticleDataAndSubmitAsync().then()" class="account-form">
-            <h1>Create New Article</h1>
+            <h1>Edit Article</h1>
+            <div>
+                <label for="titleInput">Id (integer): </label><br />
+                <input id="idInput" type="number" class="account-text-input" contenteditable="true" />
+            </div>
             <div>
                 <label for="titleInput">Title: </label><br />
                 <input id="titleInput" type="text" class="account-text-input" contenteditable="true" />
@@ -46,11 +50,12 @@
             <input type="submit" class="blog-button" value="Submit" />
         </form>
         <script>
+            const idInput = document.getElementById("idInput")
             const nameInput = document.getElementById("nameInput")
             const titleInput = document.getElementById("titleInput")
             const tagsInput = document.getElementById("tagsInput")
             const contentInput = document.getElementById("contentInput")
-            
+
             async function GetArticleDataAndSubmitAsync() {
                 let tags = tagsInput.value.split(' ')
 
@@ -60,9 +65,10 @@
                     AuthorName: nameInput.value,
                     ContentText: contentInput.value
                 }
-                resp = await CreateArticleAsync(article)
+                resp = await UpdateArticleAsync(idInput.value, article)
                 console.log(resp)
 
+                idInput.value = 0
                 titleInput.value = ""
                 tagsInput.value = ""
                 contentInput.value = ""

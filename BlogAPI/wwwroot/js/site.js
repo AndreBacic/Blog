@@ -214,7 +214,7 @@ async function CreateArticleAsync(article) {
             },
             body: JSON.stringify(article)
         })
-    //let success = await createPromise.json()
+    return createPromise
 }
 
 async function UpdateArticleAsync(id, article) {
@@ -228,7 +228,7 @@ async function UpdateArticleAsync(id, article) {
             },
             body: JSON.stringify(article)
         })
-    //let success = await updatePromise.json()
+    return updatePromise
 }
 
 async function DeleteArticleAsync(id) {
@@ -239,7 +239,7 @@ async function DeleteArticleAsync(id) {
                 'Authorization': 'Bearer ' + getAuthToken()
             }
         })
-    //let success = await deletePromise.json()
+    return deletePromise
 }
 
 // CommentApi methods   ////////////////////////////////////////////////////////////////

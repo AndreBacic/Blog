@@ -125,8 +125,7 @@ namespace BlogAPI.Controllers
 
         private bool IsValidArticle(CreateOrEditArticleViewModel article)
         {
-            return !string.IsNullOrWhiteSpace(article.AuthorName) &&
-                   !string.IsNullOrWhiteSpace(article.ContentText) &&
+            return !string.IsNullOrWhiteSpace(article.ContentText) &&
                    !string.IsNullOrWhiteSpace(article.Title);
         }
     }
