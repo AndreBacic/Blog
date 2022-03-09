@@ -27,7 +27,26 @@ describe("Navigate the Blog app while logged out", () => {
     })
 
     // TODO: validate signup form rejects bad info
-    // TODO: validate login form rejects bad info
-    // TODO: validate about page
+    it("Gives bad login creds and get rejected", () => {
+        cy.get('nav a[href="login.html"]').click()
+
+        cy.get('main input[type="email"]').type("not.real@fakeness.testilly.e2etest")
+        cy.get('main input[type="password"]').type("heyyyyyyy")
+
+        // const alertStub = cy.stub()
+        cy.on('window:alert', (e) => {
+            console.log(e)
+            expect(e).to.contain('Incorrect') // TODO: change test to not be so hard-coded?
+        })
+
+        cy.get('main input[type="submit"]').click()
+    })
+
+    it("Visits about page", () => {
+        cy.get('nav a[href="about.html"]').click()
+
+        cy.get('main').should('contain.html', 'h1')
+        cy.get('main').should('contain.html', 'article')
+    })
     // TODO: validate createArticle.html rejects non-logged in user
 })
