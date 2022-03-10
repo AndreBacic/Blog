@@ -81,17 +81,11 @@ namespace BlogAPI
             //load ip rules from appsettings.json
             services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
 
-            // inject counter and rules stores
-            services.AddInMemoryRateLimiting();
-            //services.AddDistributedRateLimiting<AsyncKeyLockProcessingStrategy>();
-            //services.AddDistributedRateLimiting<RedisProcessingStrategy>();
-            //services.AddRedisRateLimiting();
-
-            // Add framework services.
-            //services.AddMvc(); // I think services.AddControllers does the trick
-
-            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+            services.AddInMemoryRateLimiting();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +95,8 @@ namespace BlogAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseIpRateLimiting();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -124,8 +120,6 @@ namespace BlogAPI
             {
                 endpoints.MapControllers();
             });
-
-            app.UseIpRateLimiting();
         }
     }
 }

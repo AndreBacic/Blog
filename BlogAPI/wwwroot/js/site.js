@@ -777,5 +777,5 @@ function windowOnResizeChangeColor() {
 if (isUserLoggedIn()) {
     let lastTimeJWTRefreshed = Date.parse(localStorage.getItem(LS_KEY_lastJWTRefresh))
     let now = Date.parse( new Date())
-    setTimeout( RefreshTokenCallbackLoop, now - lastTimeJWTRefreshed)
+    setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken + lastTimeJWTRefreshed - now)
 }
