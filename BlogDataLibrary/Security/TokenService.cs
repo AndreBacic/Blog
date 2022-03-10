@@ -24,7 +24,7 @@ namespace BlogDataLibrary.Security
             if (!userClaims.Any(x => x.Type == JwtRegisteredClaimNames.Exp))
             {
                 userClaims.Add(new Claim(JwtRegisteredClaimNames.Exp,
-                                    new DateTimeOffset(DateTime.UtcNow.AddMinutes(5)).ToUnixTimeSeconds().ToString()));
+                                    new DateTimeOffset(DateTime.UtcNow.AddMinutes(15)).ToUnixTimeSeconds().ToString()));
             }
 
             JwtSecurityToken token = new JwtSecurityToken(

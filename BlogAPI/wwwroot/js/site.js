@@ -2,8 +2,12 @@
 const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
 
-const millisToJwtExpiration = 300000 // 5 min
-const millisDelayToRefreshToken = millisToJwtExpiration - 60000 // minus 1 minute
+const LS_KEY_user = 'user'
+const LS_KEY_authToken = 'authToken'
+const LS_KEY_lastJWTRefresh = "lastJWTRefresh"
+
+const millisToJwtExpiration = 15*60*1000 // 15 min
+const millisDelayToRefreshToken = millisToJwtExpiration - 30000 // minus 30 seconds
 
 const initialMaxNumArticlesDisplayed = 8;
 const incrementMaxNumArticlesDisplayed = 6;
@@ -25,7 +29,7 @@ function isValidEmail(email) {
 function getAuthToken() {
     let authToken = null;
     try {
-        authToken = JSON.parse(localStorage.getItem('authToken'))
+        authToken = JSON.parse(localStorage.getItem(LS_KEY_authToken))
     } catch {
         return null
     }
@@ -55,9 +59,12 @@ async function LoginAsync(email, password) {
         return
     }
     // Only log in user if the password was valid
-    localStorage.setItem('authToken', JSON.stringify(jwt))
+    localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
     let user = await GetLoggedInUserAsync()
-    localStorage.setItem('user', JSON.stringify(user))
+    localStorage.setItem(LS_KEY_user, JSON.stringify(user))
+
+    let now = new Date().toString()
+    localStorage.setItem(LS_KEY_lastJWTRefresh, now)
 }
 async function LogoutAsync() {
     let somePromise = await fetch(`${accountURI}/logout`,
@@ -76,8 +83,8 @@ async function LogoutAsync() {
     }
 }
 function LogOutUser() {
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('user')
+    localStorage.removeItem(LS_KEY_authToken)
+    localStorage.removeItem(LS_KEY_user)
     ReRenderTemplates()
 }
 
@@ -99,7 +106,9 @@ function RefreshTokenCallbackLoop() {
             }
         })
         .then(jwt => {
-            localStorage.setItem('authToken', JSON.stringify(jwt))
+            localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
+            let now = new Date().toString()
+            localStorage.setItem(LS_KEY_lastJWTRefresh, now)
             setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
         })
         .catch(err => console.error(err))
@@ -152,7 +161,7 @@ async function EditAccountAsync(user) {
 
     if (success === true) {
         let user = await GetLoggedInUserAsync()
-        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem(LS_KEY_user, JSON.stringify(user))
     }
     return success
 }
@@ -610,7 +619,7 @@ function RenderCommentList(articleJSON) {
             datesAndFormsContainer.appendChild(datesP)
 
             if (isUserLoggedIn()) {
-                let user = JSON.parse(localStorage.getItem('user'))
+                let user = JSON.parse(localStorage.getItem(LS_KEY_user))
 
                 if (value.author.id === user.id) {
                     datesAndFormsContainer.appendChild(createCommentEditDeleteButtons(value, articleJSON))
@@ -712,7 +721,7 @@ function SubmitCommentEdit(comment, articleId) {
 function postComment() {
     let comment_content_input = document.getElementById("commentInput")
     if (comment_content_input.value.replace(/\s/g, '').length) {
-        let user = JSON.parse(localStorage.getItem('user'))
+        let user = JSON.parse(localStorage.getItem(LS_KEY_user))
         let articleId = parseInt(GetUrlSearch())
         comment = {
             author: user,
@@ -766,5 +775,7 @@ function windowOnResizeChangeColor() {
 
 // Run this each time the file is loaded:
 if (isUserLoggedIn()) {
-    RefreshTokenCallbackLoop()
+    let lastTimeJWTRefreshed = Date.parse(localStorage.getItem(LS_KEY_lastJWTRefresh))
+    let now = Date.parse( new Date())
+    setTimeout( RefreshTokenCallbackLoop, now - lastTimeJWTRefreshed)
 }

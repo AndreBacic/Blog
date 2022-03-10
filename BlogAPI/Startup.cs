@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using BlogDataLibrary.DataAccess;
 using BlogDataLibrary.Messaging;
 using BlogDataLibrary.Models;
@@ -66,6 +67,31 @@ namespace BlogAPI
             services.AddControllers();
             services.AddSingleton<IBlogDbAccessor, SQLDapperDataAccessor>();
             services.AddSingleton<IEmailService, EmailService>();
+
+            //######## Anti-Dos AspNetCoreRateLimit code ###########
+            // needed to load configuration from appsettings.json
+            services.AddOptions();
+
+            // needed to store rate limit counters and ip rules
+            services.AddMemoryCache();
+
+            //load general configuration from appsettings.json
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+
+            //load ip rules from appsettings.json
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            // inject counter and rules stores
+            services.AddInMemoryRateLimiting();
+            //services.AddDistributedRateLimiting<AsyncKeyLockProcessingStrategy>();
+            //services.AddDistributedRateLimiting<RedisProcessingStrategy>();
+            //services.AddRedisRateLimiting();
+
+            // Add framework services.
+            //services.AddMvc(); // I think services.AddControllers does the trick
+
+            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,6 +124,8 @@ namespace BlogAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseIpRateLimiting();
         }
     }
 }
