@@ -160,6 +160,7 @@ async function EditAccountAsync(user) {
     let success = editPromise.status < 400
 
     if (success === true) {
+        RefreshTokenCallbackLoop()
         let user = await GetLoggedInUserAsync()
         localStorage.setItem(LS_KEY_user, JSON.stringify(user))
     }
@@ -477,9 +478,28 @@ function GetMoreArticlesToBeRendered(allArticles) {
 
 
 async function RenderArticlePageMainAsync() {
-    // TODO: have code to handle a url to article.html with an invalid id  ( ex: /article.html?-1 )
-    let id = parseInt(GetUrlSearch())
+    const articleNotFoundHTML = `<h1>Article Not Found</h1>
+            <article class="full-article">
+                <h2>Unfortunately, the article this page is linked to cannot be found</h2>
+            </article>
+            `
+    let id = -1
+    try {
+        id = parseInt(GetUrlSearch())
+    } catch (e) {/*nothing*/ }
+
+    if ((id > 0) === false) {
+        document.getElementById("main").innerHTML = articleNotFoundHTML            
+        return
+    }
+
     let json = await GetArticleByIdAsync(id)
+
+    if (json.status >= 400) {
+        document.getElementById("main").innerHTML = articleNotFoundHTML
+        return
+    }
+
     let article = RenderFullArticle(json)
     document.getElementById("main").prepend(article)
     document.title = `${json.title} - The Blog of Andre Bačić`

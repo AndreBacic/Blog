@@ -85,7 +85,6 @@
                     last_name_input.value,
                     email_address_input.value,
                     password_input.value) === false) {
-                    alert("Invalid sign up form input.")
                     return
                 }
 
@@ -109,18 +108,26 @@
                     window.alert("Successfully signed up!")
                     ReRenderTemplates(haveSearch)
                 } else {
-                    window.alert("There was a problem registering you.")
+                    window.alert("There was a problem registering you. Someone else may have signed up with that email.")
                 }
             }
             function ValidateRegisterData(first_name, last_name, email_address, password) {
-                if (first_name != '' &&
-                    last_name != '' &&
-                    isValidEmail(email_address) &&
-                    password.match(passwordRegEx)) {
-                    return true
-                } else {
+                if (first_name == '') {
+                    alert("You must enter your first name")
+                    return false
+                } else if (last_name == '') {
+                    alert("You must enter your last name")
+                    return false
+                } else if (isValidEmail(email_address) === false) {
+                    alert("You must enter a valid email address")
+                    return false
+                } else if (password.match(passwordRegEx) == null) {
+                    alert("You must enter a password with at least 6 characters," +
+                          "1 number, 1 uppercase letter, and 1 lowercase letter")
                     return false
                 }
+
+                return true
             }
         </script>
     </footer>
