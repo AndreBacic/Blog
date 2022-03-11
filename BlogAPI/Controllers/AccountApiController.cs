@@ -191,7 +191,13 @@ namespace BlogAPI.Controllers
             UserModel newDbUser = userViewModel.GetAsDbUserModel();
             newDbUser.Role = oldDbUser.Role;
             _db.UpdateUser(newDbUser);
-            return StatusCode(StatusCodes.Status200OK);
+
+            RefreshTheRefreshToken(newDbUser.Id);
+
+            string jwt = TokenService.GenerateJwtToken(
+                                    GenerateUserClaimsList(newDbUser),
+                                    _config.GetValue<string>("JWTPrivateKey"));
+            return StatusCode(StatusCodes.Status201Created, jwt);
         }
 
         /// <summary>

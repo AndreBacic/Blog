@@ -172,10 +172,16 @@ main {
     background-color: var(--blog-content-back-color);
     overflow: hidden;
     text-wrap: normal;
+    white-space: normal;
 }
 
     .full-article h1, .full-article h2, .full-article h3, .full-article h4, .full-article h5, .full-article h6 {
         margin: 2px 2px 4px;
+        white-space: normal;
+    }
+
+    .full-article p, .full-article * {
+        white-space: normal;
     }
 
 .article-info-div {
