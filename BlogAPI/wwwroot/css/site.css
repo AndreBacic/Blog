@@ -90,7 +90,7 @@ main {
 }
 
     main > h1 {
-        margin: 6px 0px 6px var(--blog-side-margin);
+        margin: 6px var(--blog-side-margin);
         border: 0;
         border-bottom: 2px solid var(--blog-theme-color-dark);
         display: inline-block;
@@ -176,12 +176,27 @@ main {
 }
 
     .full-article h1, .full-article h2, .full-article h3, .full-article h4, .full-article h5, .full-article h6 {
-        margin: 2px 2px 4px;
-        white-space: normal;
+        margin: 1.25rem 2px 0.75rem;
+    }
+    .full-article *:first-child {
+        margin-top: 0;
     }
 
-    .full-article p, .full-article * {
+    .full-article * {
+        display: block;
         white-space: normal;
+        margin-bottom: 0.75rem;
+    }
+
+    .full-article code {
+        border-top: solid 2px var(--blog-theme-color);
+        border-bottom: solid 2px var(--blog-theme-color);
+        border-radius: 2px;
+        padding: 0.5rem 0.25rem;
+        background-color: hsl(var(--blog-theme-color-hue), 100%, 97%);
+        font-size: 0.875rem;
+        letter-spacing: 0.0625rem;
+        white-space: pre-wrap;
     }
 
 .article-info-div {

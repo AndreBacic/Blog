@@ -512,6 +512,10 @@ async function RenderArticlePageMainAsync() {
     document.getElementById("main").prepend(article)
     document.title = `${json.title} - The Blog of Andre Bačić`
 
+    const header = document.createElement("h1")
+    header.textContent = json.title
+    document.getElementById("main").prepend(header)
+
     RenderPostCommentForm()
     RenderCommentList(json)
 }
@@ -519,10 +523,6 @@ async function RenderArticlePageMainAsync() {
 function RenderFullArticle(articleJSON) {
     const article = document.createElement("article")
     article.className = "full-article"
-
-    const header = document.createElement("h1")
-    header.textContent = articleJSON.title
-    article.appendChild(header)
 
     const content = document.createElement("div")
     // innerHTML because we want the html code in the article to be rendered.
