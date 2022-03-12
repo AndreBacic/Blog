@@ -81,7 +81,16 @@ namespace BlogAPI.Controllers
         {
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                RevokeUsersOldRefreshTokens(GetLoggedInDbUserByEmail().Id);
+                int userId;
+                try
+                {
+                    userId = GetLoggedInDbUserByEmail().Id;
+                }
+                catch (Exception) // This happens if someone changes their email and then sends an obsolete but not expired jwt to this endpoint
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
+                RevokeUsersOldRefreshTokens(userId);
                 return StatusCode(StatusCodes.Status200OK);
             }
             return StatusCode(StatusCodes.Status401Unauthorized);
@@ -125,9 +134,15 @@ namespace BlogAPI.Controllers
         [HttpGet]
         public IActionResult GetLoggedInUser()
         {
-            // Get logged in user by email
-            UserModel user = GetLoggedInDbUserByEmail();
-
+            UserModel user;
+            try
+            {
+                user = GetLoggedInDbUserByEmail();
+            }
+            catch (Exception) // This happens if someone changes their email and then sends an obsolete but not expired jwt to this endpoint
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
             UserViewModel userViewModel = new UserViewModel();
             userViewModel.SetThisToDbUserModel(user);
 
@@ -217,7 +232,15 @@ namespace BlogAPI.Controllers
             }
 
             // 2 Get logged in user by email
-            UserModel user = GetLoggedInDbUserByEmail();
+            UserModel user;
+            try
+            {
+                user = GetLoggedInDbUserByEmail();
+            }
+            catch (Exception) // This happens if someone changes their email and then sends an obsolete but not expired jwt to this endpoint
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
 
             // 3 Make sure that old password really is the old password
             PasswordHashModel dbPassword = new PasswordHashModel();
@@ -239,7 +262,15 @@ namespace BlogAPI.Controllers
         [HttpDelete]
         public IActionResult DeleteAccount()
         {
-            int userId = GetLoggedInDbUserByEmail().Id;
+            int userId;
+            try
+            {
+                userId = GetLoggedInDbUserByEmail().Id;
+            }
+            catch (Exception) // This happens if someone changes their email and then sends an obsolete but not expired jwt to this endpoint
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
             RevokeUsersOldRefreshTokens(userId);
             _db.DeleteUser(userId);
             return StatusCode(StatusCodes.Status200OK);

@@ -75,6 +75,7 @@ async function LogoutAsync() {
             }
         })
     LogOutUser()
+    ReRenderTemplates()
 
     if (somePromise.status < 400) {
         return true
@@ -85,7 +86,6 @@ async function LogoutAsync() {
 function LogOutUser() {
     localStorage.removeItem(LS_KEY_authToken)
     localStorage.removeItem(LS_KEY_user)
-    ReRenderTemplates()
 }
 
 function RefreshTokenCallbackLoop() {
@@ -102,6 +102,7 @@ function RefreshTokenCallbackLoop() {
                 return response.json()
             } else {
                 LogOutUser()
+                ReRenderTemplates()
                 throw response.status
             }
         })
@@ -388,7 +389,10 @@ function ReRenderTemplates() {
 }
 
 function LogOutButtonOnClick() {
-    LogoutAsync().then(window.location = 'index.html')
+    LogoutAsync().then(() => {
+        LogOutUser()
+        window.location = 'index.html'
+    })
 }
 
 
@@ -547,7 +551,7 @@ function RenderFullArticle(articleJSON) {
         lastEdited = new Date(articleJSON.lastEdited)
         if (lastEdited.getUTCFullYear() != 1) {
             const lastEditedParagraph = document.createElement("p")
-            lastEditedParagraph.textContent = formatUTCDateForDisplayAsLocal(lastEdited, 'LastEdited:')
+            lastEditedParagraph.innerHTML = formatUTCDateForDisplayAsLocal(lastEdited, '&nbsp;&nbsp;Last Edited:')
             lastEditedParagraph.style = "float: right;"
             infoDiv.appendChild(lastEditedParagraph)
         }
@@ -756,6 +760,7 @@ function postComment() {
             comment_content_input.value = ""
             ReRenderCommentList(articleId).then()
         })
+        document.getElementById("comment-list").style.textAlign = ""
     }
 }
 
