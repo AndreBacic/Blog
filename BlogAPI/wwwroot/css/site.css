@@ -199,7 +199,11 @@ main {
     .full-article p {
         text-indent: 1rem;
     }
-    .full-article a {
+    .full-article a, .full-article strong, .full-article em, .full-article i, .full-article blockquote,
+    .full-article var, .full-article del, .full-article s, .full-article abbr, .full-article q
+    .full-article cite, .full-article dfn, .full-article mark, .full-article kdb {
+        display: inline-block;
+        margin: 0;
         text-indent: 0;
     }
 

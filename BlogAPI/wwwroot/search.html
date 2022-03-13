@@ -117,6 +117,7 @@
             tags.forEach((tag) => {
                 const newOption = document.createElement('option')
                 newOption.textContent = tag
+                newOption.className = "tag"
                 tag_selector.appendChild(newOption)
             })
         }

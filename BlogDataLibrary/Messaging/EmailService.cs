@@ -45,13 +45,25 @@ namespace BlogDataLibrary.Messaging
 
             using (SmtpClient client = new SmtpClient())
             {
-                client.Connect(GetAppSetting("Host"), int.Parse(GetAppSetting("port")), bool.Parse(GetAppSetting("UseSsl")));
-                if (isInDevelopment == false)
+                //var host = GetAppSetting("Host");
+                //var port = int.Parse(GetAppSetting("Port"));
+                //var usessl = bool.Parse(GetAppSetting("UseSsl"));
+                //var username = GetAppSetting("Username");
+                //var password = GetAppSetting("Password");
+                try
                 {
-                    client.Authenticate(GetAppSetting("Username"), GetAppSetting("Password")); 
+                    client.Connect(GetAppSetting("Host"), int.Parse(GetAppSetting("Port")), bool.Parse(GetAppSetting("UseSsl")));
+                    if (isInDevelopment == false)
+                    {
+                        client.Authenticate(GetAppSetting("Username"), GetAppSetting("Password"));
+                    }
+                    client.Send(mailMessage);
+                    client.Disconnect(true);
                 }
-                client.Send(mailMessage);
-                client.Disconnect(true);
+                catch (Exception)
+                {
+                    return; // TODO: somehow notify admin that notifictions failed
+                }
             }
         }
         public bool IsValidEmailAddress(string emailAddress)
