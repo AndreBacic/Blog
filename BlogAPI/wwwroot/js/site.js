@@ -542,7 +542,7 @@ function RenderFullArticle(articleJSON) {
     const datePostedParagraph = document.createElement("p")
     datePosted = new Date(articleJSON.datePosted)
     datePostedParagraph.textContent = formatUTCDateForDisplayAsLocal(datePosted, 'Date Posted:')
-    datePostedParagraph.style = "float: right;"
+    datePostedParagraph.style = "float: right; text-align: right;"
 
     // append elements
     infoDiv.appendChild(authorNameLabel)
@@ -552,7 +552,7 @@ function RenderFullArticle(articleJSON) {
         if (lastEdited.getUTCFullYear() != 1) {
             const lastEditedParagraph = document.createElement("p")
             lastEditedParagraph.innerHTML = formatUTCDateForDisplayAsLocal(lastEdited, '&nbsp;&nbsp;Last Edited:')
-            lastEditedParagraph.style = "float: right;"
+            lastEditedParagraph.style = "float: right; text-align: right;"
             infoDiv.appendChild(lastEditedParagraph)
         }
     }

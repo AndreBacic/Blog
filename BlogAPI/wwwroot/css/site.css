@@ -181,13 +181,11 @@ main {
     .full-article *:first-child {
         margin-top: 0;
     }
-
     .full-article * {
         display: block;
         white-space: normal;
         margin-bottom: 0.75rem;
     }
-
     .full-article code {
         border-top: solid 2px var(--blog-theme-color);
         border-bottom: solid 2px var(--blog-theme-color);
@@ -198,9 +196,16 @@ main {
         letter-spacing: 0.0625rem;
         white-space: pre-wrap;
     }
+    .full-article p {
+        text-indent: 1rem;
+    }
+    .full-article a {
+        text-indent: 0;
+    }
 
 .article-info-div {
     margin-top: 0.75rem;
+    margin-bottom: 0;
     padding-top: 0.25rem;
     display: inline-block;
     border: none;
@@ -211,6 +216,9 @@ main {
 
     .article-info-div p {
         display: inline-block;
+    }
+    .article-info-div * {
+        margin-bottom: 4px;
     }
 
 .header {
@@ -633,6 +641,9 @@ main {
     margin: 2px;
     display: inline-block;
     float: right;
+}
+.tags-container h4 {
+    margin: 2px;
 }
 
 .tag {
