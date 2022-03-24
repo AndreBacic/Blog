@@ -164,6 +164,21 @@ main {
         border-bottom: 2px solid var(--blog-theme-color-dark);
     }
 
+.css-skeleton-article {
+    user-select: none;
+}
+.css-skeleton-article p, .css-skeleton-article h2, .css-skeleton-article h4 {
+    background-color: hsl(180, 0%, 89%);
+    color: hsl(180, 0%, 89%);
+}
+.css-skeleton-article h2, .css-skeleton-article p:first-of-type {
+    margin-bottom: 0.25rem;
+}
+.css-skeleton-article .tag {
+    background-color: hsl(var(--blog-theme-color-hue), 100%, 89%);
+    color: hsl(var(--blog-theme-color-hue), 100%, 89%);
+}
+
 .full-article {
     margin: 8px var(--blog-side-margin);
     border: 2px solid var(--blog-theme-color-dark);
