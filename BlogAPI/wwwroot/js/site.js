@@ -584,6 +584,7 @@ function RenderFullArticle(articleJSON) {
 }
 
 function formatUTCDateForDisplayAsLocal(date, statement) {
+    date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getSeconds(), date.getMilliseconds()))
     return `${statement} ${date.toLocaleDateString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`
 }
 
