@@ -51,6 +51,7 @@
 html {
     height: 100%;
     width: 100%;
+    scrollbar-color: var(--blog-theme-color-extra-dark) var(--blog-forward-color);
 }
 
 body {
