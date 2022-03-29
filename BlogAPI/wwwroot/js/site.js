@@ -341,7 +341,7 @@ async function RenderTemplatesAsync(haveSearch = true) {
 
     let navbar = null;
     if (haveSearch) {
-        navbar = templates.querySelector('#navbar-with-search')        
+        navbar = templates.querySelector('#navbar-with-search')
     } else {
         navbar = templates.querySelector('#navbar-no-search')
     }
@@ -366,12 +366,31 @@ async function RenderTemplatesAsync(haveSearch = true) {
 
     let footer = null;
     if (isLoggedIn) {
-        footer = templates.querySelector('#footer-user-logged-in')
+        footer = templates.querySelector('#footer-user-logged-in')        
     } else {
         footer = templates.querySelector('#footer-not-logged-in')
     }
     let footerClone = footer.content.cloneNode(true)
     document.body.append(footerClone)
+
+    RunTemplateScripts(haveSearch, isLoggedIn)
+}
+function RunTemplateScripts(haveSearch, isLoggedIn) {
+    if (haveSearch) {
+        const search_bar = document.getElementById("search-bar")
+        search_bar.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                window.location = `search.html?${search_bar.value}`
+            }
+        })
+    }
+    if (isLoggedIn) {
+        user = JSON.parse(localStorage.getItem(LS_KEY_user))
+        document.getElementById("footer-header").textContent = `You are logged in as: ${user.name}`
+    }
+    // update year in footer
+    document.getElementById("year-display").textContent = (new Date()).getFullYear()
 }
 
 function ReRenderTemplates() {
@@ -394,6 +413,63 @@ function LogOutButtonOnClick() {
         LogOutUser()
         window.location = 'index.html'
     })
+}
+
+// For the signup form in the footer
+async function GetRegisterDataAndLoginAsync() {
+    let first_name_input = document.getElementById("First_Name")
+    let last_name_input = document.getElementById("Last_Name")
+    let email_address_input = document.getElementById("Email_address")
+    let password_input = document.getElementById("Password")
+
+    if (ValidateRegisterData(first_name_input.value,
+        last_name_input.value,
+        email_address_input.value,
+        password_input.value) === false) {
+        return
+    }
+
+    let user = {
+        FirstName: first_name_input.value,
+        LastName: last_name_input.value,
+        EmailAddress: email_address_input.value,
+        Password: password_input.value,
+        DoesReceiveNotifications: true
+    }
+    let success = await CreateAccountAsync(user)
+    let email_address = email_address_input.value
+    let password = password_input.value
+    first_name_input.value = "";
+    last_name_input.value = "";
+    email_address_input.value = "";
+    password_input.value = "";
+
+    if (success === true) {
+        await LoginAsync(email_address, password)
+        window.alert("Successfully signed up!")
+        ReRenderTemplates(haveSearch)
+    } else {
+        window.alert("There was a problem registering you. Someone else may have signed up with that email.")
+    }
+}
+// Also for the signup form in the footer
+function ValidateRegisterData(first_name, last_name, email_address, password) {
+    if (first_name == '') {
+        alert("You must enter your first name")
+        return false
+    } else if (last_name == '') {
+        alert("You must enter your last name")
+        return false
+    } else if (isValidEmail(email_address) === false) {
+        alert("You must enter a valid email address")
+        return false
+    } else if (password.match(passwordRegEx) == null) {
+        alert("You must enter a password with at least 6 characters," +
+            "1 number, 1 uppercase letter, and 1 lowercase letter")
+        return false
+    }
+
+    return true
 }
 
 

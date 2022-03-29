@@ -28,13 +28,6 @@
             <input id="search-bar" type="text" class="navbar-input" contenteditable="true" />
         </div>
         <script>
-            const search_bar = document.querySelector("#search-bar")
-            search_bar.addEventListener("keyup", function(event) {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    window.location = `search.html?${search_bar.value}`
-                }
-            })
             //window.addEventListener("resize", windowOnResizeChangeColor)
         </script>
     </nav>
@@ -69,81 +62,15 @@
             </div>
         </form>
         <aside class="footer-copyright">
-            <p>© <y id="year-display"></y> by Andre Bačić</p>
+            <p>© <y id="year-display">2022</y> by Andre Bačić</p>
         </aside>
-        <script>
-            document.getElementById("year-display").textContent = (new Date()).getFullYear()
-        </script>
-        <script>
-            async function GetRegisterDataAndLoginAsync() {
-                let first_name_input = document.getElementById("First_Name")
-                let last_name_input = document.getElementById("Last_Name")
-                let email_address_input = document.getElementById("Email_address")
-                let password_input = document.getElementById("Password")
-
-                if (ValidateRegisterData(first_name_input.value,
-                    last_name_input.value,
-                    email_address_input.value,
-                    password_input.value) === false) {
-                    return
-                }
-
-                let user = {
-                    FirstName: first_name_input.value,
-                    LastName: last_name_input.value,
-                    EmailAddress: email_address_input.value,
-                    Password: password_input.value,
-                    DoesReceiveNotifications: true
-                }
-                let success = await CreateAccountAsync(user)
-                let email_address = email_address_input.value
-                let password = password_input.value
-                first_name_input.value = "";
-                last_name_input.value = "";
-                email_address_input.value = "";
-                password_input.value = "";
-
-                if (success === true) {
-                    await LoginAsync(email_address, password)
-                    window.alert("Successfully signed up!")
-                    ReRenderTemplates(haveSearch)
-                } else {
-                    window.alert("There was a problem registering you. Someone else may have signed up with that email.")
-                }
-            }
-            function ValidateRegisterData(first_name, last_name, email_address, password) {
-                if (first_name == '') {
-                    alert("You must enter your first name")
-                    return false
-                } else if (last_name == '') {
-                    alert("You must enter your last name")
-                    return false
-                } else if (isValidEmail(email_address) === false) {
-                    alert("You must enter a valid email address")
-                    return false
-                } else if (password.match(passwordRegEx) == null) {
-                    alert("You must enter a password with at least 6 characters," +
-                          "1 number, 1 uppercase letter, and 1 lowercase letter")
-                    return false
-                }
-
-                return true
-            }
-        </script>
     </footer>
 </template>
 <template id="footer-user-logged-in">
     <footer id="footer" class="footer-logged-in footer">
-        <h1 id="footer-header"></h1>
+        <h1 id="footer-header">Retrieving user info...</h1>
         <aside class="footer-copyright">
-            <p>© <y id="year-display"></y> by Andre Bačić</p>
+            <p>© <y id="year-display">2022</y> by Andre Bačić</p>
         </aside>
-        <script>
-            document.getElementById("year-display").textContent = (new Date()).getFullYear()
-        </script>
-        <script>
-            user = JSON.parse(localStorage.getItem(LS_KEY_user))
-            document.getElementById("footer-header").textContent = `You are logged in as: ${user.name}`
-        </script>
     </footer>
 </template>
