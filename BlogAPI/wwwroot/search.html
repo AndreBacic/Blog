@@ -135,8 +135,10 @@
 
             let articles_to_be_rendered = []
             articles.forEach((article) => {
-                if (article.title.toLowerCase().includes(search_string.toLowerCase()) &&
-                    (tag_selected === "(Any)" || article.tags.includes(tag_selected))) {
+                if ( ( article.title.toLowerCase().includes(search_string.toLowerCase()) ||
+                    article.contentText.toLowerCase().includes(search_string.toLowerCase()) ) &&
+                    (tag_selected === "(Any)" || article.tags.includes(tag_selected)) ) {
+                                        
                     articles_to_be_rendered.push(article)
                 }
             })
