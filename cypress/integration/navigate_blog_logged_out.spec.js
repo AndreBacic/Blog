@@ -9,10 +9,10 @@ describe("Navigate the Blog app while logged out", () => {
     })
 
     it("Looks at an article", () => {
-        cy.get('article').first().click()
+        cy.get('a.flex-item').first().click()
 
         cy.get('main').should('contain.html', 'article')
-        cy.get('form').should('not.contain.html', 'input') // logged out, so comment form shouldn't have an input
+        cy.get('main form').should('not.contain.html', 'input') // logged out, so comment form shouldn't have an input
     })
 
     it("Searches for articles", () => {
