@@ -60,15 +60,19 @@
                     AuthorName: nameInput.value,
                     ContentText: contentInput.value
                 }
-                resp = await CreateArticleAsync(article)
-                console.log(resp)
-                if (resp.status < 400) {
-                    titleInput.value = ""
-                    tagsInput.value = ""
-                    contentInput.value = ""
+                titleInput.value = ""
+                tagsInput.value = ""
+                contentInput.value = ""
 
+                resp = await CreateArticleAsync(article)
+                
+                if (resp.status < 400) {
                     window.alert("Successfully created!")
                 } else {
+                    titleInput.value = article.Title
+                    tagsInput.value = article.Tags
+                    contentInput.value = article.ContentText
+
                     window.alert("There was a problem creating the article.")
                 }
             }

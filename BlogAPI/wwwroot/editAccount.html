@@ -131,10 +131,10 @@
                       "1 number, 1 uppercase letter, and 1 lowercase letter")
             }
             else {
-                let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
                 oldPasswordInput.value = ""
                 newPasswordInput.value = ""
                 confirmPasswordInput.value = ""
+                let success = await EditPasswordAsync(oldPasswordInput.value, newPasswordInput.value)
                 if (success) {
                     alert("Password successfully changed!")
                 } else {
