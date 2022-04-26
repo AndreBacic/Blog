@@ -41,6 +41,7 @@ namespace BlogAPI.Controllers
             UserModel user = null;
             try
             {
+                // HACK: move the filtering to SQL SP
                 user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
             }
             catch (InvalidOperationException)
@@ -100,6 +101,7 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult RefreshToken()
         {
+            // HACK: get refresh token from SQL SP
             List<RefreshTokenModel> refreshTokens = _db.GetAllRefreshTokens();
             string oldCookieRefreshToken = Request.Cookies["refreshToken"];
             RefreshTokenModel oldDbRefreshToken = null;
@@ -190,6 +192,8 @@ namespace BlogAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
+
+            // HACK: move the filtering to SQL SP (get user with original email and user with new email)
             // 2 Ensure that there are no users with the new email
             List<UserModel> users = _db.GetAllUsers();
 
@@ -290,6 +294,7 @@ namespace BlogAPI.Controllers
 
         private void RevokeUsersOldRefreshTokens(int userId)
         {
+            // HACK: move this to SQL SP (delete all refresh tokens for user, param userId)
             List<RefreshTokenModel> existingTokens = _db.GetRefreshTokensByUserId(userId);
             foreach (RefreshTokenModel token in existingTokens)
             {
@@ -299,6 +304,7 @@ namespace BlogAPI.Controllers
 
         private UserModel GetLoggedInDbUserByEmail()
         {
+            // HACK: get user by email SQL SP
             string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
             return _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
         }

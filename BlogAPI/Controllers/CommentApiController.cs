@@ -49,6 +49,7 @@ namespace BlogAPI.Controllers
         {
             try
             {
+                // HACK: Write get comment by id SQL SP
                 // note: id is the id of the comment we're getting
                 CommentModel comment = _db.GetAllCommentsInArticle(articleId)
                                         .Where(c => c.Id == id).First();
@@ -67,6 +68,7 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
         {
+            // HACK: Write SQL SP that validates an article with articleId exists
             // Validate user input before saving to the db.
             if (IsValidComment(comment) == false ||
                 _db.GetAllArticles().Any(x => x.Id == comment.ArticleId) == false)
@@ -122,6 +124,7 @@ namespace BlogAPI.Controllers
         {
             try
             {
+                // HACK: Write SQL SP that checks if comment with id commentId has the authorId of the id of the logged in user.
                 CommentModel oldComment = _db.GetAllCommentsInArticle(articleId)
                                                 .Where(x => x.Id == commentId).First();
 
