@@ -6,6 +6,7 @@ namespace BlogDataLibrary.DataAccess
     public interface IBlogDbAccessor
     {
         public UserModel GetUser(int id);
+        public UserModel GetUser(string email);
         public List<UserModel> GetAllUsers();
         /// <summary>
         /// Inserts user into the database.

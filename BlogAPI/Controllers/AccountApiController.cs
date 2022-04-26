@@ -38,42 +38,30 @@ namespace BlogAPI.Controllers
         {
             string emailAddress = loginModel.EmailAddress;
             string password = loginModel.Password;
-            UserModel user = null;
-            try
+            
+            UserModel user = _db.GetUser(emailAddress);
+            if (user == null || user.Id <= 0)
             {
-                // HACK: move the filtering to SQL SP
-                user = _db.GetAllUsers().Where(u => u.EmailAddress == emailAddress).First();
+                return BadRequest("Invalid email address");
             }
-            catch (InvalidOperationException)
+            
+            PasswordHashModel passwordHash = new PasswordHashModel();
+            passwordHash.FromDbString(user.PasswordHash);
+
+            (bool IsPasswordCorrect, _) = HashAndSalter.PasswordEqualsHash(password, passwordHash);
+
+            if (IsPasswordCorrect == false)
             {
-                return BadRequest(new UnauthorizedObjectResult("Invalid email address"));
+                return BadRequest("Invalid password");
             }
-            if (user != null)
-            {
-                PasswordHashModel passwordHash = new PasswordHashModel();
-                passwordHash.FromDbString(user.PasswordHash);
+            
+            string handler = TokenService.GenerateJwtToken(
+                                        GenerateUserClaimsList(user),
+                                        _config.GetValue<string>("JWTPrivateKey"));
 
-                (bool IsPasswordCorrect, _) = HashAndSalter.PasswordEqualsHash(password, passwordHash);
+            RefreshTheRefreshToken(user.Id);
 
-                if (IsPasswordCorrect)
-                {
-                    string handler = TokenService.GenerateJwtToken(
-                                                GenerateUserClaimsList(user),
-                                                _config.GetValue<string>("JWTPrivateKey"));
-
-                    RefreshTheRefreshToken(user.Id);
-
-                    return Ok(handler);
-                }
-                else
-                {
-                    return BadRequest(new UnauthorizedObjectResult("Invalid password"));
-                }
-            }
-            else
-            {
-                return BadRequest(new UnauthorizedObjectResult("Invalid email address"));
-            }
+            return Ok(handler);                      
         }
 
         [Route("logout")]
@@ -166,8 +154,8 @@ namespace BlogAPI.Controllers
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
             // 2 Ensure that there are no users with the new email and that the password is ok.
-            List<UserModel> users = _db.GetAllUsers();
-            if (users.Any(x => x.EmailAddress == createAccountViewModel.EmailAddress) ||
+            UserModel user = _db.GetUser(createAccountViewModel.EmailAddress);
+            if (user != null || user?.Id > 0 ||
                 IsValidPassword(createAccountViewModel.Password) == false)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
@@ -193,22 +181,20 @@ namespace BlogAPI.Controllers
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
 
-            // HACK: move the filtering to SQL SP (get user with original email and user with new email)
             // 2 Ensure that there are no users with the new email
-            List<UserModel> users = _db.GetAllUsers();
+                       
+            UserModel loggedInUser = GetLoggedInDbUserByEmail();
+            UserModel user = _db.GetUser(userViewModel.EmailAddress);
 
-            string originalEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-
-            if (users.Any(x => x.EmailAddress == userViewModel.EmailAddress && x.EmailAddress != originalEmail))
+            if (user != null && user.Id != loggedInUser.Id)
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
 
             // 3 update user data in column with the original email
-            UserModel oldDbUser = users.Where(x => x.EmailAddress == originalEmail).First();
-            userViewModel.Id = oldDbUser.Id;
+            userViewModel.Id = loggedInUser.Id;
             UserModel newDbUser = userViewModel.GetAsDbUserModel();
-            newDbUser.Role = oldDbUser.Role;
+            newDbUser.Role = loggedInUser.Role;
             _db.UpdateUser(newDbUser);
 
             RefreshTheRefreshToken(newDbUser.Id);
@@ -294,7 +280,7 @@ namespace BlogAPI.Controllers
 
         private void RevokeUsersOldRefreshTokens(int userId)
         {
-            // HACK: move this to SQL SP (delete all refresh tokens for user, param userId)
+            // HACK: move this to SQL SP (delete all refresh tokens for user, param userId) and remove these two excess SPs
             List<RefreshTokenModel> existingTokens = _db.GetRefreshTokensByUserId(userId);
             foreach (RefreshTokenModel token in existingTokens)
             {
@@ -304,9 +290,8 @@ namespace BlogAPI.Controllers
 
         private UserModel GetLoggedInDbUserByEmail()
         {
-            // HACK: get user by email SQL SP
             string email = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-            return _db.GetAllUsers().Where(x => x.EmailAddress == email).First();
+            return _db.GetUser(email);
         }
 
         private void SetTokenCookie(string token)

@@ -143,6 +143,7 @@ namespace BlogDataLibrary.DataAccess
 
         public void DeleteArticle(ArticleModel article)
         {
+            // HACK: Change spArticles_Delete to delete all comments and db links to the article
             // delete all comments attached to the article
             foreach (CommentModel comment in article.Comments)
             {
@@ -224,6 +225,7 @@ namespace BlogDataLibrary.DataAccess
                                     .ToList();
             }
 
+            // HACK: Refactor spComments_GetByArticle to return author intead forcing an n+1 query
             foreach (CommentModel comment in output)
             {
                 comment.Author = GetUser(comment.AuthorId);
@@ -299,6 +301,21 @@ namespace BlogDataLibrary.DataAccess
 
                 output = connection.Query<UserModel>("dbo.spUsers_GetById", parameters, commandType: CommandType.StoredProcedure)
                                     .First();
+            }
+            return output;
+        }
+
+        public UserModel GetUser(string email)
+        {
+            UserModel output = new UserModel();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@email", email);
+
+                output = connection.Query<UserModel>("dbo.spUsers_GetByEmail", parameters, commandType: CommandType.StoredProcedure)
+                                    .FirstOrDefault(); // may return null
             }
             return output;
         }
