@@ -141,20 +141,15 @@ namespace BlogDataLibrary.DataAccess
             }
         }
 
-        public void DeleteArticle(ArticleModel article)
+        public void DeleteArticle(int articleId)
         {
             // HACK: Change spArticles_Delete to delete all comments and db links to the article
-            // delete all comments attached to the article
-            foreach (CommentModel comment in article.Comments)
-            {
-                DeleteComment(comment.Id);
-            }
 
-            // delete the article
+            // delete the article and all comments attached
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@id", article.Id);
+                parameters.Add("@id", articleId);
 
                 connection.Execute("dbo.spArticles_Delete", parameters, commandType: CommandType.StoredProcedure);
             }

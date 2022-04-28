@@ -119,8 +119,7 @@ namespace BlogAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            ArticleModel article = _db.GetArticle(id);
-            _db.DeleteArticle(article);
+            _db.DeleteArticle(id);
             return StatusCode(StatusCodes.Status200OK);
         }
 

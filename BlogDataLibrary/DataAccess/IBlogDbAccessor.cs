@@ -44,9 +44,8 @@ namespace BlogDataLibrary.DataAccess
         /// <summary>
         /// Deletes the article and all comments associated with it.
         /// </summary>
-        /// <param name="article"></param>
-        // HACK: Change param to int id and re-write SP to delete article, comments, and references
-        public void DeleteArticle(ArticleModel article);
+        /// <param name="articleId"></param>
+        public void DeleteArticle(int articleId);
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId);
         public void CreateComment(CommentModel comment, int articleId);
