@@ -45,11 +45,10 @@ namespace BlogAPI.Controllers
             return StatusCode(StatusCodes.Status200OK, commentViews);
         }
         [HttpGet("{articleId}/{id}")] // data is entered like: https://[domain]/api/CommentApi/Get/5/3
-        public IActionResult Get(int articleId, int id)
+        public IActionResult Get(int articleId, int id) // TODO: Refactor url route to not need articleId? There's already a url route with one int...
         {
             try
             {
-                // HACK: Write get comment by id SQL SP
                 // note: id is the id of the comment we're getting
                 CommentModel comment = _db.GetComment(id);
                 CommentViewModel commentView = new CommentViewModel();
@@ -69,7 +68,7 @@ namespace BlogAPI.Controllers
         {
             // Validate user input before saving to the db.
             if (IsValidComment(comment) == false ||
-                _db.GetArticle(comment.ArticleId) != null)
+                _db.GetArticle(comment.ArticleId) == null)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
@@ -93,7 +92,7 @@ namespace BlogAPI.Controllers
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
 
-            if (IsLoggedInUsersComment(comment.ArticleId, id) == false)
+            if (IsLoggedInUsersComment(id) == false)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
@@ -110,7 +109,7 @@ namespace BlogAPI.Controllers
         [HttpDelete("{articleId}/{id}")] // data is entered like: https://[domain]/api/CommentApi/Delete/5/3
         public IActionResult Delete(int articleId, int id)
         {
-            if (IsLoggedInUsersComment(articleId, id) || HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Role).First().Value == UserModel.ADMIN_ROLE)
+            if (IsLoggedInUsersComment(id) || HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Role).First().Value == UserModel.ADMIN_ROLE)
             {
                 _db.DeleteComment(id);
                 return StatusCode(StatusCodes.Status200OK);
@@ -118,10 +117,8 @@ namespace BlogAPI.Controllers
             return StatusCode(StatusCodes.Status401Unauthorized);
         }
 
-        private bool IsLoggedInUsersComment(int articleId, int commentId)
+        private bool IsLoggedInUsersComment(int commentId)
         {            
-            // HACK: Write SQL SP that checks if comment with id commentId has the authorId of the id of the logged in user.
-                
             string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
                 
             return _db.IsUsersComment(userEmail, commentId);            

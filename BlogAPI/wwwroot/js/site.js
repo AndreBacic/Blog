@@ -165,7 +165,7 @@ async function EditAccountAsync(user) {
         let jwt = await editPromise.json()
         localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
         let now = new Date().toString()
-        localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: this could have a collision with refreshTokenCallbackLoop: fix that?
+        localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
 
         let user = await GetLoggedInUserAsync()
         localStorage.setItem(LS_KEY_user, JSON.stringify(user))

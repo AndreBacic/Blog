@@ -79,7 +79,7 @@ namespace BlogAPI.Controllers
                 {
                     return StatusCode(StatusCodes.Status401Unauthorized);
                 }
-                RevokeUsersOldRefreshTokens(userId);
+                _db.DeleteRefreshTokensByUserId(userId);
                 return StatusCode(StatusCodes.Status200OK);
             }
             return StatusCode(StatusCodes.Status401Unauthorized);
@@ -89,7 +89,6 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult RefreshToken()
         {
-            // HACK: get refresh token from SQL SP
             string oldCookieRefreshToken = Request.Cookies["refreshToken"];
             RefreshTokenModel oldDbRefreshToken = _db.GetRefreshToken(oldCookieRefreshToken);
             
@@ -252,7 +251,7 @@ namespace BlogAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
-            RevokeUsersOldRefreshTokens(userId);
+            _db.DeleteRefreshTokensByUserId(userId);
             _db.DeleteUser(userId);
             return StatusCode(StatusCodes.Status200OK);
         }
@@ -261,19 +260,12 @@ namespace BlogAPI.Controllers
         // Private helper methods //////////////////////////////////////////////
         private void RefreshTheRefreshToken(int userId)
         {
-            RevokeUsersOldRefreshTokens(userId);
+            _db.DeleteRefreshTokensByUserId(userId);
 
             RefreshTokenModel refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
             _db.CreateRefreshToken(refreshToken);
 
             SetTokenCookie(refreshToken.Token);
-        }
-
-        private void RevokeUsersOldRefreshTokens(int userId)
-        {
-            // HACK: move this to SQL SP (delete all refresh tokens for user, param userId) and remove these two excess SPs
-
-            _db.DeleteRefreshTokensByUserId(userId);
         }
 
         private UserModel GetLoggedInDbUserByEmail()

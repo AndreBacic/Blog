@@ -45,11 +45,6 @@ namespace BlogDataLibrary.Messaging
 
             using (SmtpClient client = new SmtpClient())
             {
-                //var host = GetAppSetting("Host");
-                //var port = int.Parse(GetAppSetting("Port"));
-                //var usessl = bool.Parse(GetAppSetting("UseSsl"));
-                //var username = GetAppSetting("Username");
-                //var password = GetAppSetting("Password");
                 try
                 {
                     client.Connect(GetAppSetting("Host"), int.Parse(GetAppSetting("Port")), bool.Parse(GetAppSetting("UseSsl")));

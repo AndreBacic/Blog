@@ -175,6 +175,17 @@ namespace BlogDataLibrary.DataAccess
             }
         }
 
+        public void DeleteRefreshTokensByUserId(int userId)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@userId", userId);
+
+                connection.Execute("dbo.spRefreshTokens_DeleteByUser", parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public void DeleteUser(int id)
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
@@ -219,6 +230,7 @@ namespace BlogDataLibrary.DataAccess
             }
 
             // HACK: Refactor spComments_GetByArticle to return author intead forcing an n+1 query
+            // or can you do that, considering that you'd need to return two models as pairs?
             foreach (CommentModel comment in output)
             {
                 comment.Author = GetUser(comment.AuthorId);
@@ -251,6 +263,18 @@ namespace BlogDataLibrary.DataAccess
             return output;
         }
 
+        public List<UserModel> GetAllUsersWhoReceiveNotifications()
+        {
+            List<UserModel> output = new List<UserModel>();
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                output = connection.Query<UserModel>("dbo.spUsers_GetAllWhoReceiveNotifications", commandType: CommandType.StoredProcedure)
+                                    .ToList();
+            }
+            return output;
+        }
+
         public ArticleModel GetArticle(int id)
         {
             ArticleModel output = new ArticleModel();
@@ -261,11 +285,43 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@id", id);
 
                 output = connection.Query<ArticleModel>("dbo.spArticles_GetById", parameters, commandType: CommandType.StoredProcedure)
-                                    .First();
+                                    .FirstOrDefault(); // null if not found
+            }
+            if (output != null)
+            {
+                output.Comments = GetAllCommentsInArticle(output.Id);
             }
 
-            output.Comments = GetAllCommentsInArticle(output.Id);
+            return output;
+        }
 
+        public CommentModel GetComment(int id)
+        {
+            CommentModel output = null;
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                output = connection.Query<CommentModel>("dbo.spComments_GetById", parameters, commandType: CommandType.StoredProcedure)
+                                    .FirstOrDefault(); // may return null
+            }
+            return output;
+        }
+
+        public RefreshTokenModel GetRefreshToken(string token)
+        {
+            RefreshTokenModel output = null;
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@token", token);
+
+                output = connection.Query<RefreshTokenModel>("dbo.spRefreshTokens_GetByToken", parameters, commandType: CommandType.StoredProcedure)
+                                    .FirstOrDefault(); // may return null
+            }
             return output;
         }
 
@@ -311,6 +367,22 @@ namespace BlogDataLibrary.DataAccess
                                     .FirstOrDefault(); // may return null
             }
             return output;
+        }
+
+        public bool IsUsersComment(string email, int commentId)
+        {
+            CommentModel output = null;
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@email", email);
+                parameters.Add("@commentId", commentId);
+                
+                output = connection.Query<CommentModel>("dbo.spComments_isUsersComment", parameters, commandType: CommandType.StoredProcedure)
+                                    .FirstOrDefault(); // may return null
+            }
+            return output != null;
         }
 
         public void UpdateArticle(ArticleModel article)

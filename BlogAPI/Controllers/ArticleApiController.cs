@@ -78,7 +78,6 @@ namespace BlogAPI.Controllers
             }
             _db.CreateArticle(dbArticle);
 
-            // HACK: Make get all users who receive notifications SQL SP.
             // Notify users of new article
             List<UserModel> users = _db.GetAllUsersWhoReceiveNotifications();
             string subject = $"{dbArticle.AuthorName} Just Posted a New Article";

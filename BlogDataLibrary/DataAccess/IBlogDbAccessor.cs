@@ -60,6 +60,10 @@ namespace BlogDataLibrary.DataAccess
         public RefreshTokenModel GetRefreshToken(string token);
         public void CreateRefreshToken(RefreshTokenModel token);
         public void DeleteRefreshToken(int id);
+        /// <summary>
+        /// Revokes all refresh tokens for the specified user.
+        /// </summary>
+        /// <param name="userId"></param>
         public void DeleteRefreshTokensByUserId(int userId);
     }
 }
