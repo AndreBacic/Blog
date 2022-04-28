@@ -142,9 +142,7 @@ namespace BlogDataLibrary.DataAccess
         }
 
         public void DeleteArticle(int articleId)
-        {
-            // HACK: Change spArticles_Delete to delete all comments and db links to the article
-
+        {            
             // delete the article and all comments attached
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {

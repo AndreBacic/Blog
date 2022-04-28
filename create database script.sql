@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Blog]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Database [Blog]    Script Date: 4/28/2022 4:20:10 PM ******/
 CREATE DATABASE [Blog]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -86,22 +86,22 @@ ALTER DATABASE SCOPED CONFIGURATION SET IDENTITY_CACHE = OFF;
 GO
 USE [Blog]
 GO
-/****** Object:  Table [dbo].[ArticleComments]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Table [dbo].[ArticleComments]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ArticleComments](
-	[id] [int] IDENTITY(1,1) NOT NULL,
 	[ArticleId] [int] NOT NULL,
 	[CommentId] [int] NOT NULL,
- CONSTRAINT [PK_ArticleComments] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ArticleComments_1] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[ArticleId] ASC,
+	[CommentId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Articles]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Table [dbo].[Articles]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -120,7 +120,7 @@ CREATE TABLE [dbo].[Articles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Comments]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Table [dbo].[Comments]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -137,7 +137,7 @@ CREATE TABLE [dbo].[Comments](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RefreshTokens]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Table [dbo].[RefreshTokens]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -155,7 +155,7 @@ CREATE TABLE [dbo].[RefreshTokens](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -179,10 +179,10 @@ REFERENCES [dbo].[Articles] ([id])
 GO
 ALTER TABLE [dbo].[ArticleComments] CHECK CONSTRAINT [FK_ArticleComments_ArticleId]
 GO
-ALTER TABLE [dbo].[ArticleComments]  WITH CHECK ADD  CONSTRAINT [FK_ArticleComments_CommentId] FOREIGN KEY([CommentId])
+ALTER TABLE [dbo].[ArticleComments]  WITH NOCHECK ADD  CONSTRAINT [FK_ArticleComments_CommentId] FOREIGN KEY([CommentId])
 REFERENCES [dbo].[Comments] ([id])
 GO
-ALTER TABLE [dbo].[ArticleComments] CHECK CONSTRAINT [FK_ArticleComments_CommentId]
+ALTER TABLE [dbo].[ArticleComments] NOCHECK CONSTRAINT [FK_ArticleComments_CommentId]
 GO
 ALTER TABLE [dbo].[Comments]  WITH CHECK ADD  CONSTRAINT [FK_Comments_AuthorId] FOREIGN KEY([AuthorId])
 REFERENCES [dbo].[Users] ([id])
@@ -194,7 +194,7 @@ REFERENCES [dbo].[Users] ([id])
 GO
 ALTER TABLE [dbo].[RefreshTokens] CHECK CONSTRAINT [FK_RefreshTokens_OwnerId]
 GO
-/****** Object:  StoredProcedure [dbo].[spArticles_Delete]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spArticles_Delete]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -213,8 +213,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	BEGIN TRANSACTION;
-
-		delete from dbo.Articles where id = @id;
+	BEGIN TRY
 
 		delete c from dbo.Comments c
 		inner join dbo.ArticleComments a on a.CommentId = c.id
@@ -222,10 +221,19 @@ BEGIN
 
 		delete from dbo.ArticleComments where ArticleId = @id;
 
-	COMMIT TRANSACTION;
+		delete from dbo.Articles where id = @id;
+
+		COMMIT TRANSACTION;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+		BEGIN
+			ROLLBACK TRANSACTION;
+		END
+	END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spArticles_GetAll]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spArticles_GetAll]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -245,7 +253,7 @@ BEGIN
 	select * from dbo.Articles;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spArticles_GetById]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spArticles_GetById]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -266,7 +274,7 @@ BEGIN
 	select * from dbo.Articles where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spArticles_Insert]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spArticles_Insert]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -295,7 +303,7 @@ BEGIN
 	select @id = SCOPE_IDENTITY();
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spArticles_Update]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spArticles_Update]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -323,7 +331,7 @@ BEGIN
 	where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spComments_Delete]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spComments_Delete]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -350,7 +358,7 @@ BEGIN
 	COMMIT;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spComments_GetAll]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spComments_GetAll]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -370,7 +378,7 @@ BEGIN
 	select * from dbo.Comments;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spComments_GetByArticle]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spComments_GetByArticle]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -394,7 +402,7 @@ BEGIN
 	where a.ArticleId = @ArticleId
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spComments_Insert]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spComments_Insert]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -432,7 +440,7 @@ BEGIN
 	select @id = @commentId
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spComments_Update]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spComments_Update]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -457,7 +465,7 @@ BEGIN
 	where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spRefreshTokens_Delete]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spRefreshTokens_Delete]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -474,7 +482,7 @@ BEGIN
 	delete from dbo.RefreshTokens where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spRefreshTokens_GetAll]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spRefreshTokens_GetAll]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -490,7 +498,7 @@ BEGIN
 	select * from dbo.RefreshTokens;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spRefreshTokens_GetByUser]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spRefreshTokens_GetByUser]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -507,7 +515,7 @@ BEGIN
 	select * from dbo.RefreshTokens where OwnerId = @OwnerId;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spRefreshTokens_Insert]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spRefreshTokens_Insert]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -532,7 +540,7 @@ BEGIN
 	select @id = SCOPE_IDENTITY();
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_Delete]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_Delete]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -549,7 +557,7 @@ BEGIN
 	delete from dbo.Users where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_GetAll]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_GetAll]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -570,7 +578,7 @@ BEGIN
 	SELECT * from dbo.Users;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_GetByEmail]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_GetByEmail]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -584,7 +592,7 @@ BEGIN
 	SELECT u.* FROM dbo.Users u WHERE u.EmailAddress = @email;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_GetById]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_GetById]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -606,7 +614,7 @@ BEGIN
 	SELECT * from dbo.Users where id = @UserId;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_Insert]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_Insert]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -636,7 +644,7 @@ BEGIN
 	select @id = SCOPE_IDENTITY();
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_Update]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_Update]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -664,7 +672,7 @@ BEGIN
 	where id = @id;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[spUsers_UpdatePassword]    Script Date: 4/28/2022 1:45:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUsers_UpdatePassword]    Script Date: 4/28/2022 4:20:10 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
