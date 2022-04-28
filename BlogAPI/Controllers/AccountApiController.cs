@@ -90,24 +90,15 @@ namespace BlogAPI.Controllers
         public IActionResult RefreshToken()
         {
             // HACK: get refresh token from SQL SP
-            List<RefreshTokenModel> refreshTokens = _db.GetAllRefreshTokens();
             string oldCookieRefreshToken = Request.Cookies["refreshToken"];
-            RefreshTokenModel oldDbRefreshToken = null;
-            try
-            {
-                oldDbRefreshToken = refreshTokens.First(x => x.Token == oldCookieRefreshToken);
-            }
-            catch
+            RefreshTokenModel oldDbRefreshToken = _db.GetRefreshToken(oldCookieRefreshToken);
+            
+            if (oldDbRefreshToken == null || 
+                DateTime.Compare(oldDbRefreshToken.Expires, DateTime.UtcNow) < 0)
             {
                 return Unauthorized("No valid refresh token. Please login again.");
             }
             UserModel user = _db.GetUser(oldDbRefreshToken.OwnerId);
-
-            if (DateTime.Compare(oldDbRefreshToken.Expires, DateTime.UtcNow) < 0)
-            {
-                // Refresh token has expired or user is not logged in.
-                return Unauthorized("No valid refresh token. Please login again.");
-            }
 
             // There is a valid refresh token in the db; perform operations
             RefreshTheRefreshToken(user.Id);
@@ -281,11 +272,8 @@ namespace BlogAPI.Controllers
         private void RevokeUsersOldRefreshTokens(int userId)
         {
             // HACK: move this to SQL SP (delete all refresh tokens for user, param userId) and remove these two excess SPs
-            List<RefreshTokenModel> existingTokens = _db.GetRefreshTokensByUserId(userId);
-            foreach (RefreshTokenModel token in existingTokens)
-            {
-                _db.DeleteRefreshToken(token.Id);
-            }
+
+            _db.DeleteRefreshTokensByUserId(userId);
         }
 
         private UserModel GetLoggedInDbUserByEmail()

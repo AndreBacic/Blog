@@ -51,8 +51,7 @@ namespace BlogAPI.Controllers
             {
                 // HACK: Write get comment by id SQL SP
                 // note: id is the id of the comment we're getting
-                CommentModel comment = _db.GetAllCommentsInArticle(articleId)
-                                        .Where(c => c.Id == id).First();
+                CommentModel comment = _db.GetComment(id);
                 CommentViewModel commentView = new CommentViewModel();
                 commentView.SetThisToDbCommentModel(comment, articleId);
                 return StatusCode(StatusCodes.Status200OK, commentView);
@@ -68,10 +67,9 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
         {
-            // HACK: Write SQL SP that validates an article with articleId exists
             // Validate user input before saving to the db.
             if (IsValidComment(comment) == false ||
-                _db.GetAllArticles().Any(x => x.Id == comment.ArticleId) == false)
+                _db.GetArticle(comment.ArticleId) != null)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
@@ -121,22 +119,12 @@ namespace BlogAPI.Controllers
         }
 
         private bool IsLoggedInUsersComment(int articleId, int commentId)
-        {
-            try
-            {
-                // HACK: Write SQL SP that checks if comment with id commentId has the authorId of the id of the logged in user.
-                CommentModel oldComment = _db.GetAllCommentsInArticle(articleId)
-                                                .Where(x => x.Id == commentId).First();
-
-                // So if there's no error, we check if the old comment was posted by the logged in user.
-                string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-
-                return string.Equals(oldComment.Author.EmailAddress, userEmail);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+        {            
+            // HACK: Write SQL SP that checks if comment with id commentId has the authorId of the id of the logged in user.
+                
+            string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
+                
+            return _db.IsUsersComment(userEmail, commentId);            
         }
 
         private bool IsValidComment(CreateOrEditCommentViewModel comment)

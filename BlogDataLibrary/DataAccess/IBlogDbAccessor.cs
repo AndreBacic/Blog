@@ -8,6 +8,7 @@ namespace BlogDataLibrary.DataAccess
         public UserModel GetUser(int id);
         public UserModel GetUser(string email);
         public List<UserModel> GetAllUsers();
+        public List<UserModel> GetAllUsersWhoReceiveNotifications();
         /// <summary>
         /// Inserts user into the database.
         /// Note: assumes user password is plaintext, and will salt and hash it before inserting.
@@ -20,6 +21,7 @@ namespace BlogDataLibrary.DataAccess
         /// </summary>
         /// <param name="user"></param>
         public void UpdateUser(UserModel user);
+        public bool IsUsersComment(string email, int commentId);
         /// <summary>
         /// Updates user's password to be newPassword. newPassword is plaintext, and is hashed by this method
         /// </summary>
@@ -48,13 +50,16 @@ namespace BlogDataLibrary.DataAccess
         public void DeleteArticle(int articleId);
 
         public List<CommentModel> GetAllCommentsInArticle(int articleId);
+        public CommentModel GetComment(int id);
         public void CreateComment(CommentModel comment, int articleId);
         public void UpdateComment(CommentModel comment);
         public void DeleteComment(int id);
 
         public List<RefreshTokenModel> GetAllRefreshTokens();
         public List<RefreshTokenModel> GetRefreshTokensByUserId(int userId);
+        public RefreshTokenModel GetRefreshToken(string token);
         public void CreateRefreshToken(RefreshTokenModel token);
         public void DeleteRefreshToken(int id);
+        public void DeleteRefreshTokensByUserId(int userId);
     }
 }

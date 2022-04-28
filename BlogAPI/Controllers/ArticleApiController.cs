@@ -80,7 +80,7 @@ namespace BlogAPI.Controllers
 
             // HACK: Make get all users who receive notifications SQL SP.
             // Notify users of new article
-            List<UserModel> users = _db.GetAllUsers().Where(x => x.DoesReceiveNotifications == true).ToList();
+            List<UserModel> users = _db.GetAllUsersWhoReceiveNotifications();
             string subject = $"{dbArticle.AuthorName} Just Posted a New Article";
 
             string articleLink = $"https://{HttpContext.Request.Host.Value}/article.html?{dbArticle.Id}";
