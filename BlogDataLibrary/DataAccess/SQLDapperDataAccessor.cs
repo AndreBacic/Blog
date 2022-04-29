@@ -304,8 +304,12 @@ namespace BlogDataLibrary.DataAccess
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
 
-                output = connection.Query<CommentModel>("dbo.spComments_GetById", parameters, commandType: CommandType.StoredProcedure)
-                                    .FirstOrDefault(); // may return null
+                output = connection.Query<CommentModel, UserModel, CommentModel>(
+                        "dbo.spComments_GetById", 
+                        (c, u) => { c.Author = u; return c; }, 
+                        param: parameters, 
+                        commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault(); // may return null
             }
             return output;
         }

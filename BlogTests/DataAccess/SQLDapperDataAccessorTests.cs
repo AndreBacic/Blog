@@ -9,7 +9,7 @@ namespace BlogDataLibrary.Tests.DataAccess
 {
     public class SQLDapperDataAccessorTests
     {
-        [Fact]
+        [Fact(Skip = "Data Access test should only be run locally")]
         public void UpdateUserPassword_ShouldWork()
         {
             SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
@@ -17,14 +17,15 @@ namespace BlogDataLibrary.Tests.DataAccess
             db.UpdateUserPassword(user, "Password123");
         }
 
-        [Fact]
+        [Fact(Skip = "Data Access test should only be run locally")]
         public void CreateArticle_ShouldWork()
         {
             SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
             ArticleModel model = ApiSampleData.GetSampleArticles().First();
             //Assert.Throws<Exception>(() => db.CreateArticle(model)); // <- throws no error because it works
         }
-        [Fact]
+
+        [Fact(Skip = "Data Access test should only be run locally")]
         public void GetAllArticles_ShouldWork()
         {
             SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
@@ -34,6 +35,15 @@ namespace BlogDataLibrary.Tests.DataAccess
             Assert.NotNull(models[0].Tags);
             Assert.NotNull(models[0].Comments);
             Assert.NotNull(models[0].ContentText);
+        }
+
+        [Fact(Skip = "Data Access test should only be run locally")]
+        public void GetCommentById_ShouldWork()
+        {
+            SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            CommentModel c = db.GetComment(5);
+            Assert.NotNull(c);
+            Assert.NotNull(c?.Author);
         }
 
         [Fact]
