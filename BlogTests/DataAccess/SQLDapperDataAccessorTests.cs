@@ -46,6 +46,16 @@ namespace BlogDataLibrary.Tests.DataAccess
             Assert.NotNull(c?.Author);
         }
 
+        [Fact(Skip = "Data Access test should only be run locally")]
+        public void GetAllComments_ShouldWork()
+        {
+            SQLDapperDataAccessor db = new SQLDapperDataAccessor("Server=.;Database=Blog;Trusted_Connection=True;");
+            var cs = db.GetAllCommentsInArticle(1);
+            Assert.NotNull(cs);
+            Assert.NotNull(cs[0]);
+            Assert.NotNull(cs[0].Author);
+        }
+
         [Fact]
         public void ArticleModel_dbTagsShouldWork()
         {

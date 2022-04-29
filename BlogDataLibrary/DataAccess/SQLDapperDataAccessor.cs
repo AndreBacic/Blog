@@ -219,23 +219,19 @@ namespace BlogDataLibrary.DataAccess
         {
             List<CommentModel> output = new List<CommentModel>();
 
-            // Get comments by article
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ArticleId", articleId);
 
-                output = connection.Query<CommentModel>("dbo.spComments_GetByArticle", parameters, commandType: CommandType.StoredProcedure)
-                                    .ToList();
+                output = connection.Query<CommentModel, UserModel, CommentModel>(
+                        "dbo.spComments_GetByArticle",
+                        (c, u) => { c.Author = u; return c; },
+                        parameters, 
+                        commandType: CommandType.StoredProcedure)
+                    .ToList();
             }
-
-            // HACK: Refactor spComments_GetByArticle to return author intead forcing an n+1 query
-            // or can you do that, considering that you'd need to return two models as pairs?
-            foreach (CommentModel comment in output)
-            {
-                comment.Author = GetUser(comment.AuthorId);
-            }
-
+                        
             return output;
         }
 
