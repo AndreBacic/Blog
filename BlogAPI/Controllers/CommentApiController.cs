@@ -1,5 +1,6 @@
 ﻿using BlogAPI.Models;
 using BlogDataLibrary.DataAccess;
+using BlogDataLibrary.Messaging;
 using BlogDataLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,10 +17,13 @@ namespace BlogAPI.Controllers
     public class CommentApiController : Controller
     {
         private readonly IBlogDbAccessor _db;
+        private readonly IEmailService _emailService;
 
-        public CommentApiController(IBlogDbAccessor db)
+        public CommentApiController(IBlogDbAccessor db,
+                                    IEmailService emailService)
         {
             _db = db;
+            _emailService = emailService;
         }
         // GET: api/<controller>
         [HttpGet("{articleId}")]
@@ -67,16 +71,24 @@ namespace BlogAPI.Controllers
         public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
         {
             // Validate user input before saving to the db.
-            if (IsValidComment(comment) == false ||
-                _db.GetArticle(comment.ArticleId) == null)
+            var article = _db.GetArticle(comment.ArticleId);
+            if (IsValidComment(comment) == false || article == null)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-
             
             CommentModel dbComment = comment.GetAsDbCommentModel();
             dbComment.DatePosted = DateTime.UtcNow;
             _db.CreateComment(dbComment, comment.ArticleId);
+
+            var admins = _db.GetAllAdminUsers();
+            string body = $@"<div style='text-align:center;font-family:sans-serif;'>
+                              <h2>{comment.Author.Name} just commented on 
+                               <a href='https://{HttpContext.Request.Host.Value}/article.html?{article.Id}'>
+                                {article.Title}</a>
+                              </h2>
+                             </div>";
+            _emailService.SendEmail(admins, new List<UserModel>(), "A blog user just commented", body, false);
 
             return StatusCode(StatusCodes.Status201Created);            
         }

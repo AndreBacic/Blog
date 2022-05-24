@@ -26,7 +26,7 @@ namespace BlogDataLibrary.Security
             }
 
             // derive a 256-bit subkey (use HMACSHA512 with a certain number of iterations)
-            // note: I swithced to HMACSHA512 from the docs code because a bigger number seems better
+            // note: I'm using HMACSHA512 because it is faster than HMACSHA256 on 64-bit machines and is a bit more secure.
             byte[] hashed = KeyDerivation.Pbkdf2(
                 password: password,
                 salt: salt,

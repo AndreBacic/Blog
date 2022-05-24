@@ -197,6 +197,18 @@ namespace BlogDataLibrary.DataAccess
             }
         }
 
+        public List<UserModel> GetAllAdminUsers()
+        {
+            List<UserModel> output = new List<UserModel>();
+            string sql = $"SELECT * FROM dbo.Users WHERE Role = '{UserModel.ADMIN_ROLE}';";
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
+            {
+                output = connection.Query<UserModel>(sql).ToList();
+            }
+            return output;
+        }
+
         public List<ArticleModel> GetAllArticles()
         {
             List<ArticleModel> output = new List<ArticleModel>();

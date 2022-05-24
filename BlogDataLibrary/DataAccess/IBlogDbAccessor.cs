@@ -9,6 +9,7 @@ namespace BlogDataLibrary.DataAccess
         public UserModel GetUser(string email);
         public List<UserModel> GetAllUsers();
         public List<UserModel> GetAllUsersWhoReceiveNotifications();
+        public List<UserModel> GetAllAdminUsers();
         /// <summary>
         /// Inserts user into the database.
         /// Note: assumes user password is plaintext, and will salt and hash it before inserting.
