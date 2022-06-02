@@ -68,7 +68,7 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsCommenter"))]
         // POST api/<controller>
         [HttpPost]
-        public IActionResult Post([FromBody]CreateOrEditCommentViewModel comment)
+        public IActionResult Post([FromBody] CreateOrEditCommentViewModel comment)
         {
             // Validate user input before saving to the db.
             var article = _db.GetArticle(comment.ArticleId);
@@ -76,8 +76,11 @@ namespace BlogAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            
+
             CommentModel dbComment = comment.GetAsDbCommentModel();
+            dbComment.Author = _db.GetUser(HttpContext.User.Claims
+                                            .Where(x => x.Type == ClaimTypes.Email)
+                                            .First().Value);
             dbComment.DatePosted = DateTime.UtcNow;
             _db.CreateComment(dbComment, comment.ArticleId);
 
@@ -90,13 +93,13 @@ namespace BlogAPI.Controllers
                              </div>";
             _emailService.SendEmail(admins, new List<UserModel>(), "A blog user just commented", body, false);
 
-            return StatusCode(StatusCodes.Status201Created);            
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [Authorize(Policy = ("IsCommenter"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]CreateOrEditCommentViewModel comment)
+        public IActionResult Put(int id, [FromBody] CreateOrEditCommentViewModel comment)
         {
             // Validate user input before saving to the db.
             if (IsValidComment(comment) == false)
@@ -130,10 +133,10 @@ namespace BlogAPI.Controllers
         }
 
         private bool IsLoggedInUsersComment(int commentId)
-        {            
+        {
             string userEmail = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Email).First().Value;
-                
-            return _db.IsUsersComment(userEmail, commentId);            
+
+            return _db.IsUsersComment(userEmail, commentId);
         }
 
         private bool IsValidComment(CreateOrEditCommentViewModel comment)
@@ -141,8 +144,7 @@ namespace BlogAPI.Controllers
             return !string.IsNullOrWhiteSpace(comment.ContentText) &&
                    comment.ArticleId > 0 &&
                    !(comment.Author is null) &&
-                   !string.IsNullOrWhiteSpace(comment.Author.Name) &&
-                   !string.IsNullOrWhiteSpace(comment.Author.EmailAddress);
+                   !string.IsNullOrWhiteSpace(comment.Author.Name);
         }
     }
 }

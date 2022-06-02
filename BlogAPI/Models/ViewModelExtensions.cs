@@ -8,7 +8,7 @@ namespace BlogAPI.Models
     {
         public static void SetThisToDbArticleModel(this ArticleViewModel @this, ArticleModel article)
         {
-            @this.Id = article.Id; // todo: encrypt ViewModel ids before sending them to the front end? That might not make a difference...
+            @this.Id = article.Id; // TODO: encrypt ViewModel ids before sending them to the front end? That might not make a difference...
             @this.AuthorName = article.AuthorName;
             @this.Title = article.Title;
             @this.ContentText = article.ContentText;
@@ -53,7 +53,9 @@ namespace BlogAPI.Models
         public static void SetThisToDbCommentModel(this CommentViewModel @this, CommentModel comment, int articleId = -1)
         {
             @this.Id = comment.Id;
-            @this.Author.SetThisToDbUserModel(comment.Author);
+            @this.Author.Id = comment.Author.Id;
+            @this.Author.FirstName = comment.Author.FirstName;
+            @this.Author.LastName = comment.Author.LastName;
             @this.DatePosted = comment.DatePosted;
             @this.LastEdited = comment.LastEdited;
             @this.ContentText = comment.ContentText;
@@ -64,7 +66,12 @@ namespace BlogAPI.Models
             CommentModel output = new CommentModel
             {
                 Id = @this.Id,
-                Author = @this.Author.GetAsDbUserModel(),
+                Author = new UserModel
+                {
+                    Id = @this.Author.Id,
+                    FirstName = @this.Author.FirstName,
+                    LastName = @this.Author.LastName
+                },
                 DatePosted = @this.DatePosted,
                 LastEdited = @this.LastEdited,
                 ContentText = @this.ContentText
@@ -109,7 +116,12 @@ namespace BlogAPI.Models
         {
             CommentModel output = new CommentModel
             {
-                Author = @this.Author.GetAsDbUserModel(),
+                Author = new UserModel
+                {
+                    Id = @this.Author.Id,
+                    FirstName = @this.Author.FirstName,
+                    LastName = @this.Author.LastName
+                },
                 ContentText = @this.ContentText
             };
             return output;

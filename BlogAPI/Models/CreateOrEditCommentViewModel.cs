@@ -2,7 +2,7 @@
 {
     public class CreateOrEditCommentViewModel
     {
-        public UserViewModel Author { get; set; }
+        public CommentAuthorViewModel Author { get; set; }
         public string ContentText { get; set; }
         /// <summary>
         /// Id of the article this belongs to
