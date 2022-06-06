@@ -71,7 +71,7 @@ namespace BlogAPI.Controllers
         public IActionResult Post([FromBody] CreateOrEditCommentViewModel comment)
         {
             // Validate user input before saving to the db.
-            var article = _db.GetArticle(comment.ArticleId);
+            ArticleModel article = _db.GetArticle(comment.ArticleId);
             if (IsValidComment(comment) == false || article == null)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
@@ -84,7 +84,7 @@ namespace BlogAPI.Controllers
             dbComment.DatePosted = DateTime.UtcNow;
             _db.CreateComment(dbComment, comment.ArticleId);
 
-            var admins = _db.GetAllAdminUsers();
+            List<UserModel> admins = _db.GetAllAdminUsers();
             string body = $@"<div style='text-align:center;font-family:sans-serif;'>
                               <h2>{comment.Author.Name} just commented on 
                                <a href='https://{HttpContext.Request.Host.Value}/article.html?{article.Id}'>

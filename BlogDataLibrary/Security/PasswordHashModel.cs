@@ -42,22 +42,22 @@ namespace BlogDataLibrary.Security
         {
             get
             {
-                return Convert.ToBase64String(this.PasswordHash);
+                return Convert.ToBase64String(PasswordHash);
             }
             set
             {
-                this.PasswordHash = Convert.FromBase64String(value);
+                PasswordHash = Convert.FromBase64String(value);
             }
         }
         public string SaltString
         {
             get
             {
-                return Convert.ToBase64String(this.Salt);
+                return Convert.ToBase64String(Salt);
             }
             set
             {
-                this.Salt = Convert.FromBase64String(value);
+                Salt = Convert.FromBase64String(value);
             }
         }
         public int IterationsOnHash { get; set; }

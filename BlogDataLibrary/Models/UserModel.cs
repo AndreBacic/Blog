@@ -14,7 +14,7 @@
         {
             get
             {
-                return this.FirstName + " " + this.LastName;
+                return FirstName + " " + LastName;
             }
         }
 

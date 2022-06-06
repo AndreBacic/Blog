@@ -35,11 +35,8 @@ namespace BlogAPI.Controllers
         [Route("login")]
         [HttpPost]
         public IActionResult Login([FromBody]LoginModel loginModel)
-        {
-            string emailAddress = loginModel.EmailAddress;
-            string password = loginModel.Password;
-            
-            UserModel user = _db.GetUser(emailAddress);
+        {            
+            UserModel user = _db.GetUser(loginModel.EmailAddress);
             if (user == null || user.Id <= 0)
             {
                 return BadRequest("Invalid email address");
@@ -48,7 +45,7 @@ namespace BlogAPI.Controllers
             PasswordHashModel passwordHash = new PasswordHashModel();
             passwordHash.FromDbString(user.PasswordHash);
 
-            (bool IsPasswordCorrect, _) = HashAndSalter.PasswordEqualsHash(password, passwordHash);
+            (bool IsPasswordCorrect, _) = HashAndSalter.PasswordEqualsHash(loginModel.Password, passwordHash);
 
             if (IsPasswordCorrect == false)
             {
@@ -252,7 +249,7 @@ namespace BlogAPI.Controllers
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
             _db.DeleteRefreshTokensByUserId(userId);
-            _db.DeleteUser(userId);
+            _db.DeleteUser(userId); // TODO: Decide either to delete the user's comments or leave the user as a ghost without email or password hash and unsubscribed but with the comments left on the articles
             return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -262,7 +259,7 @@ namespace BlogAPI.Controllers
         {
             _db.DeleteRefreshTokensByUserId(userId);
 
-            RefreshTokenModel refreshToken = TokenService.GenerateRefreshToken(userId, this.IpAddress());
+            RefreshTokenModel refreshToken = TokenService.GenerateRefreshToken(userId, IpAddress());
             _db.CreateRefreshToken(refreshToken);
 
             SetTokenCookie(refreshToken.Token);
@@ -305,8 +302,8 @@ namespace BlogAPI.Controllers
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             }
         }
-
-        private bool IsValidPassword(string password)
+        // public so it can be unit tested
+        public bool IsValidPassword(string password)
         {
             Regex regex = new Regex(@"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,})$");
 
