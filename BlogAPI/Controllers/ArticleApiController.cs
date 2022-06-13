@@ -62,13 +62,13 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsAdmin"))]
         // POST api/<controller>
         [HttpPost]
-        public IActionResult Post([FromBody]CreateOrEditArticleViewModel article)
+        public IActionResult Post([FromBody] CreateOrEditArticleViewModel article)
         {
             // Validate user input before saving to the db.
             if (IsValidArticle(article) == false)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
-            } 
+            }
 
             ArticleModel dbArticle = article.GetAsDbArticleModel();
             dbArticle.DatePosted = DateTime.UtcNow;
@@ -98,7 +98,7 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = ("IsAdmin"))]
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]CreateOrEditArticleViewModel article)
+        public IActionResult Put(int id, [FromBody] CreateOrEditArticleViewModel article)
         {
             // Validate user input before saving to the db.
             if (IsValidArticle(article) == false)

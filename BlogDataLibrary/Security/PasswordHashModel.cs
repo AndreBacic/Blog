@@ -40,25 +40,13 @@ namespace BlogDataLibrary.Security
         public byte[] Salt { get; set; }
         public string PasswordHashString
         {
-            get
-            {
-                return Convert.ToBase64String(PasswordHash);
-            }
-            set
-            {
-                PasswordHash = Convert.FromBase64String(value);
-            }
+            get => Convert.ToBase64String(PasswordHash);
+            set => PasswordHash = Convert.FromBase64String(value);
         }
         public string SaltString
         {
-            get
-            {
-                return Convert.ToBase64String(Salt);
-            }
-            set
-            {
-                Salt = Convert.FromBase64String(value);
-            }
+            get => Convert.ToBase64String(Salt);
+            set => Salt = Convert.FromBase64String(value);
         }
         public int IterationsOnHash { get; set; }
     }

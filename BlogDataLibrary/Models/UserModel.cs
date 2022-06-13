@@ -10,13 +10,7 @@
         public string Role { get; set; }
         public bool DoesReceiveNotifications { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return FirstName + " " + LastName;
-            }
-        }
+        public string Name => FirstName + " " + LastName;
 
         public static readonly string ADMIN_ROLE = "Admin";
         public static readonly string COMMENTER_ROLE = "Commenter";

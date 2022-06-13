@@ -142,7 +142,7 @@ namespace BlogDataLibrary.DataAccess
         }
 
         public void DeleteArticle(int articleId)
-        {            
+        {
             // delete the article and all comments attached
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(_connectionString))
             {
@@ -239,11 +239,11 @@ namespace BlogDataLibrary.DataAccess
                 output = connection.Query<CommentModel, UserModel, CommentModel>(
                         "dbo.spComments_GetByArticle",
                         (c, u) => { c.Author = u; return c; },
-                        parameters, 
+                        parameters,
                         commandType: CommandType.StoredProcedure)
                     .ToList();
             }
-                        
+
             return output;
         }
 
@@ -313,9 +313,9 @@ namespace BlogDataLibrary.DataAccess
                 parameters.Add("@id", id);
 
                 output = connection.Query<CommentModel, UserModel, CommentModel>(
-                        "dbo.spComments_GetById", 
-                        (c, u) => { c.Author = u; return c; }, 
-                        param: parameters, 
+                        "dbo.spComments_GetById",
+                        (c, u) => { c.Author = u; return c; },
+                        param: parameters,
                         commandType: CommandType.StoredProcedure)
                     .FirstOrDefault(); // may return null
             }
@@ -390,7 +390,7 @@ namespace BlogDataLibrary.DataAccess
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@email", email);
                 parameters.Add("@commentId", commentId);
-                
+
                 output = connection.Query<CommentModel>("dbo.spComments_isUsersComment", parameters, commandType: CommandType.StoredProcedure)
                                     .FirstOrDefault(); // may return null
             }

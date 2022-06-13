@@ -34,14 +34,14 @@ namespace BlogAPI.Controllers
 
         [Route("login")]
         [HttpPost]
-        public IActionResult Login([FromBody]LoginModel loginModel)
-        {            
+        public IActionResult Login([FromBody] LoginModel loginModel)
+        {
             UserModel user = _db.GetUser(loginModel.EmailAddress);
             if (user == null || user.Id <= 0)
             {
                 return BadRequest("Invalid email address");
             }
-            
+
             PasswordHashModel passwordHash = new PasswordHashModel();
             passwordHash.FromDbString(user.PasswordHash);
 
@@ -51,14 +51,14 @@ namespace BlogAPI.Controllers
             {
                 return BadRequest("Invalid password");
             }
-            
+
             string handler = TokenService.GenerateJwtToken(
                                         GenerateUserClaimsList(user),
                                         _config.GetValue<string>("JWTPrivateKey"));
 
             RefreshTheRefreshToken(user.Id);
 
-            return Ok(handler);                      
+            return Ok(handler);
         }
 
         [Route("logout")]
@@ -88,8 +88,8 @@ namespace BlogAPI.Controllers
         {
             string oldCookieRefreshToken = Request.Cookies["refreshToken"];
             RefreshTokenModel oldDbRefreshToken = _db.GetRefreshToken(oldCookieRefreshToken);
-            
-            if (oldDbRefreshToken == null || 
+
+            if (oldDbRefreshToken == null ||
                 DateTime.Compare(oldDbRefreshToken.Expires, DateTime.UtcNow) < 0)
             {
                 return Unauthorized("No valid refresh token. Please login again.");
@@ -133,7 +133,7 @@ namespace BlogAPI.Controllers
         /// <returns></returns>
         [Route("createAccount")]
         [HttpPost]
-        public IActionResult CreateAccount([FromBody]CreateAccountViewModel createAccountViewModel)
+        public IActionResult CreateAccount([FromBody] CreateAccountViewModel createAccountViewModel)
         {
             // 1 Check that email is a valid email
             if (_emailService.IsValidEmailAddress(createAccountViewModel.EmailAddress) == false)
@@ -160,7 +160,7 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = "IsCommenter")]
         [Route("editAccount")]
         [HttpPut]
-        public IActionResult EditAccount([FromBody]UserViewModel userViewModel)
+        public IActionResult EditAccount([FromBody] UserViewModel userViewModel)
         {
             // 1 Ensure email is valid
             if (_emailService.IsValidEmailAddress(userViewModel.EmailAddress) == false)
@@ -169,7 +169,7 @@ namespace BlogAPI.Controllers
             }
 
             // 2 Ensure that there are no users with the new email
-                       
+
             UserModel loggedInUser = GetLoggedInDbUserByEmail();
             UserModel user = _db.GetUser(userViewModel.EmailAddress);
 
@@ -200,7 +200,7 @@ namespace BlogAPI.Controllers
         [Authorize(Policy = "IsCommenter")]
         [Route("editPassword")]
         [HttpPut]
-        public IActionResult EditPassword([FromBody]EditPasswordModel editPasswordModel)
+        public IActionResult EditPassword([FromBody] EditPasswordModel editPasswordModel)
         {
             // 1 Validate model
             if (IsValidPassword(editPasswordModel.NewPassword) == false)

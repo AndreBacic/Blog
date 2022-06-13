@@ -34,10 +34,7 @@ namespace BlogDataLibrary.Models
                 }
                 return output;
             }
-            set
-            {
-                Tags = value.Split(',').ToList();
-            }
+            set => Tags = value.Split(',').ToList();
         }
     }
 }

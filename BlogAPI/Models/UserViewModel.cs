@@ -8,12 +8,6 @@
         public string EmailAddress { get; set; }
         public bool DoesReceiveNotifications { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return FirstName + " " + LastName;
-            }
-        }
+        public string Name => FirstName + " " + LastName;
     }
 }
