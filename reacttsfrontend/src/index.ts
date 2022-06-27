@@ -1,6 +1,4 @@
-import { useContext, useState } from 'react';
-import UserContext from './UserContext';
-let user: UserModel | null = useContext(UserContext)
+import { LogOutUser } from './loginAsync';
 
 const accountURI = "api/AccountApi"
 const articleURI = "api/ArticleApi"
@@ -15,7 +13,6 @@ const millisDelayToRefreshToken = millisToJwtExpiration - 30000 // minus 30 seco
 
 const initialMaxNumArticlesDisplayed = 8;
 const incrementMaxNumArticlesDisplayed = 6;
-const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed) // TODO: Discern if this is actually a bad idea
 
 const passwordRegEx = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/g
 const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g
@@ -43,53 +40,6 @@ function getAuthToken() {
 
 function isUserLoggedIn() {
     return getAuthToken() !== null
-}
-
-async function LoginAsync(email: string, password: string) {
-    let uri = `${accountURI}/login`
-    let somePromise = await fetch(uri,
-        {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "EmailAddress": email,
-                "Password": password
-            })
-        })
-    let jwt = await somePromise.json()
-    if (somePromise.status >= 400 || jwt.value === "Invalid password" || jwt.value === "Invalid email address") {
-        return
-    }
-    // Only log in user if the password was valid
-    localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-    user = await GetLoggedInUserAsync()
-    localStorage.setItem(LS_KEY_user, JSON.stringify(user))
-
-    let now = new Date().toString()
-    localStorage.setItem(LS_KEY_lastJWTRefresh, now)
-}
-async function LogoutAsync() {
-    let somePromise = await fetch(`${accountURI}/logout`,
-        {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + getAuthToken()
-            }
-        })
-    LogOutUser()
-
-    if (somePromise.status < 400) {
-        return true
-    } else {
-        return false
-    }
-}
-function LogOutUser() {
-    localStorage.removeItem(LS_KEY_authToken)
-    localStorage.removeItem(LS_KEY_user)
 }
 
 function RefreshTokenCallbackLoop() {
@@ -149,47 +99,6 @@ async function CreateAccountAsync(user: CreateAccountViewModel) {
     }
 }
 
-async function EditAccountAsync(u: UserModel) {
-    let editPromise = await fetch(`${accountURI}/editAccount`,
-        {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getAuthToken()
-            },
-            body: JSON.stringify(u)
-        })
-    let success = editPromise.status < 400
-
-    if (success === true) {
-        let jwt = await editPromise.json()
-        localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-        let now = new Date().toString()
-        localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
-
-        user = await GetLoggedInUserAsync()
-        localStorage.setItem(LS_KEY_user, JSON.stringify(user))
-    }
-    return success
-}
-
-async function EditPasswordAsync(oldPassword: string, newPassword: string) {
-    let editPromise = await fetch(`${accountURI}/editPassword`,
-        {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getAuthToken()
-            },
-            body: JSON.stringify({
-                "OldPassword": oldPassword,
-                "NewPassword": newPassword
-            })
-        })
-    return editPromise.status < 400
-}
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
 async function GetAllArticlesAsync(): Promise<ArticleModel[]> {
@@ -381,24 +290,22 @@ export interface CreateOrEditCommentModel {
 }
 
 export {
+    accountURI,
+    articleURI,
+    commentURI,
     LS_KEY_authToken,
     LS_KEY_lastJWTRefresh,
     LS_KEY_user,
     initialMaxNumArticlesDisplayed,
     incrementMaxNumArticlesDisplayed,
-    maxNumArticlesDisplayed,
-    setMaxNumArticlesDisplayed,
     emailRegex,
     passwordRegEx,
     isUserLoggedIn,
     isValidEmail,
+    getAuthToken,
     GetLoggedInUserAsync,
-    LoginAsync,
-    LogoutAsync,
     RefreshTokenCallbackLoop,
     CreateAccountAsync,
-    EditAccountAsync,
-    EditPasswordAsync,
     GetAllArticlesAsync,
     GetArticleByIdAsync,
     CreateArticleAsync,

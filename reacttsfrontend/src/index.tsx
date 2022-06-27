@@ -5,9 +5,17 @@ import './index.css';
 import Header from './Header';
 import Navbar from './Navbar';
 import Main from './Main';
+import Footer from './Footer';
 import Home from './Home';
 import About from './About';
-import Footer from './Footer';
+import SearchPage from './SearchPage';
+import Login from './Login';
+import CreateArticle from './CreateArticle';
+import EditAccount from './EditAccount';
+import EditArticle from './EditArticle';
+import ArticlePage from './ArticlePage';
+import PageNotFound from './PageNotFound';
+
 import reportWebVitals from './reportWebVitals';
 import UserContext from './UserContext';
 import { LS_KEY_user, UserModel } from '.';
@@ -28,12 +36,12 @@ root.render(
           <Route path="/" element={<Main />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
-            <Route path="search/:query" element={<Search />} />
+            <Route path="search/:query" element={<SearchPage />} />
             <Route path="login" element={<Login />} />
             <Route path="editAccount" element={<EditAccount />} />
             <Route path="createArticle" element={<CreateArticle />} />
             <Route path="editArticle" element={<EditArticle />} />
-            <Route path="article/:id" element={<Article />} />
+            <Route path="article/:id" element={<ArticlePage />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
         </Routes>

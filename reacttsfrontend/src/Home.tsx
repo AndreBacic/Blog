@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed, maxNumArticlesDisplayed, setMaxNumArticlesDisplayed } from '.'
+import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
 
 const [articles, setArticles] = useState<ArticleModel[]>([])
 const [articlesToBeRendered, setArticlesToBeRendered] = useState<ArticleModel[]>([])
+const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
 
 function Home() {
     // grab articles from api
@@ -55,7 +56,8 @@ function Home() {
                     })
                 }
             </div>
-            <button id="load-more-articles-button" className="button-article-list" onClick={LoadMoreArticles} type="button">
+            <button id="load-more-articles-button" className="button-article-list"
+                onClick={() => setArticlesToBeRendered(GetMoreArticlesToBeRendered(articles))} type="button">
                 {maxNumArticlesDisplayed >= articles.length ? "That is All" : "Load More"}
             </button>
         </>
@@ -70,7 +72,5 @@ function GetMoreArticlesToBeRendered(allArticles: ArticleModel[]) {
         return allArticles.slice(0, maxNumArticlesDisplayed)
     }
 }
-function LoadMoreArticles() {
-    setArticlesToBeRendered(GetMoreArticlesToBeRendered(articles))
-}
+
 export default Home

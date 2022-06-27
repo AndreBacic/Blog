@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { LogoutAsync } from '.';
+import { LogoutAsync } from './loginAsync';
 import UserContext from './UserContext';
 
 type Props = { hasSearch: boolean }

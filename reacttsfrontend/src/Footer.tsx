@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
-import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, LoginAsync, passwordRegEx, UserModel } from '.'
+import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx, UserModel } from '.'
+import LoginAsync from './loginAsync'
 import UserContext from './UserContext'
 
 let user: UserModel | null = useContext(UserContext)
