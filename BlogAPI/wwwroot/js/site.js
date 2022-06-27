@@ -510,12 +510,12 @@ function RenderPreviewOfArticle(articleJSON) {
 
     const datesP = document.createElement("p")
     datePosted = new Date(articleJSON.datePosted)
-    datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
+    datesP.textContent = formatUTCDateForDisplayAsLocal(datePosted, 'Posted')
 
     if (articleJSON.lastEdited != '') {
         lastEdited = new Date(articleJSON.lastEdited)
         if (lastEdited.getUTCFullYear() != 1) {
-            datesP.textContent += `, ${formatUTCDateForDisplayAsLocal(lastEdited, 'Last Edited')}`
+            datesP.textContent += formatUTCDateForDisplayAsLocal(lastEdited, ', Last Edited')
         }
     }
     authorNameLabel.appendChild(datesP)
@@ -713,13 +713,13 @@ function RenderCommentList(articleJSON) {
 
             const datesP = document.createElement("p")
             datePosted = new Date(value.datePosted)
-            datesP.textContent = `${formatUTCDateForDisplayAsLocal(datePosted, 'Posted')}`
+            datesP.textContent = formatUTCDateForDisplayAsLocal(datePosted, 'Posted')
             datesP.style = "padding: 0.875rem 0px 0.25rem; display: inline-block;"
 
             if (value.lastEdited != '') {
                 lastEdited = new Date(value.lastEdited)
                 if (lastEdited.getUTCFullYear() != 1) {
-                    datesP.textContent += `, ${formatUTCDateForDisplayAsLocal(lastEdited, 'Last Edited')}`
+                    datesP.textContent += formatUTCDateForDisplayAsLocal(lastEdited, ', Last Edited')
                 }
             }
             datesAndFormsContainer.appendChild(datesP)

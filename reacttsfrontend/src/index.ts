@@ -118,7 +118,7 @@ function RefreshTokenCallbackLoop() {
         .catch(err => console.error(err))
 }
 
-async function GetLoggedInUserAsync() {
+async function GetLoggedInUserAsync(): Promise<UserModel> {
     let createPromise = await fetch(`${accountURI}/getLoggedInUser`,
         {
             method: 'GET',
@@ -128,8 +128,7 @@ async function GetLoggedInUserAsync() {
                 'Authorization': 'Bearer ' + getAuthToken()
             }
         })
-    let user = await createPromise.json()
-    return user
+    return await createPromise.json()
 }
 
 async function CreateAccountAsync(user: CreateAccountViewModel) {
@@ -193,7 +192,7 @@ async function EditPasswordAsync(oldPassword: string, newPassword: string) {
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////
-async function GetAllArticlesAsync() {
+async function GetAllArticlesAsync(): Promise<ArticleModel[]> {
     let infoPromise = await fetch(articleURI,
         {
             method: 'GET',
@@ -202,14 +201,14 @@ async function GetAllArticlesAsync() {
             }
         })
     let articles = await infoPromise.json()
-    return articles.sort((a: any, b: any) => { // TODO: replace 'any' with actual article model
+    return articles.sort((a: ArticleModel, b: ArticleModel) => { // TODO: replace 'any' with actual article model
         let d1 = Number(new Date(a.datePosted))
         let d2 = Number(new Date(b.datePosted))
         return d2 - d1
     });
 }
 
-async function GetArticleByIdAsync(id: number) {
+async function GetArticleByIdAsync(id: number): Promise<ArticleModel> {
     let infoPromise = await fetch(`${articleURI}/${id}`,
         {
             method: 'GET',
@@ -261,7 +260,7 @@ async function DeleteArticleAsync(id: number) {
 }
 
 // CommentApi methods   ////////////////////////////////////////////////////////////////
-async function GetAllCommentsInArticle(articleId: number) {
+async function GetAllCommentsInArticle(articleId: number): Promise<CommentModel[]> {
     let infoPromise = await fetch(`${commentURI}/${articleId}`,
         {
             method: 'GET',
@@ -273,7 +272,7 @@ async function GetAllCommentsInArticle(articleId: number) {
     return comments;
 }
 
-async function GetCommentByArticleAndId(articleId: number, commentId: number) {
+async function GetCommentByArticleAndId(articleId: number, commentId: number): Promise<CommentModel> {
     let infoPromise = await fetch(`${commentURI}/${articleId}/${commentId}`,
         {
             method: 'GET',
@@ -284,7 +283,7 @@ async function GetCommentByArticleAndId(articleId: number, commentId: number) {
     let comment = await infoPromise.json()
     return comment;
 }
-async function CreateCommentAsync(comment: CommentModel) {
+async function CreateCommentAsync(comment: CreateOrEditCommentModel) {
     await fetch(commentURI,
         {
             method: 'POST',
@@ -297,7 +296,7 @@ async function CreateCommentAsync(comment: CommentModel) {
         })
 }
 
-async function UpdateCommentAsync(id: number, comment: CommentModel) {
+async function UpdateCommentAsync(id: number, comment: CreateOrEditCommentModel) {
     await fetch(`${commentURI}/${id}`,
         {
             method: 'PUT',
@@ -324,7 +323,10 @@ function GetUrlSearch() {
     let url = window.location.search
     return url.split('?')[1]
 }
-
+function formatUTCDateForDisplayAsLocal(date: Date, statement: string) {
+    date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getSeconds(), date.getMilliseconds()))
+    return `${statement} ${date.toLocaleDateString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`
+}
 
 // Types ////////////////////////////////////////////////////////////////////////////
 export interface UserModel {
@@ -342,6 +344,24 @@ export interface CreateAccountViewModel {
     password: string;
     doesReceiveNotifications: boolean;
 }
+export interface ArticleModel {
+    id: number;
+    title: string;
+    datePosted: Date;
+    lastEdited: Date;
+    comments: CommentModel[];
+    tags: string[];
+    authorName: string;
+    contentText: string;
+}
+export interface CommentModel {
+    id: number;
+    datePosted: string;
+    lastEdited: string;
+    author: CommentAuthorViewModel;
+    contentText: string;
+    articleId: number;
+}
 export interface CreateOrEditArticleModel {
     title: string;
     tags: string[];
@@ -354,7 +374,7 @@ export interface CommentAuthorViewModel {
     lastName: string;
     name: string;
 }
-export interface CommentModel {
+export interface CreateOrEditCommentModel {
     author: CommentAuthorViewModel;
     contentText: string;
     articleId: number;
@@ -390,4 +410,5 @@ export {
     UpdateCommentAsync,
     DeleteCommentAsync,
     GetUrlSearch,
+    formatUTCDateForDisplayAsLocal,
 }

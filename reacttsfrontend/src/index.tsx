@@ -5,6 +5,8 @@ import './index.css';
 import Header from './Header';
 import Navbar from './Navbar';
 import Main from './Main';
+import Home from './Home';
+import About from './About';
 import Footer from './Footer';
 import reportWebVitals from './reportWebVitals';
 import UserContext from './UserContext';
