@@ -18,7 +18,7 @@ const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}
 
 function isValidEmail(email) {
     email = email.toLowerCase()
-    regexed = email.match(emailRegex)
+    let regexed = email.match(emailRegex)
     if (!regexed) {return false}
     if (regexed.length > 1) {return false}
     if (regexed[0] !== email) {return false}
