@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx, UserModel } from '.'
-import LoginAsync from './loginAsync'
+import { LoginAsync } from '.'
 import UserContext from './UserContext'
 
-let user: UserModel | null = useContext(UserContext)
 
 function Footer() {
+    let user: UserModel | null = useContext(UserContext)
     return (
         <footer id="footer" className={user ? "footer-logged-in footer" : "footer"}>
             {user ?
@@ -13,7 +13,7 @@ function Footer() {
                 :
                 <>
                     <aside className="footer-signup-prompt">Please subscribe:</aside>
-                    <form className="footer-signup-form" id="register-form" action="javascript:void(0)">
+                    <form className="footer-signup-form" id="register-form" action={undefined}>
                         <input type="text" className="footer-signup-input" id="First_Name" placeholder="First Name" contentEditable="true" required />
                         <input type="text" className="footer-signup-input" id="Last_Name" placeholder="Last Name" contentEditable="true" required />
                         <input type="email" className="footer-signup-input" id="Email_address" placeholder="Email address" contentEditable="true" required />
@@ -25,7 +25,7 @@ function Footer() {
                 </>
             }
             <aside className="footer-copyright">
-                <p>© <p id="year-display">2022</p> by Andre Bačić</p>
+                <div>© <p id="year-display" style={{ display: "inline-block" }}>2022</p> by Andre Bačić</div>
             </aside>
 
         </footer>

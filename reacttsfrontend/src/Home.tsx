@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
 
-const [articles, setArticles] = useState<ArticleModel[]>([])
-const [articlesToBeRendered, setArticlesToBeRendered] = useState<ArticleModel[]>([])
-const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
-
 function Home() {
+    const [articles, setArticles] = useState<ArticleModel[]>([])
+    const [articlesToBeRendered, setArticlesToBeRendered] = useState<ArticleModel[]>([])
+    const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
+
     // grab articles from api
     useEffect(() => {
         GetAllArticlesAsync().then(articles => {
@@ -15,6 +15,15 @@ function Home() {
             console.log(err)
         })
     }, [])
+
+    function GetMoreArticlesToBeRendered(allArticles: ArticleModel[]) {
+        if (maxNumArticlesDisplayed >= allArticles.length) {
+            return allArticles
+        } else {
+            setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
+            return allArticles.slice(0, maxNumArticlesDisplayed)
+        }
+    }
     return (
         <>
             <h1>Latest Articles</h1>
@@ -23,7 +32,7 @@ function Home() {
 
                     Array(6).fill(0).map((_, i: any) => {
                         return (
-                            <div className="flex-item css-skeleton-article">
+                            <div className="flex-item css-skeleton-article" key={i}>
                                 <article className="article-flex-item">
                                     <h2>XXXXX XXXXXXX</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>XXXXX XXXXX</cite><br /></p>
@@ -39,7 +48,7 @@ function Home() {
                     :
                     articlesToBeRendered.map((article, i) => {
                         return (
-                            <div className="flex-item css-skeleton-article">
+                            <div className="flex-item css-skeleton-article" key={i}>
                                 <article className="article-flex-item">
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
@@ -48,7 +57,7 @@ function Home() {
                                     </p>
                                     <div className="tags-container">
                                         <h4>Tags: </h4>
-                                        {article.tags.map((tag: string, i: any) => <p className="tag">{tag}</p>)}
+                                        {article.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
                                     </div>
                                 </article>
                             </div>
@@ -62,15 +71,6 @@ function Home() {
             </button>
         </>
     )
-}
-
-function GetMoreArticlesToBeRendered(allArticles: ArticleModel[]) {
-    if (maxNumArticlesDisplayed >= allArticles.length) {
-        return allArticles
-    } else {
-        setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
-        return allArticles.slice(0, maxNumArticlesDisplayed)
-    }
 }
 
 export default Home

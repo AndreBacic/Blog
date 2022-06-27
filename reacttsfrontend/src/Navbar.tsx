@@ -1,13 +1,18 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { LogoutAsync } from './loginAsync';
+import { LogoutAsync } from './index';
 import UserContext from './UserContext';
 
 type Props = { hasSearch: boolean }
-
-let user = useContext(UserContext)
-
 function Navbar({ hasSearch }: Props) {
+    let user = useContext(UserContext)
+
+    function LogOutButtonOnClick() {
+        LogoutAsync().then(() => {
+            user = null
+            // useNavigate()('/') // TODO: Redirect to home page after logout (useNavigate() is not allowed in a nested function)
+        })
+    }
     return (
         <>
             <input type="checkbox" id="navbar-toggle" className="navbar-toggle" />
@@ -19,12 +24,12 @@ function Navbar({ hasSearch }: Props) {
                 </span>
             </label>
             <nav className="navbar">
-                <Link to="index">Home</Link>
+                <Link to="">Home</Link>
                 <Link to="about">About</Link>
                 {user ?
                     <>
                         <Link className="right" to="editAccount" id="edit-account-link">Edit Account</Link>
-                        <a className="right" href="javascript:void(0)" id="login-link" onClick={LogOutButtonOnClick}>Logout</a>
+                        <a className="right" href={undefined} id="login-link" onClick={LogOutButtonOnClick}>Logout</a>
                     </>
                     :
                     <>
@@ -56,14 +61,6 @@ function signUpAnimation() {
             clearInterval(keepScrollDown)
         }, 1200)
     }
-}
-
-function LogOutButtonOnClick() {
-    LogoutAsync().then(() => {
-        user = useContext(UserContext)
-        user = null
-        useNavigate()('/')
-    })
 }
 
 export default Navbar
