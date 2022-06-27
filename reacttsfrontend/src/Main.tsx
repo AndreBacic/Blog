@@ -1,11 +1,10 @@
-import logo from './logo.svg';
-import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 
 function Main() {
 
   return (
     <main id="main">
-      {/* Page content goes here */}
+      <Outlet />
     </main>
   );
 }

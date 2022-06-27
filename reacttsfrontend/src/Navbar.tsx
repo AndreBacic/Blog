@@ -1,4 +1,6 @@
 import React, { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import { LogoutAsync } from '.';
 import UserContext from './UserContext';
 
 type Props = { hasSearch: boolean }
@@ -17,14 +19,19 @@ function Navbar({ hasSearch }: Props) {
                 </span>
             </label>
             <nav className="navbar">
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
+                <Link to="index">Home</Link>
+                <Link to="about">About</Link>
                 {user ?
-                    <a className="right" href="editAccount.html" id="edit-account-link">Edit Account</a>
+                    <>
+                        <Link className="right" to="editAccount" id="edit-account-link">Edit Account</Link>
+                        <a className="right" href="javascript:void(0)" id="login-link" onClick={LogOutButtonOnClick}>Logout</a>
+                    </>
                     :
-                    <a className="right" href="#footer" onClick={signUpAnimation} id="sign-up-link">Sign Up</a>
+                    <>
+                        <a className="right" href="#footer" onClick={signUpAnimation} id="sign-up-link">Sign Up</a>
+                        <Link className="right" to="login" id="login-link">Login</Link>
+                    </>
                 }
-                <a className="right" href="login.html" id="login-link">{user ? "Logout" : "Login"}</a>
                 {hasSearch &&
                     <div style={{ float: "right" }}>
                         <label htmlFor="search-bar">Search:</label>
@@ -49,6 +56,14 @@ function signUpAnimation() {
             clearInterval(keepScrollDown)
         }, 1200)
     }
+}
+
+function LogOutButtonOnClick() {
+    LogoutAsync().then(() => {
+        user = useContext(UserContext)
+        user = null
+        useNavigate()('/')
+    })
 }
 
 export default Navbar

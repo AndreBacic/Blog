@@ -9,7 +9,6 @@ function Footer() {
         <footer id="footer" className={user ? "footer-logged-in footer" : "footer"}>
             {user ?
                 <h1 id="footer-header">You are logged in as {user.name}</h1>
-
                 :
                 <>
                     <aside className="footer-signup-prompt">Please subscribe:</aside>
@@ -63,7 +62,6 @@ async function GetRegisterDataAndLoginAsync() {
     if (success === true) {
         await LoginAsync(email_address, password)
         window.alert("Successfully signed up!")
-        ReRenderTemplates(haveSearch) // TODO: Change Navbar state
     } else {
         window.alert("There was a problem registering you. Someone else may have signed up with that email.")
     }

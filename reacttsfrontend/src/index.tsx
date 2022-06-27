@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import Header from './Header';
 import Navbar from './Navbar';
@@ -7,22 +8,36 @@ import Main from './Main';
 import Footer from './Footer';
 import reportWebVitals from './reportWebVitals';
 import UserContext from './UserContext';
-import { UserModel } from '.';
+import { LS_KEY_user, UserModel } from '.';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-let user: UserModel | null = null
+let user: UserModel | null = JSON.parse(localStorage.getItem(LS_KEY_user) as string)
 
 root.render(
   <React.StrictMode>
-    <UserContext.Provider value={user}>
-      <Header />
-      <Navbar hasSearch={true} />
-      <Main />
-      <Footer />
-    </UserContext.Provider>
+    <BrowserRouter>
+      <UserContext.Provider value={user}>
+        <Header />
+        <Navbar hasSearch={true} />
+        <Routes>
+          <Route path="/" element={<Main />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="search/:query" element={<Search />} />
+            <Route path="login" element={<Login />} />
+            <Route path="editAccount" element={<EditAccount />} />
+            <Route path="createArticle" element={<CreateArticle />} />
+            <Route path="editArticle" element={<EditArticle />} />
+            <Route path="article/:id" element={<Article />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Route>
+        </Routes>
+        <Footer />
+      </UserContext.Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

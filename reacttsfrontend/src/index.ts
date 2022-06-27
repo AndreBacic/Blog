@@ -1,3 +1,7 @@
+import { useContext, useState } from 'react';
+import UserContext from './UserContext';
+let user: UserModel | null = useContext(UserContext)
+
 const accountURI = "api/AccountApi"
 const articleURI = "api/ArticleApi"
 const commentURI = "api/CommentApi"
@@ -11,7 +15,7 @@ const millisDelayToRefreshToken = millisToJwtExpiration - 30000 // minus 30 seco
 
 const initialMaxNumArticlesDisplayed = 8;
 const incrementMaxNumArticlesDisplayed = 6;
-let MaxNumArticlesDisplayed = initialMaxNumArticlesDisplayed // TODO: Change to useState value
+const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed) // TODO: Discern if this is actually a bad idea
 
 const passwordRegEx = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/g
 const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g
@@ -61,7 +65,7 @@ async function LoginAsync(email: string, password: string) {
     }
     // Only log in user if the password was valid
     localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-    let user = await GetLoggedInUserAsync()
+    user = await GetLoggedInUserAsync()
     localStorage.setItem(LS_KEY_user, JSON.stringify(user))
 
     let now = new Date().toString()
@@ -76,7 +80,6 @@ async function LogoutAsync() {
             }
         })
     LogOutUser()
-    ReRenderTemplates() // TODO: Re-arrange app logic so this works
 
     if (somePromise.status < 400) {
         return true
@@ -103,7 +106,6 @@ function RefreshTokenCallbackLoop() {
                 return response.json()
             } else {
                 LogOutUser()
-                ReRenderTemplates() // TODO: Re-arrange app logic so this works
                 throw response.status
             }
         })
@@ -148,7 +150,7 @@ async function CreateAccountAsync(user: CreateAccountViewModel) {
     }
 }
 
-async function EditAccountAsync(user: UserModel) {
+async function EditAccountAsync(u: UserModel) {
     let editPromise = await fetch(`${accountURI}/editAccount`,
         {
             method: 'PUT',
@@ -157,7 +159,7 @@ async function EditAccountAsync(user: UserModel) {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getAuthToken()
             },
-            body: JSON.stringify(user)
+            body: JSON.stringify(u)
         })
     let success = editPromise.status < 400
 
@@ -167,7 +169,7 @@ async function EditAccountAsync(user: UserModel) {
         let now = new Date().toString()
         localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
 
-        let user = await GetLoggedInUserAsync()
+        user = await GetLoggedInUserAsync()
         localStorage.setItem(LS_KEY_user, JSON.stringify(user))
     }
     return success
@@ -359,9 +361,13 @@ export interface CommentModel {
 }
 
 export {
+    LS_KEY_authToken,
+    LS_KEY_lastJWTRefresh,
+    LS_KEY_user,
     initialMaxNumArticlesDisplayed,
     incrementMaxNumArticlesDisplayed,
-    MaxNumArticlesDisplayed,
+    maxNumArticlesDisplayed,
+    setMaxNumArticlesDisplayed,
     emailRegex,
     passwordRegEx,
     isUserLoggedIn,
