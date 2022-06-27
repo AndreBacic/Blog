@@ -90,7 +90,7 @@ function LogOutUser() {
 }
 
 function RefreshTokenCallbackLoop() {
-    let somePromise = fetch(`${accountURI}/refreshToken`,
+    fetch(`${accountURI}/refreshToken`,
         {
             method: 'POST',
             headers: {

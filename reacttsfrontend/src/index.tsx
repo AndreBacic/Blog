@@ -6,16 +6,23 @@ import Navbar from './Navbar';
 import Main from './Main';
 import Footer from './Footer';
 import reportWebVitals from './reportWebVitals';
+import UserContext from './UserContext';
+import { UserModel } from '.';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+let user: UserModel | null = null
+
 root.render(
   <React.StrictMode>
-    <Header />
-    <Navbar hasSearch={true} />
-    <Main />
-    <Footer />
+    <UserContext.Provider value={user}>
+      <Header />
+      <Navbar hasSearch={true} />
+      <Main />
+      <Footer />
+    </UserContext.Provider>
   </React.StrictMode>
 );
 

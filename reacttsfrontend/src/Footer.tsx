@@ -1,23 +1,35 @@
-import React from 'react'
-import { CreateAccountAsync, isValidEmail, LoginAsync, passwordRegEx } from '.'
+import React, { useContext } from 'react'
+import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, LoginAsync, passwordRegEx, UserModel } from '.'
+import UserContext from './UserContext'
+
+let user: UserModel | null = useContext(UserContext)
 
 function Footer() {
     return (
-        <footer id="footer" className="footer">
-            <aside className="footer-signup-prompt">Please subscribe:</aside>
-            <form className="footer-signup-form" id="register-form" action="javascript:void(0)">
-                <input type="text" className="footer-signup-input" id="First_Name" placeholder="First Name" contentEditable="true" required />
-                <input type="text" className="footer-signup-input" id="Last_Name" placeholder="Last Name" contentEditable="true" required />
-                <input type="email" className="footer-signup-input" id="Email_address" placeholder="Email address" contentEditable="true" required />
-                <input type="password" className="footer-signup-input" id="Password" placeholder="A New Password" contentEditable="true" required />
-                <div style={{ display: "inline-block" }}>
-                    <button type="button" className="blog-button" onClick={GetRegisterDataAndLoginAsync().then} style={{ float: "right" }}>Sign Up</button>
-                </div>
-            </form>
+        <footer id="footer" className={user ? "footer-logged-in footer" : "footer"}>
+            {user ?
+                <h1 id="footer-header">You are logged in as {user.name}</h1>
+
+                :
+                <>
+                    <aside className="footer-signup-prompt">Please subscribe:</aside>
+                    <form className="footer-signup-form" id="register-form" action="javascript:void(0)">
+                        <input type="text" className="footer-signup-input" id="First_Name" placeholder="First Name" contentEditable="true" required />
+                        <input type="text" className="footer-signup-input" id="Last_Name" placeholder="Last Name" contentEditable="true" required />
+                        <input type="email" className="footer-signup-input" id="Email_address" placeholder="Email address" contentEditable="true" required />
+                        <input type="password" className="footer-signup-input" id="Password" placeholder="A New Password" contentEditable="true" required />
+                        <div style={{ display: "inline-block" }}>
+                            <button type="button" className="blog-button" onClick={GetRegisterDataAndLoginAsync} style={{ float: "right" }}>Sign Up</button>
+                        </div>
+                    </form>
+                </>
+            }
             <aside className="footer-copyright">
                 <p>© <p id="year-display">2022</p> by Andre Bačić</p>
             </aside>
+
         </footer>
+
     )
 }
 async function GetRegisterDataAndLoginAsync() {
@@ -33,12 +45,12 @@ async function GetRegisterDataAndLoginAsync() {
         return
     }
 
-    let user = {
-        FirstName: first_name_input.value,
-        LastName: last_name_input.value,
-        EmailAddress: email_address_input.value,
-        Password: password_input.value,
-        DoesReceiveNotifications: true
+    let user: CreateAccountViewModel = {
+        firstName: first_name_input.value,
+        lastName: last_name_input.value,
+        emailAddress: email_address_input.value,
+        password: password_input.value,
+        doesReceiveNotifications: true
     }
     let success = await CreateAccountAsync(user)
     let email_address = email_address_input.value
