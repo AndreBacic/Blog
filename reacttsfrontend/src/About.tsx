@@ -27,9 +27,9 @@ function About() {
             <h2>About Me</h2>
             <p>
                 My name is Andre Bačić, and I am a full-stack web developer eager to
-                help and learn! If you're interested in hiring me,
+                help and learn! If you're interested in hiring me,&nbsp;
                 <a href="https://andrebacic.github.io/">my portfolio</a>
-                has my contact information and demos some of my other development skills.</p>
+                &nbsp;has my contact information and demos some of my other development skills.</p>
         </article>
     )
 }

@@ -57,7 +57,8 @@ html {
   scrollbar-color: var(--blog-theme-color-extra-dark) var(--blog-forward-color);
 }
 
-body {
+body,
+#root {
   height: 100%;
   width: 100%;
   background-color: var(--blog-back-color);
@@ -74,11 +75,13 @@ body {
   font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
-body::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track,
+#root::-webkit-scrollbar-track {
   background: var(--blog-forward-color);
 }
 
-body::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb,
+#root::-webkit-scrollbar-thumb {
   border: 0.15rem solid var(--blog-forward-color);
 }
 
