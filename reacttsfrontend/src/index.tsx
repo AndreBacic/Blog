@@ -224,11 +224,11 @@ export async function GetAllArticlesAsync(): Promise<ArticleModel[]> {
       }
     })
   let articles = await infoPromise.json()
-  return articles.sort((a: ArticleModel, b: ArticleModel) => { // TODO: replace 'any' with actual article model
+  return articles.sort((a: ArticleModel, b: ArticleModel) => {
     let d1 = Number(new Date(a.datePosted))
     let d2 = Number(new Date(b.datePosted))
     return d2 - d1
-  });
+  })
 }
 
 export async function GetArticleByIdAsync(id: number): Promise<ArticleModel> {
@@ -370,8 +370,8 @@ export interface CreateAccountViewModel {
 export interface ArticleModel {
   id: number;
   title: string;
-  datePosted: Date;
-  lastEdited: Date;
+  datePosted: string;
+  lastEdited: string;
   comments: CommentModel[];
   tags: string[];
   authorName: string;

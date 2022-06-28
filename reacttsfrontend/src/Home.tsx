@@ -47,13 +47,14 @@ function Home() {
                     })
                     :
                     articlesToBeRendered.map((article, i) => {
+                        let lastEdited = new Date(article.lastEdited)
                         return (
-                            <div className="flex-item css-skeleton-article" key={i}>
+                            <div className="flex-item" key={i}>
                                 <article className="article-flex-item">
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
-                                    <p>{formatUTCDateForDisplayAsLocal(article.datePosted, 'Posted')}
-                                        {article.lastEdited ? formatUTCDateForDisplayAsLocal(article.lastEdited, ', LastEdited') : ""}
+                                    <p>{formatUTCDateForDisplayAsLocal(new Date(article.datePosted), 'Posted')}
+                                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
                                     </p>
                                     <div className="tags-container">
                                         <h4>Tags: </h4>
