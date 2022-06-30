@@ -1,11 +1,11 @@
 import { useContext } from 'react'
-import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx, UserModel } from '.'
+import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx } from '.'
 import { LoginAsync } from '.'
 import UserContext from './UserContext'
 
 
 function Footer() {
-    let user: UserModel | null = useContext(UserContext)
+    const [user, setUser] = useContext(UserContext)
     return (
         <footer id="footer" className={user ? "footer-logged-in footer" : "footer"}>
             {user ?

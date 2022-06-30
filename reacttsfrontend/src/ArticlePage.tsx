@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { ArticleModel, CommentModel, formatUTCDateForDisplayAsLocal, GetArticleByIdAsync, CreateCommentAsync } from "."
-import UserContext from "./UserContext"
+import { ArticleModel, CommentModel, CreateOrEditCommentModel, formatUTCDateForDisplayAsLocal, GetArticleByIdAsync, CreateCommentAsync } from "."
+import UserContext, { LS_KEY_user } from "./UserContext"
 import Comment from "./Comment"
 
 function ArticlePage() {
-    const { id } = useParams()
+    const id = Number(useParams().id)
     const [article, setArticle] = useState<ArticleModel | null>(null)
     const [user, setUser] = useContext(UserContext)
 
@@ -14,11 +14,31 @@ function ArticlePage() {
     // grab article from api
     useEffect(() => {
         console.log(id)
-        GetArticleByIdAsync(Number(id)).then(a => {
+        GetArticleByIdAsync(id).then(a => {
             setArticle(a)
             lastEdited = new Date(a.lastEdited)
+            document.title = `${a.title} - The Blog of Andre Bačić`
         })
     }, [])
+
+    function postComment() {
+        let comment_content_input = document.getElementById("commentInput") as HTMLInputElement
+        if (comment_content_input.value.replace(/\s/g, '').length) {
+            let user = JSON.parse(localStorage.getItem(LS_KEY_user) as string)
+            let comment: CreateOrEditCommentModel = {
+                author: user,
+                contentText: comment_content_input.value,
+                articleId: id
+            }
+            CreateCommentAsync(comment).then(() => {
+                comment_content_input.value = ""
+                GetArticleByIdAsync(id).then(a => {
+                    setArticle(a)
+                    lastEdited = new Date(a.lastEdited)
+                })
+            })
+        }
+    }
     return (
         <>
             <h1>{article?.title}</h1>
@@ -26,9 +46,6 @@ function ArticlePage() {
                 <div dangerouslySetInnerHTML={{ __html: `${article?.contentText}` }}></div>
                 <div className="article-info-div">
                     <p>Written by <cite>{article?.authorName}</cite></p>
-                    <p>
-
-                    </p>
                     <div className="tags-container">
                         <h4>Tags: </h4>
                         {article?.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
@@ -41,7 +58,7 @@ function ArticlePage() {
                 </div>
             </article>
             {user !== null ?
-                <form id="post-comment-form" onSubmit={CreateComment}>
+                <form id="post-comment-form" onClick={postComment}>
                     <h4>Leave a comment</h4>
                     <textarea id="commentInput" contentEditable="true" placeholder="Your comment"></textarea>
                     <button className="blog-button" type="button">Submit</button>

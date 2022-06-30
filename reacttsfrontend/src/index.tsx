@@ -390,14 +390,14 @@ export interface CreateOrEditArticleModel {
   authorName: string;
   contentText: string;
 }
+export interface CreateOrEditCommentModel {
+  author: CommentAuthorViewModel;
+  contentText: string;
+  articleId: number;
+}
 export interface CommentAuthorViewModel {
   id: number;
   firstName: string;
   lastName: string;
   name: string;
-}
-export interface CreateOrEditCommentModel {
-  author: CommentAuthorViewModel;
-  contentText: string;
-  articleId: number;
 }
