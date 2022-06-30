@@ -5,7 +5,7 @@ import UserContext, { LS_KEY_authToken, LS_KEY_lastJWTRefresh, LS_KEY_user } fro
 
 type Props = {}
 export default function EditAccount({ }: Props) {
-    let user = useContext(UserContext)
+    const [user, setUser] = useContext(UserContext)
 
     async function EditAccountAsync(u: UserModel) {
         let editPromise = await fetch(`${accountURI}/editAccount`,
@@ -26,7 +26,7 @@ export default function EditAccount({ }: Props) {
             let now = new Date().toString()
             localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
 
-            user = await GetLoggedInUserAsync()
+            setUser(await GetLoggedInUserAsync())
             localStorage.setItem(LS_KEY_user, JSON.stringify(user))
         }
         return success

@@ -47,13 +47,12 @@ export {
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-
-let user: UserModel | null = JSON.parse(localStorage.getItem(LS_KEY_user) as string)
+const [user, setUser] = React.useState<UserModel | null>(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={[user, setUser]}>
         <Header />
         <Navbar hasSearch={true} />
         <Routes>
@@ -186,7 +185,7 @@ export async function LoginAsync(email: string, password: string) {
   }
   // Only log in user if the password was valid
   localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-  user = await GetLoggedInUserAsync()
+  setUser(await GetLoggedInUserAsync())
   localStorage.setItem(LS_KEY_user, JSON.stringify(user))
 
   let now = new Date().toString()
@@ -211,7 +210,7 @@ export async function LogoutAsync() {
 export function LogOutUser() {
   localStorage.removeItem(LS_KEY_authToken)
   localStorage.removeItem(LS_KEY_user)
-  user = null
+  setUser(null)
 }
 
 // ArticleApi methods   ////////////////////////////////////////////////////////////

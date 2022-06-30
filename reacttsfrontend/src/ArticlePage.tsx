@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { ArticleModel, formatUTCDateForDisplayAsLocal, GetArticleByIdAsync } from "."
+import { ArticleModel, CommentModel, formatUTCDateForDisplayAsLocal, GetArticleByIdAsync, CreateCommentAsync } from "."
+import UserContext from "./UserContext"
+import Comment from "./Comment"
 
 function ArticlePage() {
     const { id } = useParams()
     const [article, setArticle] = useState<ArticleModel | null>(null)
+    const [user, setUser] = useContext(UserContext)
 
     // default last edited to be min date
     let lastEdited = new Date("0001-01-01T00:00:00")
@@ -37,12 +40,29 @@ function ArticlePage() {
 
                 </div>
             </article>
-            <form id="post-comment-form" style={{ textAlign: "center" }}>
-                <p>Please <Link to="login">log in</Link> to post comments.</p>
-            </form>
-            <div id="comment-list" style={{ textAlign: "center" }}>
-                <p>This article has no comments yet.</p>
-            </div>
+            {user !== null ?
+                <form id="post-comment-form" onSubmit={CreateComment}>
+                    <h4>Leave a comment</h4>
+                    <textarea id="commentInput" contentEditable="true" placeholder="Your comment"></textarea>
+                    <button className="blog-button" type="button">Submit</button>
+                </form>
+                :
+                <form id="post-comment-form" style={{ textAlign: "center" }}>
+                    <p>Please <Link to="login">log in</Link> to post comments.</p>
+                </form>
+            }
+            {article?.comments?.length == 0 ?
+                <div id="comment-list" style={{ textAlign: "center" }}>
+                    <p>This article has no comments yet.</p>
+                </div>
+                :
+                <div id="comment-list">
+                    <h3 style={{ margin: "15px 5px 5px 0px" }}>Comments:</h3>
+                    {article?.comments?.map((comment: CommentModel, i: number) => {
+                        return <Comment comment={comment} user={user} key={i} />
+                    })}
+                </div>
+            }
         </>
     )
 }

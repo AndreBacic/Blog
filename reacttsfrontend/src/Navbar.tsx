@@ -5,11 +5,11 @@ import UserContext from './UserContext';
 
 type Props = { hasSearch: boolean }
 function Navbar({ hasSearch }: Props) {
-    let user = useContext(UserContext)
+    const [user, setUser] = useContext(UserContext)
 
     function LogOutButtonOnClick() {
         LogoutAsync().then(() => {
-            user = null
+            setUser(null)
             // useNavigate()('/') // TODO: Redirect to home page after logout (useNavigate() is not allowed in a nested function)
         })
     }
