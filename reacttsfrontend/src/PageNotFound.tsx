@@ -1,10 +1,11 @@
-import React from 'react'
-
-type Props = {}
-
-function PageNotFound({ }: Props) {
+function PageNotFound() {
     return (
-        <div>404: You are nowhere</div>
+        <>
+            <h1>Error 404: Page Not Found</h1>
+            <article className="full-article">
+                <h2>Unfortunately, the page you have been directed to cannot be found</h2>
+            </article>
+        </>
     )
 }
 

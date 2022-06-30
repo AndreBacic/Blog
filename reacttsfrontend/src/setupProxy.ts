@@ -2,8 +2,19 @@
 
 const context = [
     "/api/accountAPI",
+    "/api/accountAPI/login",
+    "/api/accountAPI/logout",
+    "/api/accountAPI/refreshToken",
+    "/api/accountAPI/getLoggedInUser",
+    "/api/accountAPI/createAccount",
+    "/api/accountAPI/editAccount",
+    "/api/accountAPI/editPassword",
+    "/api/accountAPI/deleteAccount",
     "/api/articleAPI",
+    "/api/articleAPI/{id}",
     "/api/commentAPI",
+    "/api/commentAPI/{articleId}",
+    "/api/commentAPI/{articleId}/{id}",
 ]
 
 module.exports = function (app: any) {

@@ -20,9 +20,9 @@ import reportWebVitals from './reportWebVitals';
 import UserContext, { LS_KEY_authToken, LS_KEY_lastJWTRefresh, LS_KEY_user } from './UserContext';
 
 // Constants because we need them before we do anything
-const accountURI = "api/AccountApi"
-const articleURI = "api/ArticleApi"
-const commentURI = "api/CommentApi"
+const accountURI = "/api/AccountApi"
+const articleURI = "/api/ArticleApi"
+const commentURI = "/api/CommentApi"
 
 const millisToJwtExpiration = 15 * 60 * 1000 // 15 min
 const millisDelayToRefreshToken = millisToJwtExpiration - 30000 // minus 30 seconds

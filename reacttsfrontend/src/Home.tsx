@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
 
 function Home() {
@@ -49,7 +50,7 @@ function Home() {
                     articlesToBeRendered.map((article, i) => {
                         let lastEdited = new Date(article.lastEdited)
                         return (
-                            <div className="flex-item" key={i}>
+                            <Link to={`article/${article.id}`} className="flex-item" key={i}>
                                 <article className="article-flex-item">
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
@@ -61,7 +62,7 @@ function Home() {
                                         {article.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
                                     </div>
                                 </article>
-                            </div>
+                            </Link>
                         )
                     })
                 }
