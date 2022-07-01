@@ -41,7 +41,13 @@ function Navbar({ hasSearch }: Props) {
                 {hasSearch &&
                     <div style={{ float: "right" }}>
                         <label htmlFor="search-bar">Search:</label>
-                        <input id="search-bar" type="text" className="navbar-input" contentEditable="true" />
+                        <input id="search-bar" type="text" className="navbar-input" contentEditable="true"
+                            onKeyUp={(e) => {
+                                if (e.keyCode === 13) {
+                                    const search_bar = document.getElementById("search-bar") as HTMLInputElement
+                                    navigate(`/search/${search_bar.value}`)
+                                }
+                            }} />
                     </div>
                 }
             </nav>

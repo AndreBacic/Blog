@@ -95,7 +95,7 @@ function Root() {
             <Route path="/" element={<Main />}>
               <Route index element={<Home />} />
               <Route path="about" element={<About />} />
-              <Route path="search/:query" element={<SearchPage />} />
+              <Route path="search/:search" element={<SearchPage />} />
               <Route path="login" element={<Login />} />
               <Route path="editAccount" element={<EditAccount />} />
               <Route path="createArticle" element={<CreateArticle />} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
+import SkeletonArticle from './SkeletonArticle'
 
 function Home() {
     const [articles, setArticles] = useState<ArticleModel[]>([])
@@ -24,22 +25,7 @@ function Home() {
             <h1>Latest Articles</h1>
             <div id="articleList" className="flex-container-column">
                 {articles.length === 0 ?
-
-                    Array(6).fill(0).map((_, i: any) => {
-                        return (
-                            <div className="flex-item css-skeleton-article" key={i}>
-                                <article className="article-flex-item">
-                                    <h2>XXXXX XXXXXXX</h2>
-                                    <p style={{ display: "inline-block" }}>Written by <cite>XXXXX XXXXX</cite><br /></p>
-                                    <p>Posted XXXX XX, XXXX</p>
-                                    <div className="tags-container">
-                                        <h4>Tags: </h4>
-                                        <p className="tag">XXXXXXXXX</p>
-                                    </div>
-                                </article>
-                            </div>
-                        )
-                    })
+                    Array(6).fill(0).map((_, i: number) => <SkeletonArticle key={i} />)
                     :
                     articles.slice(0, maxNumArticlesDisplayed).map((article, i) => {
                         let lastEdited = new Date(article.lastEdited)
