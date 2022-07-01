@@ -4,26 +4,20 @@ import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incr
 
 function Home() {
     const [articles, setArticles] = useState<ArticleModel[]>([])
-    const [articlesToBeRendered, setArticlesToBeRendered] = useState<ArticleModel[]>([])
     const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
 
     // grab articles from api
     useEffect(() => {
         GetAllArticlesAsync().then(articles => {
             setArticles(articles)
-            setArticlesToBeRendered(articles.splice(0, initialMaxNumArticlesDisplayed))
         }).catch(err => {
             console.log(err)
         })
     }, [])
 
-    function GetMoreArticlesToBeRendered(allArticles: ArticleModel[]) {
-        if (maxNumArticlesDisplayed >= allArticles.length) {
-            return allArticles
-        } else {
-            setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
-            return allArticles.slice(0, maxNumArticlesDisplayed)
-        }
+    function GetMoreArticlesToBeRendered() {
+        if (maxNumArticlesDisplayed >= articles.length) return
+        setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
     }
     return (
         <>
@@ -47,7 +41,7 @@ function Home() {
                         )
                     })
                     :
-                    articlesToBeRendered.map((article, i) => {
+                    articles.slice(0, maxNumArticlesDisplayed).map((article, i) => {
                         let lastEdited = new Date(article.lastEdited)
                         return (
                             <Link to={`article/${article.id}`} className="flex-item" key={i}>
@@ -67,10 +61,12 @@ function Home() {
                     })
                 }
             </div>
-            <button id="load-more-articles-button" className="button-article-list"
-                onClick={() => setArticlesToBeRendered(GetMoreArticlesToBeRendered(articles))} type="button">
-                {maxNumArticlesDisplayed >= articles.length ? "That is All" : "Load More"}
-            </button>
+            {(articles.length > initialMaxNumArticlesDisplayed) &&
+                <button id="load-more-articles-button" className="button-article-list"
+                    onClick={GetMoreArticlesToBeRendered} type="button">
+                    {maxNumArticlesDisplayed >= articles.length ? "That is All" : "Load More"}
+                </button>
+            }
         </>
     )
 }

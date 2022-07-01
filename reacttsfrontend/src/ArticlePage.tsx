@@ -64,7 +64,7 @@ function ArticlePage() {
                 </form>
                 :
                 <form id="post-comment-form" style={{ textAlign: "center" }}>
-                    <p>Please <Link to="login">log in</Link> to post comments.</p>
+                    <p>Please <Link to="/login">log in</Link> to post comments.</p>
                 </form>
             }
             {article?.comments?.length == 0 ?

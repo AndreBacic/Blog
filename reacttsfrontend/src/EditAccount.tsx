@@ -28,7 +28,10 @@ export default function EditAccount({ }: Props) {
             let now = new Date().toString()
             localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
 
-            setUser(await GetLoggedInUserAsync())
+            console.log("EditAccountAsync: successfully edited account")
+            const user = await GetLoggedInUserAsync()
+            setUser(user)
+            console.log("EditAccountAsync: successfully got user")
             localStorage.setItem(LS_KEY_user, JSON.stringify(user))
         }
         return success
@@ -114,17 +117,17 @@ export default function EditAccount({ }: Props) {
         }
     }
     return (
-        <form action="javascript:void(0)" className="account-form edit-account-form">
+        <form className="account-form edit-account-form">
             <h1>Edit Account</h1>
             <div>
                 <label htmlFor="firstNameInput">First Name: </label>
                 <br />
-                <input id="firstNameInput" type="email" defaultValue={user?.firstName} className="account-text-input" contentEditable="true" />
+                <input id="firstNameInput" type="text" defaultValue={user?.firstName} className="account-text-input" contentEditable="true" />
             </div>
             <div>
                 <label htmlFor="lastNameInput">Last Name: </label>
                 <br />
-                <input id="lastNameInput" type="email" defaultValue={user?.lastName} className="account-text-input" contentEditable="true" />
+                <input id="lastNameInput" type="text" defaultValue={user?.lastName} className="account-text-input" contentEditable="true" />
             </div>
             <div>
                 <label htmlFor="emailInput">Email: </label>
@@ -152,7 +155,7 @@ export default function EditAccount({ }: Props) {
                 <input id="confirmPasswordInput" type="password" className="account-text-input" contentEditable="true" />
             </div>
             <div>
-                <button type="button" className="blog-button" onClick={() => GetEditDataAndSubmitAsync().then()} style={{ width: "160px", marginBottom: "4px" }}>Save Changes</button>
+                <button type="button" className="blog-button" onClick={() => GetEditDataAndSubmitAsync().then()} style={{ width: "160px", margin: "0 4px 4px 0" }}>Save Changes</button>
                 <input type="button" className="blog-button" value="Cancel" onClick={() => navigate("/")} />
             </div>
         </form>

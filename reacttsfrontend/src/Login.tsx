@@ -23,7 +23,7 @@ export default function Login({ }: Props) {
         })
     }
     return (
-        <form action="javascript:void(0)" onSubmit={() => GetLoginDataAndLogin()} className="account-form login-form">
+        <form onSubmit={() => GetLoginDataAndLogin()} className="account-form login-form">
             <h1>Log in</h1>
             <div>
                 <label htmlFor="emailInput">Email: </label><br />

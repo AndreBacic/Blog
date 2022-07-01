@@ -586,7 +586,8 @@ main>h1 {
   border: 2px solid var(--blog-theme-color-dark);
   border-radius: 7px;
   margin: 25px auto 15px auto;
-  display: none;
+  display: inherit;
+  /* display: none; */
 }
 
 .button-article-list:hover {

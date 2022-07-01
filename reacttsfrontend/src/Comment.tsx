@@ -30,7 +30,7 @@ export default function Comment({ comment: comment0, user }: Props) {
             {comment.id > 0 &&
                 <div className="comment">
                     <p>
-                        <div className="comment-title">Andre Bačić:</div>
+                        <div className="comment-title">{comment.author.name}:</div>
 
                         <p id={`comment${comment.id}-content`}>
                             {mode === Mode.Edit ?
