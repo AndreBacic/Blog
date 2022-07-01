@@ -34,11 +34,9 @@ export default function Comment({ comment: comment0, user }: Props) {
 
                         <p id={`comment${comment.id}-content`}>
                             {mode === Mode.Edit ?
-                                <textarea className="edit-comment-textarea" contentEditable="true">
-                                    {comment.contentText}
-                                </textarea>
-                                :
-                                comment.contentText}
+                                <textarea className="edit-comment-textarea" contentEditable="true"
+                                    defaultValue={comment.contentText}></textarea>
+                                : comment.contentText}
                         </p>
                     </p>
                     <div style={{ display: "inline-block", width: "100%" }}>
@@ -67,9 +65,9 @@ export default function Comment({ comment: comment0, user }: Props) {
                                 <div className="comment-button-popup" style={{ display: mode === Mode.Edit ? "grid" : "none" }}>
                                     <p style={{ textAlign: "center", width: "100%" }}>Do you want to submit your edits?</p>
                                     <button className="comment-button comment-form-button"
-                                        onClick={() => setMode(Mode.Edit)}>Cancel</button>
+                                        onClick={() => setMode(Mode.View)}>Cancel</button>
                                     <button className="comment-button comment-form-button"
-                                        onClick={() => { SubmitCommentEdit }}>
+                                        onClick={SubmitCommentEdit}>
                                         Submit</button>
                                 </div>
                             </div>

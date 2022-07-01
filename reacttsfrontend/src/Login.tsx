@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LoginAsync } from '.'
+import { GetLoggedInUserAsync, isUserLoggedIn, LoginAsync } from '.'
 import UserContext from './UserContext'
 type Props = {}
 export default function Login({ }: Props) {
@@ -12,11 +12,14 @@ export default function Login({ }: Props) {
         LoginAsync(emailInput.value, passwordInput.value).then(() => {
             emailInput.value = "";
             passwordInput.value = "";
-            if (user !== null) {
-                navigate("/")
-            } else {
-                window.alert("Incorrect email or password")
-            }
+            GetLoggedInUserAsync().then(u => {
+                setUser(u)
+                if (isUserLoggedIn()) {
+                    navigate("/")
+                } else {
+                    window.alert("Incorrect email or password")
+                }
+            })
         })
     }
     return (

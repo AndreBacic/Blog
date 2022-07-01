@@ -1,7 +1,7 @@
 import { useContext } from 'react'
-import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx } from '.'
+import { CreateAccountAsync, CreateAccountViewModel, isValidEmail, passwordRegEx, UserModel } from '.'
 import { LoginAsync } from '.'
-import UserContext from './UserContext'
+import UserContext, { LS_KEY_user } from './UserContext'
 
 
 function Footer() {
@@ -19,7 +19,7 @@ function Footer() {
                         <input type="email" className="footer-signup-input" id="Email_address" placeholder="Email address" contentEditable="true" required />
                         <input type="password" className="footer-signup-input" id="Password" placeholder="A New Password" contentEditable="true" required />
                         <div style={{ display: "inline-block" }}>
-                            <button type="button" className="blog-button" onClick={GetRegisterDataAndLoginAsync} style={{ float: "right" }}>Sign Up</button>
+                            <button type="button" className="blog-button" onClick={() => GetRegisterDataAndLoginAsync(setUser)} style={{ float: "right" }}>Sign Up</button>
                         </div>
                     </form>
                 </>
@@ -32,7 +32,7 @@ function Footer() {
 
     )
 }
-async function GetRegisterDataAndLoginAsync() {
+async function GetRegisterDataAndLoginAsync(setUser: (user: UserModel) => void) {
     let first_name_input = document.getElementById("First_Name") as HTMLInputElement
     let last_name_input = document.getElementById("Last_Name") as HTMLInputElement
     let email_address_input = document.getElementById("Email_address") as HTMLInputElement
@@ -62,6 +62,7 @@ async function GetRegisterDataAndLoginAsync() {
 
     if (success === true) {
         await LoginAsync(email_address, password)
+        setUser(JSON.parse(localStorage.getItem(LS_KEY_user) as string) as UserModel)
         window.alert("Successfully signed up!")
     } else {
         window.alert("There was a problem registering you. Someone else may have signed up with that email.")

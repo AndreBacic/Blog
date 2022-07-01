@@ -13,7 +13,6 @@ function ArticlePage() {
     let lastEdited = new Date("0001-01-01T00:00:00")
     // grab article from api
     useEffect(() => {
-        console.log(id)
         GetArticleByIdAsync(id).then(a => {
             setArticle(a)
             lastEdited = new Date(a.lastEdited)

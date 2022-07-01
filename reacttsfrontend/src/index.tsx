@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
@@ -47,32 +47,70 @@ export {
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-const [user, setUser] = React.useState<UserModel | null>(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
+function Root() {
+  const [user, setUser] = React.useState<UserModel | null>(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
 
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <UserContext.Provider value={[user, setUser]}>
-        <Header />
-        <Navbar hasSearch={true} />
-        <Routes>
-          <Route path="/" element={<Main />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="search/:query" element={<SearchPage />} />
-            <Route path="login" element={<Login />} />
-            <Route path="editAccount" element={<EditAccount />} />
-            <Route path="createArticle" element={<CreateArticle />} />
-            <Route path="editArticle" element={<EditArticle />} />
-            <Route path="article/:id" element={<ArticlePage />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Route>
-        </Routes>
-        <Footer />
-      </UserContext.Provider>
-    </BrowserRouter>
-  </React.StrictMode>
-);
+  function RefreshTokenCallbackLoop() {
+    fetch(`${accountURI}/refreshToken`,
+      {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + getAuthToken()
+        }
+      }).then(response => {
+        if (response.status < 400) {
+          return response.json()
+        } else {
+          localStorage.removeItem(LS_KEY_authToken)
+          localStorage.removeItem(LS_KEY_user)
+          setUser(null)
+          throw response.status
+        }
+      })
+      .then(jwt => {
+        localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
+        let now = new Date().toString()
+        localStorage.setItem(LS_KEY_lastJWTRefresh, now)
+        setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
+      })
+      .catch(err => console.error(err))
+  }
+  useEffect(() => {
+    if (isUserLoggedIn()) {
+      let lastTimeJWTRefreshed = Date.parse(localStorage.getItem(LS_KEY_lastJWTRefresh) as string)
+      let now = Date.parse(new Date().toString())
+      setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken + lastTimeJWTRefreshed - now)
+    }
+  }, [])
+
+  return (
+    <React.StrictMode>
+      <BrowserRouter>
+        <UserContext.Provider value={[user, setUser]}>
+          <Header />
+          <Navbar hasSearch={true} />
+          <Routes>
+            <Route path="/" element={<Main />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="search/:query" element={<SearchPage />} />
+              <Route path="login" element={<Login />} />
+              <Route path="editAccount" element={<EditAccount />} />
+              <Route path="createArticle" element={<CreateArticle />} />
+              <Route path="editArticle" element={<EditArticle />} />
+              <Route path="article/:id" element={<ArticlePage />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Route>
+          </Routes>
+          <Footer />
+        </UserContext.Provider>
+      </BrowserRouter>
+    </React.StrictMode>
+  )
+}
+root.render(<Root />)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
@@ -106,32 +144,6 @@ export function getAuthToken() {
 
 export function isUserLoggedIn() {
   return getAuthToken() !== null
-}
-
-export function RefreshTokenCallbackLoop() {
-  fetch(`${accountURI}/refreshToken`,
-    {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + getAuthToken()
-      }
-    }).then(response => {
-      if (response.status < 400) {
-        return response.json()
-      } else {
-        LogOutUser()
-        throw response.status
-      }
-    })
-    .then(jwt => {
-      localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-      let now = new Date().toString()
-      localStorage.setItem(LS_KEY_lastJWTRefresh, now)
-      setTimeout(RefreshTokenCallbackLoop, millisDelayToRefreshToken)
-    })
-    .catch(err => console.error(err))
 }
 
 export async function GetLoggedInUserAsync(): Promise<UserModel> {
@@ -185,7 +197,7 @@ export async function LoginAsync(email: string, password: string) {
   }
   // Only log in user if the password was valid
   localStorage.setItem(LS_KEY_authToken, JSON.stringify(jwt))
-  setUser(await GetLoggedInUserAsync())
+  const user = await GetLoggedInUserAsync()
   localStorage.setItem(LS_KEY_user, JSON.stringify(user))
 
   let now = new Date().toString()
@@ -199,7 +211,8 @@ export async function LogoutAsync() {
         'Authorization': 'Bearer ' + getAuthToken()
       }
     })
-  LogOutUser()
+  localStorage.removeItem(LS_KEY_authToken)
+  localStorage.removeItem(LS_KEY_user)
 
   if (somePromise.status < 400) {
     return true
@@ -207,12 +220,6 @@ export async function LogoutAsync() {
     return false
   }
 }
-export function LogOutUser() {
-  localStorage.removeItem(LS_KEY_authToken)
-  localStorage.removeItem(LS_KEY_user)
-  setUser(null)
-}
-
 // ArticleApi methods   ////////////////////////////////////////////////////////////
 export async function GetAllArticlesAsync(): Promise<ArticleModel[]> {
   let infoPromise = await fetch(articleURI,
