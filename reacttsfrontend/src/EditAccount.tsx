@@ -62,6 +62,7 @@ export default function EditAccount({ }: Props) {
     }
 
     async function GetEditDataAndSubmitAsync() {
+        // TODO: Switch to using useRef for all of these inputs?
         let first_name_input = document.getElementById("firstNameInput") as HTMLInputElement
         let last_name_input = document.getElementById("lastNameInput") as HTMLInputElement
         let email_address_input = document.getElementById("emailInput") as HTMLInputElement
