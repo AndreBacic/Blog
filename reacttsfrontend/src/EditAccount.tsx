@@ -1,13 +1,20 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { accountURI, getAuthToken, GetLoggedInUserAsync, isValidEmail, passwordRegEx, UserModel } from '.'
+import HaveSearchBarContext from './HaveSearchBarContext'
 import UserContext, { LS_KEY_authToken, LS_KEY_lastJWTRefresh, LS_KEY_user } from './UserContext'
 
 
 type Props = {}
 export default function EditAccount({ }: Props) {
-    const [user, setUser] = useContext(UserContext) as [UserModel | null, any]
+    const [user, setUser] = useContext(UserContext) as [UserModel | null, (u: UserModel | null) => void]
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
     const navigate = useNavigate()
+
+    useEffect(() => {
+        setHaveSearchBar(false)
+        document.title = "Edit Account - The Blog of Andre Bačić"
+    }, [])
 
     async function EditAccountAsync(u: UserModel) {
         let editPromise = await fetch(`${accountURI}/editAccount`,

@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
+import HaveSearchBarContext from './HaveSearchBarContext'
 import SkeletonArticle from './SkeletonArticle'
 
 function Home() {
     const [articles, setArticles] = useState<ArticleModel[]>([])
     const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
 
     // grab articles from api
     useEffect(() => {
+        setHaveSearchBar(true)
+        document.title = "The Blog of Andre Bačić"
         GetAllArticlesAsync().then(articles => {
             setArticles(articles)
         }).catch(err => {
@@ -30,7 +34,7 @@ function Home() {
                     articles.slice(0, maxNumArticlesDisplayed).map((article, i) => {
                         let lastEdited = new Date(article.lastEdited)
                         return (
-                            <Link to={`article/${article.id}`} className="flex-item" key={i}>
+                            <Link to={`/article/${article.id}`} className="flex-item" key={i}>
                                 <article className="article-flex-item">
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>

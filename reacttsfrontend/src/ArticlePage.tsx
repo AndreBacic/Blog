@@ -3,16 +3,19 @@ import { Link, useParams } from "react-router-dom"
 import { ArticleModel, CommentModel, CreateOrEditCommentModel, formatUTCDateForDisplayAsLocal, GetArticleByIdAsync, CreateCommentAsync } from "."
 import UserContext, { LS_KEY_user } from "./UserContext"
 import Comment from "./Comment"
+import HaveSearchBarContext from "./HaveSearchBarContext"
 
 function ArticlePage() {
     const id = Number(useParams().id)
     const [article, setArticle] = useState<ArticleModel | null>(null)
     const [user, setUser] = useContext(UserContext)
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
 
     // default last edited to be min date
     let lastEdited = new Date("0001-01-01T00:00:00")
     // grab article from api
     useEffect(() => {
+        setHaveSearchBar(true)
         GetArticleByIdAsync(id).then(a => {
             setArticle(a)
             lastEdited = new Date(a.lastEdited)

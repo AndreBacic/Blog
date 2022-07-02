@@ -18,6 +18,7 @@ import PageNotFound from './PageNotFound';
 
 import reportWebVitals from './reportWebVitals';
 import UserContext, { LS_KEY_authToken, LS_KEY_lastJWTRefresh, LS_KEY_user } from './UserContext';
+import HaveSearchBarContext from './HaveSearchBarContext';
 
 // Constants because we need them before we do anything
 const accountURI = "/api/AccountApi"
@@ -48,6 +49,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 function Root() {
+  const [haveSearchBar, setHaveSearchBar] = React.useState(true);
   const [user, setUser] = React.useState<UserModel | null>(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
 
   function RefreshTokenCallbackLoop() {
@@ -88,24 +90,26 @@ function Root() {
   return (
     <React.StrictMode>
       <BrowserRouter>
-        <UserContext.Provider value={[user, setUser]}>
-          <Header />
-          <Navbar hasSearch={true} />
-          <Routes>
-            <Route path="/" element={<Main />}>
-              <Route index element={<Home />} />
-              <Route path="about" element={<About />} />
-              <Route path="search/:search" element={<SearchPage />} />
-              <Route path="login" element={<Login />} />
-              <Route path="editAccount" element={<EditAccount />} />
-              <Route path="createArticle" element={<CreateArticle />} />
-              <Route path="editArticle" element={<EditArticle />} />
-              <Route path="article/:id" element={<ArticlePage />} />
-              <Route path="*" element={<PageNotFound />} />
-            </Route>
-          </Routes>
-          <Footer />
-        </UserContext.Provider>
+        <HaveSearchBarContext.Provider value={[haveSearchBar, setHaveSearchBar]}>
+          <UserContext.Provider value={[user, setUser]}>
+            <Header />
+            <Navbar hasSearchBar={true} />
+            <Routes>
+              <Route path="/" element={<Main />}>
+                <Route index element={<Home />} />
+                <Route path="about" element={<About />} />
+                <Route path="search/:search" element={<SearchPage />} />
+                <Route path="login" element={<Login />} />
+                <Route path="editAccount" element={<EditAccount />} />
+                <Route path="createArticle" element={<CreateArticle />} />
+                <Route path="editArticle" element={<EditArticle />} />
+                <Route path="article/:id" element={<ArticlePage />} />
+                <Route path="*" element={<PageNotFound />} />
+              </Route>
+            </Routes>
+            <Footer />
+          </UserContext.Provider>
+        </HaveSearchBarContext.Provider>
       </BrowserRouter>
     </React.StrictMode>
   )

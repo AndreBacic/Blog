@@ -63,13 +63,12 @@ function SearchPage() {
                     Array(4).fill(0).map((_, i: number) => <SkeletonArticle key={i} />)
                     :
                     articles.map((article, i) => {
-                        console.log(tag, search)
                         let lastEdited = new Date(article.lastEdited)
                         return ((article.title.toLowerCase().includes(search.toLowerCase()) ||
                             article.contentText.toLowerCase().includes(search.toLowerCase())) &&
                             (tag === "(Any)" || article.tags.includes(tag)))
                             &&
-                            (<Link to={`article/${article.id}`} className="flex-item" key={i}>
+                            (<Link to={`/article/${article.id}`} className="flex-item" key={i}>
                                 <article className="article-flex-item">
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>

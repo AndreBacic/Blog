@@ -1,11 +1,19 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GetLoggedInUserAsync, isUserLoggedIn, LoginAsync } from '.'
+import HaveSearchBarContext from './HaveSearchBarContext'
 import UserContext from './UserContext'
 type Props = {}
 export default function Login({ }: Props) {
     const [user, setUser] = useContext(UserContext)
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setHaveSearchBar(false)
+        document.title = "Login - The Blog of Andre Bačić"
+    }, [])
+
     function GetLoginDataAndLogin() {
         let emailInput = document.getElementById('emailInput') as HTMLInputElement
         let passwordInput = document.getElementById('passwordInput') as HTMLInputElement

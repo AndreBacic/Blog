@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LogoutAsync } from './index';
 import UserContext from './UserContext';
 
-type Props = { hasSearch: boolean }
-function Navbar({ hasSearch }: Props) {
+type Props = { hasSearchBar: boolean }
+function Navbar({ hasSearchBar }: Props) {
     const [user, setUser] = useContext(UserContext)
     const navigate = useNavigate()
 
@@ -38,7 +38,7 @@ function Navbar({ hasSearch }: Props) {
                         <Link className="right" to="login" id="login-link">Login</Link>
                     </>
                 }
-                {hasSearch &&
+                {hasSearchBar &&
                     <div style={{ float: "right" }}>
                         <label htmlFor="search-bar">Search:</label>
                         <input id="search-bar" type="text" className="navbar-input" contentEditable="true"

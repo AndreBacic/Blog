@@ -1,4 +1,9 @@
+import { useContext, useEffect } from "react"
+import HaveSearchBarContext from "./HaveSearchBarContext"
+
 function PageNotFound() {
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
+    useEffect(() => setHaveSearchBar(true), [])
     return (
         <>
             <h1>Error 404: Page Not Found</h1>

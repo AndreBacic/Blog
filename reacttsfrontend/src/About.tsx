@@ -1,4 +1,12 @@
+import { useContext, useEffect } from "react"
+import HaveSearchBarContext from "./HaveSearchBarContext"
+
 function About() {
+    const [haveSearchBar, setHaveSearchBar] = useContext(HaveSearchBarContext)
+    useEffect(() => {
+        setHaveSearchBar(true)
+        document.title = "About - The Blog of Andre Bačić"
+    }, [])
     return (
         <article className="full-article">
             <h2>Why this exists</h2>
