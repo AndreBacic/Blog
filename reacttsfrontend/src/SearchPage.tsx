@@ -7,8 +7,8 @@ import SkeletonArticle from "./SkeletonArticle"
 function SearchPage() {
     const searchQuery = useParams().search as string
     const [search, setSearch] = useState(searchQuery)
-    const [tag, setTag] = useState("(Any)")
-    const [tags, setTags] = useState([tag])
+    const [selectedTag, setSelectedTag] = useState("(Any)")
+    const [tags, setTags] = useState([selectedTag])
     const [articles, setArticles] = useState<ArticleModel[]>([])
     const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
 
@@ -49,7 +49,7 @@ function SearchPage() {
                 </div>
                 <div>
                     <label htmlFor="tag-selector">Filter by tag:</label>
-                    <select id="tag-selector" onChange={(e) => setTag(e.target.value)}>
+                    <select id="tag-selector" onChange={(e) => setSelectedTag(e.target.value)}>
                         <option>(Any)</option>
                         {tags.map((t, i) => {
                             return <option className="tag" key={i}>{t}</option>
@@ -66,7 +66,7 @@ function SearchPage() {
                         let lastEdited = new Date(article.lastEdited)
                         return ((article.title.toLowerCase().includes(search.toLowerCase()) ||
                             article.contentText.toLowerCase().includes(search.toLowerCase())) &&
-                            (tag === "(Any)" || article.tags.includes(tag)))
+                            (selectedTag === "(Any)" || article.tags.includes(selectedTag)))
                             &&
                             (<Link to={`/article/${article.id}`} className="flex-item" key={i}>
                                 <article className="article-flex-item">

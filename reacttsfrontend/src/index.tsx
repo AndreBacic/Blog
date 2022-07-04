@@ -52,6 +52,7 @@ function Root() {
   const [haveSearchBar, setHaveSearchBar] = React.useState(true);
   const [user, setUser] = React.useState<UserModel | null>(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
 
+  // TODO: Actually monitor this code while running the app and see if it works.
   function RefreshTokenCallbackLoop() {
     fetch(`${accountURI}/refreshToken`,
       {
