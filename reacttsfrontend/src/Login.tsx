@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GetLoggedInUserAsync, isUserLoggedIn, LoginAsync } from '.'
 import HaveSearchBarContext from './HaveSearchBarContext'
-import UserContext from './UserContext'
+import UserContext, { LS_KEY_user } from './UserContext'
 type Props = {}
 export default function Login({ }: Props) {
     const [user, setUser] = useContext(UserContext)
@@ -17,25 +17,25 @@ export default function Login({ }: Props) {
         document.title = "Login - The Blog of Andre Bačić"
     }, [])
 
-    function GetLoginDataAndLogin() {
+    function GetLoginDataAndLogin(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
         const e = emailInput.current as HTMLInputElement
         const p = passwordInput.current as HTMLInputElement
         LoginAsync(e.value as string, p.value as string).then(() => {
-            // TODO: Make sure this clears the inputs as intended
             e.value = "";
             p.value = "";
-            GetLoggedInUserAsync().then(u => {
-                setUser(u)
-                if (isUserLoggedIn()) {
-                    navigate("/")
-                } else {
-                    window.alert("Incorrect email or password")
-                }
-            })
+            setUser(JSON.parse(localStorage.getItem(LS_KEY_user) as string))
+            if (isUserLoggedIn()) {
+                navigate("/")
+            } else {
+                window.alert("Incorrect email or password")
+            }
         })
     }
     return (
-        <form onSubmit={() => GetLoginDataAndLogin()} className="account-form login-form">
+        <form
+            onSubmit={(e) => GetLoginDataAndLogin(e)}
+            className="account-form login-form">
             <h1>Log in</h1>
             <div>
                 <label htmlFor="emailInput">Email: </label><br />

@@ -35,10 +35,8 @@ export default function EditAccount({ }: Props) {
             let now = new Date().toString()
             localStorage.setItem(LS_KEY_lastJWTRefresh, now) // TODO: could this have a collision with refreshTokenCallbackLoop? fix that?
 
-            console.log("EditAccountAsync: successfully edited account")
             const user = await GetLoggedInUserAsync()
             setUser(user)
-            console.log("EditAccountAsync: successfully got user")
             localStorage.setItem(LS_KEY_user, JSON.stringify(user))
         }
         return success
