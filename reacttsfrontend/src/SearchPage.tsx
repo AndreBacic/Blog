@@ -62,6 +62,7 @@ function SearchPage() {
                 {articles.length === 0 ?
                     Array(4).fill(0).map((_, i: number) => <SkeletonArticle key={i} />)
                     :
+                    // TODO: Fix search results output
                     articles.map((article, i) => {
                         let lastEdited = new Date(article.lastEdited)
                         return ((article.title.toLowerCase().includes(search.toLowerCase()) ||

@@ -53,7 +53,7 @@ function ArticlePage() {
                         {article?.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
                     </div>
                     <p style={{ float: "right", textAlign: "right" }}>&nbsp;&nbsp;
-                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
+                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', Last Edited') : ""}
                     </p>
                     <p style={{ float: "right", textAlign: "right" }}>{formatUTCDateForDisplayAsLocal(new Date(article?.datePosted as string), 'Posted')}</p><br />
 

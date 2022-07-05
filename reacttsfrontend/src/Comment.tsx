@@ -21,6 +21,7 @@ export default function Comment({ comment: comment0, user }: Props) {
         const commentContent = textarea.value
         comment.contentText = commentContent
         UpdateCommentAsync(comment.id, comment).then(() => {
+            comment.lastEdited = new Date().toString()
             setMode(Mode.View)
             setComment(comment)
         })
@@ -42,7 +43,7 @@ export default function Comment({ comment: comment0, user }: Props) {
                     <div style={{ display: "inline-block", width: "100%" }}>
                         <p style={{ padding: "0.875rem 0px 0.25rem", display: "inline-block" }}>
                             {formatUTCDateForDisplayAsLocal(new Date(comment.datePosted), 'Posted')}
-                            {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
+                            {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', Last Edited') : ""}
                         </p>
                         {user !== null && user.id === comment.author.id &&
                             <div className="comment-button-container" style={{ minHeight: mode === Mode.View ? "initial" : "4.25rem" }}>

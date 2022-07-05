@@ -39,7 +39,7 @@ function Home() {
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
                                     <p>{formatUTCDateForDisplayAsLocal(new Date(article.datePosted), 'Posted')}
-                                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
+                                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', Last Edited') : ""}
                                     </p>
                                     <div className="tags-container">
                                         <h4>Tags: </h4>
