@@ -95,18 +95,18 @@ export default function EditAccount({ }: Props) {
         let newPasswordInput = document.getElementById("newPasswordInput") as HTMLInputElement
         let confirmPasswordInput = document.getElementById("confirmPasswordInput") as HTMLInputElement
 
-        if (oldPasswordInput.value == '' &&
-            newPasswordInput.value == '' &&
-            confirmPasswordInput.value == '') {
+        if (oldPasswordInput.value === '' &&
+            newPasswordInput.value === '' &&
+            confirmPasswordInput.value === '') {
             // This is fine, don't do anything
-        } else if (oldPasswordInput.value == '' ||
-            newPasswordInput.value == '' ||
-            confirmPasswordInput.value == '') {
+        } else if (oldPasswordInput.value === '' ||
+            newPasswordInput.value === '' ||
+            confirmPasswordInput.value === '') {
             alert("To change your password you must fill in all three fields")
         } else if (newPasswordInput.value !== confirmPasswordInput.value) {
             alert("To change your password you must enter the same new password " +
                 "in both the 'New Password' and the 'Confirm New Password' fields.")
-        } else if (newPasswordInput.value.match(passwordRegEx) == null) {
+        } else if (newPasswordInput.value.match(passwordRegEx) === null) {
             alert("Your new password must have at least 6 characters, " +
                 "1 number, 1 uppercase letter, and 1 lowercase letter")
         }

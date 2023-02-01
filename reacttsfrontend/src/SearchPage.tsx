@@ -35,6 +35,11 @@ function SearchPage() {
         })
     }, [])
 
+    useEffect(() => {
+        setMaxNumArticlesDisplayed(initialMaxNumArticlesDisplayed)
+        
+    }, [search, selectedTag])
+
     function GetMoreArticlesToBeRendered() {
         if (maxNumArticlesDisplayed >= articles.length) return
         setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
@@ -74,7 +79,7 @@ function SearchPage() {
                                     <h2>{article.title}</h2>
                                     <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
                                     <p>{formatUTCDateForDisplayAsLocal(new Date(article.datePosted), 'Posted')}
-                                        {lastEdited.getFullYear() != 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
+                                        {lastEdited.getFullYear() !== 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
                                     </p>
                                     <div className="tags-container">
                                         <h4>Tags: </h4>
@@ -83,7 +88,7 @@ function SearchPage() {
                                 </article>
                             </Link>
                             )
-                    }).slice(0, maxNumArticlesDisplayed)
+                    }).filter(x => !!x).slice(0, maxNumArticlesDisplayed)
                 }
             </div>
             {(articles.length > initialMaxNumArticlesDisplayed) &&
