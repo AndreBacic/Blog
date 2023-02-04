@@ -1,16 +1,27 @@
 import { useParams } from "react-router-dom"
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArticleModel, formatUTCDateForDisplayAsLocal, GetAllArticlesAsync, incrementMaxNumArticlesDisplayed, initialMaxNumArticlesDisplayed } from '.'
 import SkeletonArticle from "./SkeletonArticle"
 
 function SearchPage() {
     const searchQuery = useParams().search as string
+    const searchBar = useRef<HTMLInputElement>(null)
     const [search, setSearch] = useState(searchQuery)
     const [selectedTag, setSelectedTag] = useState("(Any)")
     const [tags, setTags] = useState([selectedTag])
     const [articles, setArticles] = useState<ArticleModel[]>([])
     const [maxNumArticlesDisplayed, setMaxNumArticlesDisplayed] = useState(initialMaxNumArticlesDisplayed)
+
+    const navSearchBar = document.getElementById("search-bar")
+    if (navSearchBar) {
+        navSearchBar.addEventListener("keyup", (e) => {
+            if (e.keyCode === 13 && searchBar.current) {
+                searchBar.current.value = (navSearchBar as HTMLInputElement).value
+                setSearch((navSearchBar as HTMLInputElement).value)
+            }
+        })
+    }
 
     // grab articles from api
     useEffect(() => {
@@ -37,20 +48,42 @@ function SearchPage() {
 
     useEffect(() => {
         setMaxNumArticlesDisplayed(initialMaxNumArticlesDisplayed)
-        
     }, [search, selectedTag])
 
     function GetMoreArticlesToBeRendered() {
         if (maxNumArticlesDisplayed >= articles.length) return
         setMaxNumArticlesDisplayed(m => m + incrementMaxNumArticlesDisplayed)
     }
+
+    let filteredArticles = articles.map((article, i) => {
+        let lastEdited = new Date(article.lastEdited)
+        return ((article.title.toLowerCase().includes(search.toLowerCase()) ||
+            article.contentText.toLowerCase().includes(search.toLowerCase())) &&
+            (selectedTag === "(Any)" || article.tags.includes(selectedTag)))
+            &&
+            (<Link to={`/article/${article.id}`} className="flex-item" key={i}>
+                <article className="article-flex-item">
+                    <h2>{article.title}</h2>
+                    <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
+                    <p>{formatUTCDateForDisplayAsLocal(new Date(article.datePosted), 'Posted')}
+                        {lastEdited.getFullYear() !== 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
+                    </p>
+                    <div className="tags-container">
+                        <h4>Tags: </h4>
+                        {article.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
+                    </div>
+                </article>
+            </Link>
+            )
+    }).filter(x => !!x)
+    
     return (
         <>
             <div id="search-fields">
                 <div>
-                    <label htmlFor="search-bar">Search:</label>
-                    <input id="search-bar" type="text" style={{ marginBottom: "10px" }} className="account-text-input" contentEditable="true"
-                        onChange={(e) => setSearch(e.target.value)} defaultValue={search} />
+                    <label htmlFor="article-search-bar">Search:</label>
+                    <input id="article-search-bar" type="text" style={{ marginBottom: "10px" }} className="account-text-input" contentEditable="true"
+                        onChange={(e) => setSearch(e.target.value)} defaultValue={search} ref={searchBar} />
                 </div>
                 <div>
                     <label htmlFor="tag-selector">Filter by tag:</label>
@@ -64,37 +97,16 @@ function SearchPage() {
             </div>
             <h1>Latest Articles</h1>
             <div id="articleList" className="flex-container-column">
-                {articles.length === 0 ?
+                {!filteredArticles ?
                     Array(4).fill(0).map((_, i: number) => <SkeletonArticle key={i} />)
                     :
-                    // TODO: Fix search results output
-                    articles.map((article, i) => {
-                        let lastEdited = new Date(article.lastEdited)
-                        return ((article.title.toLowerCase().includes(search.toLowerCase()) ||
-                            article.contentText.toLowerCase().includes(search.toLowerCase())) &&
-                            (selectedTag === "(Any)" || article.tags.includes(selectedTag)))
-                            &&
-                            (<Link to={`/article/${article.id}`} className="flex-item" key={i}>
-                                <article className="article-flex-item">
-                                    <h2>{article.title}</h2>
-                                    <p style={{ display: "inline-block" }}>Written by <cite>{article.authorName}</cite><br /></p>
-                                    <p>{formatUTCDateForDisplayAsLocal(new Date(article.datePosted), 'Posted')}
-                                        {lastEdited.getFullYear() !== 1 ? formatUTCDateForDisplayAsLocal(lastEdited, ', LastEdited') : ""}
-                                    </p>
-                                    <div className="tags-container">
-                                        <h4>Tags: </h4>
-                                        {article.tags.map((tag: string, i: any) => <p className="tag" key={i}>{tag}</p>)}
-                                    </div>
-                                </article>
-                            </Link>
-                            )
-                    }).filter(x => !!x).slice(0, maxNumArticlesDisplayed)
+                    filteredArticles.slice(0, maxNumArticlesDisplayed)
                 }
             </div>
-            {(articles.length > initialMaxNumArticlesDisplayed) &&
+            {(filteredArticles && filteredArticles.length > initialMaxNumArticlesDisplayed) &&
                 <button id="load-more-articles-button" className="button-article-list"
                     onClick={GetMoreArticlesToBeRendered} type="button">
-                    {maxNumArticlesDisplayed >= articles.length ? "That is All" : "Load More"}
+                    {maxNumArticlesDisplayed >= filteredArticles.length ? "That is All" : "Load More"}
                 </button>
             }
         </>
